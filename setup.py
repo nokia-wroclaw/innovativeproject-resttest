@@ -5,7 +5,7 @@ setup(
     name='resttest',
     version='0.0.0',
     packages=[''],
-    url='',
+    url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
     author='Sławomir Domagała, Damian Mirecki, Tomasz Wlisłocki, Bartosz Zięba',
     author_email='',
