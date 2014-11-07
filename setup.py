@@ -4,7 +4,7 @@ from distutils.core import setup
 setup(
     name='resttest',
     version='0.0.0',
-    packages=[''],
+    packages=['resttest'],
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
     author='Sławomir Domagała, Damian Mirecki, Tomasz Wlisłocki, Bartosz Zięba',
