@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='resttest',
-    version='0.0.0',
+    version='0.0.0.1',
     packages=['resttest'],
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
