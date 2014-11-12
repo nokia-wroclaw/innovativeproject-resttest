@@ -1,0 +1,93 @@
+# Hello world
+GET http://www.onet.pl.
+ASSERT RESPONSE STATUS OK.
+
+
+
+
+# Possible request types
+GET http://api.something.com, PARAMS name Joe age 17.
+ASSERT RESPONSE STATUS OK.
+
+POST http://api.something.com, PARAMS name Joe age 17.
+ASSERT RESPONSE STATUS OK.
+
+HEAD http://api.something.com, PARAMS name Joe age 17.
+ASSERT RESPONSE STATUS OK.
+
+PUT http://api.something.com, PARAMS name Joe age 17.
+ASSERT RESPONSE STATUS OK.
+
+DELETE http://api.something.com, PARAMS name Joe age 17.
+ASSERT RESPONSE STATUS OK.
+
+
+
+
+# More params
+GET http://api.something.com, PARAMS name Joe age 17, HEADERS Accept-Language pl.
+ASSERT RESPONSE STATUS OK.
+
+
+
+
+# Multiline support for clearer input + very big request
+GET 
+	http://api.something.com, 
+PARAMS 
+	name Joe 
+	age 17, 
+HEADERS 
+	Accept-Language pl,
+AUTH
+	login password,
+TIMEOUT
+	200,
+PORT
+	4040.
+ASSERT RESPONSE STATUS OK.
+
+
+
+
+# Possible assertions
+POST http://api.something.com, PARAMS name Joe age 17.
+
+# Response assertions
+ASSERT RESPONSE STATUS OK.		# Other options: Not Found, number eg. 500...
+ASSERT RESPONSE TYPE JSON.		# Other options: XML, HTML, ...
+ASSERT RESPONSE NOT EMPTY.
+ASSERT RESPONSE LENGTH = 234.
+ASSERT RESPONSE LENGTH > 17.
+ASSERT RESPONSE TIME < 200.		# in miliseconds
+
+# Cookies
+ASSERT COOKIE SET cookie-name.
+ASSERT COOKIE VALUE cookie-name cookie-value.
+
+# Header assertions
+ASSERT HEADER SET header-name.
+ASSERT HEADER VALUE header-name header-value.
+
+# Json/Xml path assertions
+ASSERT PATH path/to/resource EXISTS.
+ASSERT PATH path/to/resource CONTAINS ANY data.
+ASSERT PATH path/to/resource CONTAINS EACH data.
+ASSERT PATH path/to/resource NODES COUNT = 4.
+ASSERT PATH path/to/resource NODES COUNT > 7.
+ASSERT PATH path/to/resource FINAL.
+
+
+# Sławek
+ASSERT PATH path/to/resource/ANY/something EXISTS.
+ASSERT PATH path/to/resource/*/something EXISTS.
+ASSERT PATH path/to/resource/ALL/something EXISTS.
+
+ASSERT PATH path/to/resource/ALL/something MATCHES regexp.
+ASSERT PATH path/to/resource/ALL/something TYPE integer.
+ASSERT 
+	PATH path/to/resource CONTAINS ANY data1
+	OR
+	PATH path/to/resource CONTAINS ANY data2.
+ASSERT PATH path/to/resource PASSES EACH data1 > data2.
+
