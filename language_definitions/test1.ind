@@ -91,3 +91,9 @@ ASSERT
 	PATH path/to/resource CONTAINS ANY data2.
 ASSERT PATH path/to/resource PASSES EACH data1 > data2.
 
+# Przykładowy test
+GET http://api.geonames.org/postalCodeLookupJSON, PARAMS postalcode 50316 username indor.
+ASSERT RESPONSE STATUS OK.
+ASSERT RESPONSE TYPE JSON.
+ASSERT RESPONSE NOT EMPTY.
+ASSERT RESPONSE LENGTH > 200.
