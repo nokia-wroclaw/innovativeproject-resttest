@@ -1,6 +1,7 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławuś Domagała'
 
+import requests
 
 class TestRunner:
     response = None
@@ -15,7 +16,7 @@ class TestRunner:
         print "Tests finished"
         print "Executed tests:"
         for test in TestRunner.list_of_test_classes:
-            print "\t {}: status {}, message {}".format(test.__class__.__name__, test.status, test.message)
+            print "\t {}: status {}, message {}".format(test.__class__.__name__, test.result.status, test.result.message)
 
     def run_test(self, test_lines):
         for line in test_lines:
@@ -24,6 +25,15 @@ class TestRunner:
             test.parse(args)
 
         self.print_summary()
+
+
+class Result:
+
+    def __init__(self):
+        self.status = False
+        self.message = ":D"
+        self.expected = None
+        self.actual = None
 
 
 # Base class for all tests
@@ -41,7 +51,7 @@ class Test:
         return False
 
 
-# Base class for all conections
+# Base class for all connections
 class Connect(Test):
     # path - definition of test class
     def __init__(self):
@@ -49,12 +59,11 @@ class Connect(Test):
         self.headers = {}
         self.url = ""
 
-
     def parseParams(self, path):
         begin = path.find("PARAMS") + 7
         end = path.find(",", begin)
 
-        if (end > 0):
+        if end > 0:
             splitted = path[begin: end].split(" ")
         else:
             splitted = path[begin:].split(" ")
@@ -66,7 +75,7 @@ class Connect(Test):
         begin = path.find("HEADERS") + 8
         end = path.find(",", begin)
 
-        if (end > 0):
+        if end > 0:
             splitted = path[begin: end].split(" ")
         else:
             splitted = path[begin:].split(" ")
@@ -99,10 +108,11 @@ class ConnectGET(Connect):
         Connect.__init__(self)
 
     def execute(self, arguments):
-        # TODO: Damian - do your job here
         self.parseParams(arguments)
         self.parseHeaders(arguments)
         self.parseUrl(arguments)
+
+        TestRunner.response = requests.get(self.url)
 
         print "GET to {} with params: {}".format(self.url, str(self.params))  # TODO: delete it
 
@@ -126,7 +136,7 @@ class ConnectPOST(Connect):
 
     def parse(self, path):
         joined_path = " ".join(path)
-        self.execute(joined_path)\
+        self.execute(joined_path)
 
 
 # Class for sending PUT request
@@ -165,8 +175,7 @@ class ConnectDELETE(Connect):
 # Base class for Assertions
 class Assert(Test):
     def __init__(self):
-        self.status = 0
-        self.message = ":D"
+        self.result = Result()
 
     def parse(self, path):
         # Convert all arguments to CamelCase
@@ -219,7 +228,7 @@ class AssertResponseStatus(AssertResponse):
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting status is {}".format(args[0])
+        self.result.status = (TestRunner.response.status_code == args[0])
 
 
 # This class is for check type of content of response
