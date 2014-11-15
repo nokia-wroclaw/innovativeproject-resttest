@@ -28,6 +28,7 @@ class TestRunner:
 
 
 class Result:
+    """Class contains data of any action realized by program."""
 
     def __init__(self):
         self.status = False
@@ -51,15 +52,15 @@ class Test:
         return False
 
 
-# Base class for all connections
 class Connect(Test):
-    # path - definition of test class
+    """Make request"""
+
     def __init__(self):
         self.params = {}
         self.headers = {}
         self.url = ""
 
-    def parseParams(self, path):
+    def parse_params(self, path):
         begin = path.find("PARAMS") + 7
         end = path.find(",", begin)
 
@@ -71,7 +72,7 @@ class Connect(Test):
         for i in range(0, len(splitted) / 2):
             self.params[splitted[2 * i]] = splitted[2 * i + 1]
 
-    def parseHeaders(self, path):
+    def parse_headers(self, path):
         begin = path.find("HEADERS") + 8
         end = path.find(",", begin)
 
@@ -83,92 +84,24 @@ class Connect(Test):
         for i in range(0, len(splitted) / 2):
             self.headers[splitted[2 * i]] = splitted[2 * i + 1]
 
-    def parseUrl(self, path):
+    def parse_url(self, path):
         args = path.split(" ")
         self.url = args[0].strip(",")
 
     def parse(self, path):
         argument = path[0]
 
-        if argument == 'GET':
-            next_step = ConnectGET()
-        elif argument == 'POST':
-            next_step = ConnectPOST()
-        elif argument == 'PUT':
-            next_step = ConnectPUT()
-        elif argument == 'DELETE':
-            next_step = ConnectDELETE()
+        arguments = " ".join(path[1:])
+        self.parse_params(arguments)
+        self.parse_headers(arguments)
+        self.parse_url(arguments)
 
-        next_step.parse(path[1:])
-
-
-# Class for sending GET request
-class ConnectGET(Connect):
-    def __init__(self):
-        Connect.__init__(self)
-
-    def execute(self, arguments):
-        self.parseParams(arguments)
-        self.parseHeaders(arguments)
-        self.parseUrl(arguments)
-
-        TestRunner.response = requests.get(self.url)
-
-        print "GET to {} with params: {}".format(self.url, str(self.params))  # TODO: delete it
-
-    def parse(self, path):
-        joined_path = " ".join(path)
-        self.execute(joined_path)
-
-
-# Class for sending POST request
-class ConnectPOST(Connect):
-    def __init__(self):
-        Connect.__init__(self)
-
-    def execute(self, arguments):
-        # TODO: Damian - do your job here
-        self.parseParams(arguments)
-        self.parseHeaders(arguments)
-        self.parseUrl(arguments)
-
-        print "POST to {} with params: {}".format(self.url, str(self.params))  # TODO: delete it
-
-    def parse(self, path):
-        joined_path = " ".join(path)
-        self.execute(joined_path)
-
-
-# Class for sending PUT request
-class ConnectPUT(Connect):
-    def __init__(self):
-        Connect.__init__(self)
-
-    def execute(self, arguments):
-        # TODO: Damian - do your job here
-        self.parseParams(arguments)
-        self.parseHeaders(arguments)
-        self.parseUrl(arguments)
-
-    def parse(self, path):
-        joined_path = " ".join(path)
-        self.execute(joined_path)\
-
-
-# Class for sending DELETE request
-class ConnectDELETE(Connect):
-    def __init__(self):
-        Connect.__init__(self)
-
-    def execute(self, arguments):
-        # TODO: Damian - do your job here
-        self.parseParams(arguments)
-        self.parseHeaders(arguments)
-        self.parseUrl(arguments)
-
-    def parse(self, path):
-        joined_path = " ".join(path)
-        self.execute(joined_path)\
+        try:
+            func = getattr(requests, argument.lower())
+        except AttributeError:
+            print 'function not found "%s"' % (argument.lower())
+        else:
+            TestRunner.response = func(url=self.url, params=self.params)
 
 
 # This class inherits from the class Test
@@ -190,13 +123,12 @@ class Assert(Test):
 # This class inherits from the class Assert
 # Base class for Assertion on Response
 class AssertResponse(Assert):
-    def __init__(self):
-        pass
 
     def parse(self, path):
         argument = path[0]
         argument2 = " ".join(path[0:2])
 
+        # TODO: I think this should be more "generic"?
         if argument2 == 'Not Empty':
             next_step = AssertResponseNotEmpty()
             next_step.parse(path[2:])
@@ -217,70 +149,124 @@ class AssertResponse(Assert):
             next_step.parse(path[1:])
 
 
-# This class inherits from the class AssertResponse
-# In this class we are able to check status of response
 class AssertResponseStatus(AssertResponse):
+    """
+    This class inherits from the class AssertResponse
+    In this class we are able to check status of response
+    """
+
     def __init__(self):
-        Assert.__init__(self)
+        AssertResponse.__init__(self)
+        self.mapping = {
+            "Ok": 200,
+            "Not found": 404
+        }
+
+    def map_status_code(self, status):
+        """
+
+        author Damian Mirecki
+
+        :param status
+        :return:
+        :rtype: int
+        :raise LookupError: When status is not implemented yet.
+        """
+
+        # TODO: Catching any exceptions and errors.
+        if not status in self.mapping:
+            raise LookupError("Status" + status + "not found in " + self.mapping.__str__())
+
+        return self.mapping[status]
 
     def parse(self, path):
         TestRunner.list_of_test_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        self.result.status = (TestRunner.response.status_code == args[0])
+        status = args[0]
+
+        if not status.isdigit():
+            status = self.map_status_code(status)
+
+        self.result.status = (TestRunner.response.status_code == status)
+        self.result.expected = status
+        self.result.actual = TestRunner.response.status_code
 
 
 # This class is for check type of content of response
 class AssertResponseContentType(AssertResponse):
-    def __init__(self):
-        Assert.__init__(self)
 
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
-        self.execute(path)
+        if path[0] == "Json":
+            next_step = AssertResponseContentTypeJson()
+            next_step.parse()
+        else:
+            raise Exception("Bad param")
 
-    def execute(self, args):
-        print "Asserting content type is {}".format(args[0])
+
+class AssertResponseContentTypeJson(AssertResponseContentType):
+    """Check if content type is JSON"""
+
+    def parse(self):
+        TestRunner.list_of_test_classes.append(self)
+        self.execute()
+
+    def execute(self):
+        try:
+            TestRunner.response.json()
+        except ValueError, e:
+            self.result.status = False
+        else:
+            self.result.status = True
 
 
 # This class is for check length of response
 class AssertResponseLength(AssertResponse):
-    def __init__(self):
-        Assert.__init__(self)
+    def parse(self, path):
+        assert 'content-length' in TestRunner.response.headers
 
+        if path[0] == ">":
+            next_step = AssertResponseLengthGreater()
+            next_step.parse(path[1])
+        else:
+            raise Exception("Bad param or not implemented yet")
+        # TODO: implementation
+
+
+class AssertResponseLengthGreater(AssertResponseLength):
     def parse(self, path):
         TestRunner.list_of_test_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting response length is {}".format(str(args))
+        self.result.status = (int(TestRunner.response.headers['content-length']) > int(args))
+        self.result.expected = ""
+        self.result.actual = TestRunner.response.headers['content-length']
 
 
 # Is response empty?
 class AssertResponseEmpty(AssertResponse):
-    def __init__(self):
-        Assert.__init__(self)
 
     def parse(self, path):
         TestRunner.list_of_test_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting response length is empty"
+        self.result.status = (TestRunner.response.content == "")
+        self.result.actual = TestRunner.response.content
 
 
 # Is response NOT empty?
 class AssertResponseNotEmpty(AssertResponse):
-    def __init__(self):
-        Assert.__init__(self)
 
     def parse(self, path):
         TestRunner.list_of_test_classes.append(self)
-        self.execute(path)
+        self.execute()
 
-    def execute(self, args):
-        print "Asserting response length is not empty"
+    def execute(self):
+        self.result.status = (TestRunner.response.content != "")
+        self.result.actual = TestRunner.response.content
 
 
 # Check Time of Response
@@ -293,7 +279,7 @@ class AssertResponseTime(AssertResponse):
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting response time is {}".format(str(args))
+        raise Exception("Not implemented yet")
 
 
 # ??

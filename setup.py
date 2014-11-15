@@ -4,6 +4,9 @@ from distutils.core import setup
 setup(
     name='resttest',
     version='0.0.0.1',
+    install_requires=[
+        "requests",
+    ],
     packages=['resttest'],
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
