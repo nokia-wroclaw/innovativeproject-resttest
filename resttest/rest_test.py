@@ -1,22 +1,41 @@
 # coding=utf-8
-__author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławuś Domagała'
+ASSERT_NAME = 'ASSERT'
+PARAMS_NAME = "PARAMS"
+HEADERS_NAME = "HEADERS"
+__author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
 import requests
+from requests.structures import CaseInsensitiveDict
+
+# Sławek
+# TODO
+# * Dlaczego tyle niepotrzebnych dziedziczeń?
+# * Zrobić osobną klasę na TestRunner.assertion_names?
+# * Gdzie przechwytujemy wyjątki (bo gdzie rzucamy wiadomo), np. użytkownik podał za małą liczbę argumentów albo za małą ich liczbę
+#   trzeba dobrze przemyśleć, żeby później w łatwy sposób komunikować to użytkownikowi
+# * Dlaczego test splitujemy w linie w innym pliku?
 
 class TestRunner:
     response = None
-    list_of_test_classes = []  # list of all classes created in this test
+    tested_classes = []  # list of all classes created in this test
+    assertions_names = CaseInsensitiveDict()
 
     def __init__(self):
-        TestRunner.list_of_test_classes = []
+        TestRunner.tested_classes = []
+        TestRunner.assertions_names[AssertResponseContentTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
+        TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
+        TestRunner.assertions_names[AssertResponseNotEmpty.__name__] = "RESPONSE NOT EMPTY"
+        TestRunner.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
         TestRunner.request = None
 
     def print_summary(self):
-        # TODO: Sławek - we need a nice summary here
-        print "Tests finished"
-        print "Executed tests:"
-        for test in TestRunner.list_of_test_classes:
-            print "\t {}: status {}, message {}".format(test.__class__.__name__, test.result.status, test.result.message)
+        print("Tests finished")
+        print("Executed tests:")
+        for test in TestRunner.tested_classes:
+            if test.result.status:
+                print("\t ASSERTION: {}\n\t\tPASSED".format(TestRunner.assertions_names[test.__class__.__name__]))
+            else:
+                print("\t ASSERTION: {}\n\t\tFAILED: EXPECTED {}\tGOT {}".format(TestRunner.assertions_names[test.__class__.__name__], test.result.expected, test.result.actual))
 
     def run_test(self, test_lines):
         for line in test_lines:
@@ -32,7 +51,6 @@ class Result:
 
     def __init__(self):
         self.status = False
-        self.message = ":D"
         self.expected = None
         self.actual = None
 
@@ -42,7 +60,7 @@ class Test:
     def parse(self, path):
         argument = path[0]
 
-        if argument == 'ASSERT':
+        if argument == ('%s' % ASSERT_NAME):
             next_step = Assert()
             next_step.parse(path[1:])
         elif argument in ['GET', 'POST', 'PUT', 'DELETE']:
@@ -61,7 +79,7 @@ class Connect(Test):
         self.url = ""
 
     def parse_params(self, path):
-        begin = path.find("PARAMS") + 7
+        begin = path.find("%s" % PARAMS_NAME) + 7
         end = path.find(",", begin)
 
         if end > 0:
@@ -73,7 +91,7 @@ class Connect(Test):
             self.params[splitted[2 * i]] = splitted[2 * i + 1]
 
     def parse_headers(self, path):
-        begin = path.find("HEADERS") + 8
+        begin = path.find("%s" % HEADERS_NAME) + 8
         end = path.find(",", begin)
 
         if end > 0:
@@ -99,7 +117,7 @@ class Connect(Test):
         try:
             func = getattr(requests, argument.lower())
         except AttributeError:
-            print 'function not found "%s"' % (argument.lower())
+            print('function not found "%s"' % (argument.lower()))
         else:
             TestRunner.response = func(url=self.url, params=self.params)
 
@@ -123,30 +141,29 @@ class Assert(Test):
 # This class inherits from the class Assert
 # Base class for Assertion on Response
 class AssertResponse(Assert):
-
     def parse(self, path):
-        argument = path[0]
-        argument2 = " ".join(path[0:2])
+        if len(path) == 0:
+            raise Exception("Za mało argumentów")
+        if path[0] == "Not" and len(path) < 2:
+            raise Exception("Za mało argumentów")
 
-        # TODO: I think this should be more "generic"?
-        if argument2 == 'Not Empty':
-            next_step = AssertResponseNotEmpty()
-            next_step.parse(path[2:])
-        elif argument == 'Status':
-            next_step = AssertResponseStatus()
-            next_step.parse(path[1:])
-        elif argument == 'Empty':
-            next_step = AssertResponseEmpty()
-            next_step.parse(path[1:])
-        elif argument == 'Length':
-            next_step = AssertResponseLength()
-            next_step.parse(path[1:])
-        elif argument == 'Time':
-            next_step = AssertResponseTime()
-            next_step.parse(path[1:])
-        elif argument == 'Type':
-            next_step = AssertResponseContentType()
-            next_step.parse(path[1:])
+        classes_names = CaseInsensitiveDict()
+        classes_names['status'] = 'Status'
+        classes_names['empty'] = 'Empty'
+        classes_names['length'] = 'Length'
+        classes_names['time'] = 'Time'
+        classes_names['type'] = 'ContentType'
+        classes_names['not'] = 'Not'
+
+        if path[0] == "Not":
+            new_class_name = self.__class__.__name__ + classes_names[path[0]] + classes_names[path[1]]
+            passed_args = path[2:]
+        else:
+            new_class_name = self.__class__.__name__ + classes_names[path[0]]
+            passed_args = path[1:]
+
+        next_step = eval(new_class_name + "()")
+        next_step.parse(passed_args)
 
 
 class AssertResponseStatus(AssertResponse):
@@ -180,7 +197,7 @@ class AssertResponseStatus(AssertResponse):
         return self.mapping[status]
 
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
@@ -196,7 +213,6 @@ class AssertResponseStatus(AssertResponse):
 
 # This class is for check type of content of response
 class AssertResponseContentType(AssertResponse):
-
     def parse(self, path):
         if path[0] == "Json":
             next_step = AssertResponseContentTypeJson()
@@ -209,7 +225,7 @@ class AssertResponseContentTypeJson(AssertResponseContentType):
     """Check if content type is JSON"""
 
     def parse(self):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute()
 
     def execute(self):
@@ -224,32 +240,36 @@ class AssertResponseContentTypeJson(AssertResponseContentType):
 # This class is for check length of response
 class AssertResponseLength(AssertResponse):
     def parse(self, path):
-        assert 'content-length' in TestRunner.response.headers
+        # assert 'content-length' in TestRunner.response.headers
+        # Jeśli 'transfer-encoding' == 'chunked' wtedy nie ma headea content-length
 
         if path[0] == ">":
             next_step = AssertResponseLengthGreater()
             next_step.parse(path[1])
         else:
             raise Exception("Bad param or not implemented yet")
-        # TODO: implementation
+            # TODO: implementation
 
 
 class AssertResponseLengthGreater(AssertResponseLength):
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        self.result.status = (int(TestRunner.response.headers['content-length']) > int(args))
-        self.result.expected = ""
-        self.result.actual = TestRunner.response.headers['content-length']
+        if 'content-length' in TestRunner.response.headers:
+            self.result.status = (int(TestRunner.response.headers['content-length']) > int(args))
+            self.result.actual = TestRunner.response.headers['content-length']
+        else:
+            self.result.status = (len(TestRunner.response.content) > int(args))
+            self.result.actual = len(TestRunner.response.content)
+        self.result.expected = "> " + args
 
 
 # Is response empty?
 class AssertResponseEmpty(AssertResponse):
-
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
@@ -259,9 +279,8 @@ class AssertResponseEmpty(AssertResponse):
 
 # Is response NOT empty?
 class AssertResponseNotEmpty(AssertResponse):
-
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute()
 
     def execute(self):
@@ -275,7 +294,7 @@ class AssertResponseTime(AssertResponse):
         Assert.__init__(self)
 
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
@@ -318,11 +337,12 @@ class AssertTimeTotal(AssertTime):
         Assert.__init__(self)
 
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting total request time is {}".format(str(args))
+        print
+        "Asserting total request time is {}".format(str(args))
 
 
 # Average time per request?
@@ -331,8 +351,9 @@ class AssertTimeAverage(AssertTime):
         Assert.__init__(self)
 
     def parse(self, path):
-        TestRunner.list_of_test_classes.append(self)
+        TestRunner.tested_classes.append(self)
         self.execute(path)
 
     def execute(self, args):
-        print "Asserting average request time is {}".format(str(args))
+        print
+        "Asserting average request time is {}".format(str(args))

@@ -1,5 +1,5 @@
 # coding=utf-8
-__author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławuś Domagała'
+__author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
 import sys
 import rest_test
