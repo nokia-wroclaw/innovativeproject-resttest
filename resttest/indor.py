@@ -11,6 +11,10 @@ if (len(args) != 2):
     print "Usage: python indor.py file.ind"
     sys.exit()
 
+logo_file = open("..\\other\\logo.txt", "r")
+logo = logo_file.read()
+print(logo)
+
 filename = args[1]
 f = open(filename, "r")
 
