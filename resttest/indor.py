@@ -3,6 +3,7 @@ __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Do
 
 import sys
 import rest_test
+import indor_input_parser as parser
 
 args = sys.argv
 
@@ -13,10 +14,10 @@ if (len(args) != 2):
 filename = args[1]
 f = open(filename, "r")
 
-test_data = f.read()
-test_lines = test_data.splitlines()
+file_data = f.read()
+test_data = parser.parse(file_data)
 
 runner = rest_test.TestRunner()
-runner.run_test(test_lines)
+runner.run_test(test_data)
 
 
