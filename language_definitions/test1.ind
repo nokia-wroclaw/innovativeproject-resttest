@@ -6,10 +6,10 @@ ASSERT RESPONSE STATUS OK.
 
 
 # Possible request types
-GET http://api.something.com, PARAMS name Joe age 17.
+GET http://api.something.com, PARAMS name Joe, age 17.
 ASSERT RESPONSE STATUS OK.
 
-POST http://api.something.com, PARAMS name Joe age 17.
+POST http://api.something.com, PARAMS name "Joe Doe" age 17.
 ASSERT RESPONSE STATUS OK.
 
 HEAD http://api.something.com, PARAMS name Joe age 17.
@@ -33,7 +33,7 @@ ASSERT RESPONSE STATUS OK.
 
 # Multiline support for clearer input + very big request
 GET 
-	http://api.something.com, 
+	http://api.something.com:3000, 
 PARAMS 
 	name Joe 
 	age 17, 
@@ -42,9 +42,7 @@ HEADERS
 AUTH
 	login password,
 TIMEOUT
-	200,
-PORT
-	4040.
+	200.
 ASSERT RESPONSE STATUS OK.
 
 
@@ -97,3 +95,6 @@ ASSERT RESPONSE STATUS OK.
 ASSERT RESPONSE TYPE JSON.
 ASSERT RESPONSE NOT EMPTY.
 ASSERT RESPONSE LENGTH > 200.
+
+# 2014-11-17
+ASSERT RESPONSE TEXT CONTAINS/MATCHES aaaa.

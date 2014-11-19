@@ -11,8 +11,6 @@ from result_collector import ResultCollector
 # * Dlaczego tyle niepotrzebnych dziedziczeń?
 # * Zrobić osobną klasę na TestRunner.assertion_names?
 # * Gdzie przechwytujemy wyjątki (bo gdzie rzucamy wiadomo), np. użytkownik podał za małą liczbę argumentów albo za małą ich liczbę
-# trzeba dobrze przemyśleć, żeby później w łatwy sposób komunikować to użytkownikowi
-# * Dlaczego test splitujemy w linie w innym pliku?
 
 
 class TestRunner:
@@ -41,9 +39,8 @@ class TestRunner:
                     TestRunner.assertions_names[test.__class__.__name__], test.result.expected, test.result.actual))
 
     def run_test(self, test_lines):
-        for line in test_lines:
+        for test_data in test_lines:
             test = Test()
-            args = line.strip(".").split(" ")
-            test.parse(args)
+            test.parse(test_data)
 
         self.print_summary()
