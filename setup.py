@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='resttest',
-    version='0.0.0.1',
+    version='0.0.3',
     install_requires=[
         "requests",
     ],

@@ -1,14 +1,13 @@
 language: python
 python:
 - '2.7'
-- '3.4'
 install: pip install -r requirements.txt
 script: nosetests
 deploy:
   provider: pypi
   user: DeeM
   password:
-    secure: WQ4E6MJTnIAnpmsb3KjfTvR9Jnee3KHPa802tnj0H1IWiOPopFedaD1jZbVxWanOfuxERkOQFw7jE10nDAG2Y5T3ljk0todu/TkUD3J7QNoAXzufd5lhfDVt0LBm+GK+72cs4CtmGJ7MhWmq3PdsqRZNVzI9/fH9f69I7JFMU6A=
+    secure: gNUMQluBseWOfNqOwujpMRHfWSYWCrCSckBWK9N5uBxe+lc1VcVYsZt3lRL9RY8MegMOGCQ8F6prpnR+gIEAhWwqSUASHdI5fATFq8EdD4Nf+xVK+zeIaiE47vongvwPTUSk5is4YFFjlpba1QCwNm6aFU6eft8vBaPkj8Inlog=
   on:
     tags: true
     repo: nokia-wroclaw/innovativeproject-resttest
