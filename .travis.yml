@@ -1,11 +1,17 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
-# command to install dependencies
-install: "pip install -r requirements.txt"
-# command to run tests
+- '2.6'
+- '2.7'
+- '3.2'
+- '3.3'
+- '3.4'
+install: pip install -r requirements.txt
 script: nosetests
+deploy:
+  provider: pypi
+  user: DeeM
+  password:
+    secure: WQ4E6MJTnIAnpmsb3KjfTvR9Jnee3KHPa802tnj0H1IWiOPopFedaD1jZbVxWanOfuxERkOQFw7jE10nDAG2Y5T3ljk0todu/TkUD3J7QNoAXzufd5lhfDVt0LBm+GK+72cs4CtmGJ7MhWmq3PdsqRZNVzI9/fH9f69I7JFMU6A=
+  on:
+    tags: true
+    repo: nokia-wroclaw/innovativeproject-resttest
