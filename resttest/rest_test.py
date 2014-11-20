@@ -38,7 +38,7 @@ class TestRunner:
                 print("\t ASSERTION: {}\n\t\tFAILED: EXPECTED {}\tGOT {}".format(
                     TestRunner.assertions_names[test.__class__.__name__], test.result.expected, test.result.actual))
 
-    def run_test(self, test_lines):
+    def run(self, test_lines):
         for test_data in test_lines:
             test = Test()
             test.parse(test_data)

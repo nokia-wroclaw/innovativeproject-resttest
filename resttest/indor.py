@@ -24,6 +24,6 @@ file_data = f.read()
 test_data = parser.parse(file_data)
 
 runner = rest_test.TestRunner()
-runner.run_test(test_data)
+runner.run(test_data)
 
 
