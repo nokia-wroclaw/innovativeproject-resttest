@@ -6,10 +6,11 @@ import re
 
 
 def parse(input_data):
+    # TODO: Unit tests!
     no_comment = re.sub(r'#.*', "", input_data)
     parsed1 = re.sub(r'\s+', " ", no_comment).replace(". ", "\n")
     parsed2 = re.sub(r'^\s+', "", parsed1)
-    parsed3 = re.sub(r'.$', "", parsed2)
+    parsed3 = re.sub(r'\.$', "", parsed2)
 
     test_lines = parsed3.splitlines()
     parsed = map(lambda x: x.split(" "), test_lines)

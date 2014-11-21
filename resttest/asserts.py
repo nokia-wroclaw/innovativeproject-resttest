@@ -1,4 +1,4 @@
-# coding=utf-8
+    # coding=utf-8
 from requests.structures import CaseInsensitiveDict
 from abstract_test import AbstractTest
 from result_collector import ResultCollector
@@ -58,7 +58,7 @@ class AssertResponseStatus(AbstractTest):
 
         # TODO: Catching any exceptions and errors.
         if not status in self.mapping:
-            raise LookupError("Status" + status + "not found in " + self.mapping.__str__())
+            raise LookupError("Status " + status + " not found in " + self.mapping.__str__())
 
         return self.mapping[status]
 
@@ -72,7 +72,7 @@ class AssertResponseStatus(AbstractTest):
         if not status.isdigit():
             status = self.map_status_code(status)
 
-        self.result.status = (ResultCollector().get_response().status_code == status)
+        self.result.status = (ResultCollector().get_response().status_code == int(status))
         self.result.expected = status
         self.result.actual = ResultCollector().get_response().status_code
 
