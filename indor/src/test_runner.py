@@ -1,4 +1,6 @@
 # coding=utf-8
+from result import Passed, Failed, Error
+
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater
@@ -30,12 +32,18 @@ class TestRunner:
     def print_summary(self):
         print("Tests finished")
         print("Executed tests:")
-        for test in self.tested_classes:
-            if test.result.status:
-                print("\t ASSERTION: {}\n\t\tPASSED".format(TestRunner.assertions_names[test.__class__.__name__]))
-            else:
+        for result in self.tested_classes:
+            if isinstance(result, Passed):
+                print("\t ASSERTION: {}\n\t\tPASSED".format(TestRunner.assertions_names[result.class_name]))
+            elif isinstance(result, Failed):
                 print("\t ASSERTION: {}\n\t\tFAILED: EXPECTED {}\tGOT {}".format(
-                    TestRunner.assertions_names[test.__class__.__name__], test.result.expected, test.result.actual))
+                    TestRunner.assertions_names[result.class_name], result.expected, result.actual))
+            elif isinstance(result, Error):
+                print("\t ASSERTION: {}\n\t\tERROR: {}".format(
+                    TestRunner.assertions_names[result.class_name], result.error))
+            else:
+                print("\t ASSERTION: {}\n\t\tUNKNOWN RESULT".format(
+                    TestRunner.assertions_names[result.class_name]))
 
     def run(self, test_lines):
         for test_data in test_lines:

@@ -1,12 +1,15 @@
 # coding=utf-8
 from command import Command
 from command_factory import CommandFactory
+from result import Error, Passed, Failed
 from result_collector import ResultCollector
+
 
 class AssertResponse(Command):
     def parse(self, path):
         if len(path) == 0:
-            raise Exception("Za mało argumentów")
+            ResultCollector().add_result(Error(self, "Za mało argumentów"))
+            return
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
         next_step.parse(path[1:])
@@ -16,7 +19,8 @@ CommandFactory().add_class(AssertResponse.__name__, AssertResponse)
 class AssertResponseNot(Command):
     def parse(self, path):
         if len(path) == 0:
-            raise Exception("Za mało argumentów")
+            ResultCollector().add_result(Error(self, "Za mało argumentów"))
+            return
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
         next_step.parse(path[1:])
@@ -24,10 +28,6 @@ CommandFactory().add_class(AssertResponseNot.__name__, AssertResponseNot)
 
 
 class AssertResponseStatus(Command):
-    """
-    In this class we are able to check status of response
-    """
-
     def __init__(self):
         super(AssertResponseStatus, self).__init__()
         self.mapping = {
@@ -53,7 +53,6 @@ class AssertResponseStatus(Command):
         return self.mapping[status]
 
     def parse(self, path):
-        ResultCollector().add_result(self)
         self.execute(path)
 
     def execute(self, args):
@@ -62,16 +61,20 @@ class AssertResponseStatus(Command):
         if not status.isdigit():
             status = self.map_status_code(status)
 
-        self.result.status = (ResultCollector().get_response().status_code == int(status))
-        self.result.expected = status
-        self.result.actual = ResultCollector().get_response().status_code
+        actual = ResultCollector().get_response().status_code
+        expected = int(status)
+        if actual == expected:
+            ResultCollector().add_result(Passed(self))
+        else:
+            ResultCollector().add_result(Failed(self, expected, actual))
 CommandFactory().add_class(AssertResponseStatus.__name__, AssertResponseStatus)
 
-# This class is for check type of content of response
+
 class AssertResponseType(Command):
     def parse(self, path):
         if len(path) == 0:
-            raise Exception("Za mało argumentów")
+            ResultCollector().add_result(Error(self, "Za mało argumentów"))
+            return
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
         next_step.parse(path[1:])
@@ -79,31 +82,24 @@ CommandFactory().add_class(AssertResponseType.__name__, AssertResponseType)
 
 
 class AssertResponseTypeJson(Command):
-    """Check if content type is JSON"""
-
     def parse(self, path):
-        ResultCollector().add_result(self)
         self.execute()
 
     def execute(self):
         try:
             ResultCollector().get_response().json()
         except ValueError, e:
-            self.result.status = False
+            ResultCollector().add_result(Failed(self, "json", "not json"))
         else:
-            self.result.status = True
+            ResultCollector().add_result(Passed(self))
 CommandFactory().add_class(AssertResponseTypeJson.__name__, AssertResponseTypeJson)
 
 
-# This class is for check length of response
 class AssertResponseLength(Command):
     def parse(self, path):
-        # assert 'content-length' in TestRunner.response.headers
-        # Jeśli 'transfer-encoding' == 'chunked' wtedy nie ma headea content-length
-
         if path[0] == ">":
             next_step = AssertResponseLengthGreater()
-            next_step.parse(path[1])
+            next_step.parse(path[1:])
         else:
             raise Exception("Bad param or not implemented yet")
             # TODO: implementation
@@ -112,17 +108,18 @@ CommandFactory().add_class(AssertResponseLength.__name__, AssertResponseLength)
 
 class AssertResponseLengthGreater(Command):
     def parse(self, path):
-        ResultCollector().add_result(self)
         self.execute(path)
 
     def execute(self, args):
+        content_length = None
         if 'content-length' in ResultCollector().get_response().headers:
-            self.result.status = (int(ResultCollector().get_response().headers['content-length']) > int(args))
-            self.result.actual = ResultCollector().get_response().headers['content-length']
+            content_length = int(ResultCollector().get_response().headers['content-length'])
         else:
-            self.result.status = (len(ResultCollector().get_response().content) > int(args))
-            self.result.actual = len(ResultCollector().get_response().content)
-        self.result.expected = "> " + args
+            content_length = len(ResultCollector().get_response().content)
+        if content_length > int(args[0]):
+            ResultCollector().add_result(Passed(self))
+        else:
+            ResultCollector().add_result(Failed(self, "> " + args[0], content_length))
 CommandFactory().add_class(AssertResponseLengthGreater.__name__, AssertResponseLengthGreater)
 
 
@@ -132,21 +129,23 @@ class AssertResponseEmpty(Command):
         ResultCollector().add_result(self)
         self.execute(path)
 
-    def execute(self, args):
-        self.result.status = (ResultCollector().get_response().content == "")
-        self.result.actual = ResultCollector().get_response().content
+    def execute(self):
+        if len(ResultCollector().get_response().content) != 0:
+            ResultCollector().add_result(Failed(self, "`EMPTY`", "`NOT EMPTY`"))
+        else:
+            ResultCollector().add_result(Passed(self))
 CommandFactory().add_class(AssertResponseEmpty.__name__, AssertResponseEmpty)
 
 
-# Is response NOT empty?
 class AssertResponseNotEmpty(Command):
     def parse(self, path):
-        ResultCollector().add_result(self)
         self.execute()
 
     def execute(self):
-        self.result.status = (ResultCollector().get_response().content != "")
-        self.result.actual = ResultCollector().get_response().content
+        if len(ResultCollector().get_response().content) == 0:
+            ResultCollector().add_result(Failed(self, "`NOT EMPTY`", "`EMPTY`"))
+        else:
+            ResultCollector().add_result(Passed(self))
 CommandFactory().add_class(AssertResponseNotEmpty.__name__, AssertResponseNotEmpty)
 
 
