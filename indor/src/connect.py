@@ -1,4 +1,4 @@
-from abstract_test import AbstractTest
+from command import Command
 from result_collector import ResultCollector
 import requests
 
@@ -27,7 +27,7 @@ def find_keywords_begin_and_end(path, text):
     return begin, end
 
 
-class Connect(AbstractTest):
+class Connect(Command):
     """Make request"""
 
     def __init__(self):

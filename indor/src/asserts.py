@@ -1,40 +1,30 @@
-    # coding=utf-8
-from requests.structures import CaseInsensitiveDict
-from abstract_test import AbstractTest
+# coding=utf-8
+from command import Command
+from command_factory import CommandFactory
 from result_collector import ResultCollector
 
-
-# This class inherits from the class Assert
-# Base class for Assertion on Response
-class AssertResponse(AbstractTest):
+class AssertResponse(Command):
     def parse(self, path):
         if len(path) == 0:
             raise Exception("Za mało argumentów")
-        if path[0] == "Not" and len(path) < 2:
+
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step.parse(path[1:])
+CommandFactory().add_class(AssertResponse.__name__, AssertResponse)
+
+
+class AssertResponseNot(Command):
+    def parse(self, path):
+        if len(path) == 0:
             raise Exception("Za mało argumentów")
 
-        classes_names = CaseInsensitiveDict()
-        classes_names['status'] = 'Status'
-        classes_names['empty'] = 'Empty'
-        classes_names['length'] = 'Length'
-        classes_names['time'] = 'Time'
-        classes_names['type'] = 'ContentType'
-        classes_names['not'] = 'Not'
-
-        if path[0] == "Not":
-            new_class_name = self.__class__.__name__ + classes_names[path[0]] + classes_names[path[1]]
-            passed_args = path[2:]
-        else:
-            new_class_name = self.__class__.__name__ + classes_names[path[0]]
-            passed_args = path[1:]
-
-        next_step = eval(new_class_name + "()")
-        next_step.parse(passed_args)
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step.parse(path[1:])
+CommandFactory().add_class(AssertResponseNot.__name__, AssertResponseNot)
 
 
-class AssertResponseStatus(AbstractTest):
+class AssertResponseStatus(Command):
     """
-    This class inherits from the class AssertResponse
     In this class we are able to check status of response
     """
 
@@ -75,19 +65,20 @@ class AssertResponseStatus(AbstractTest):
         self.result.status = (ResultCollector().get_response().status_code == int(status))
         self.result.expected = status
         self.result.actual = ResultCollector().get_response().status_code
-
+CommandFactory().add_class(AssertResponseStatus.__name__, AssertResponseStatus)
 
 # This class is for check type of content of response
-class AssertResponseContentType(AbstractTest):
+class AssertResponseType(Command):
     def parse(self, path):
-        if path[0] == "Json":
-            next_step = AssertResponseContentTypeJson()
-            next_step.parse([])
-        else:
-            raise Exception("Bad param")
+        if len(path) == 0:
+            raise Exception("Za mało argumentów")
+
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step.parse(path[1:])
+CommandFactory().add_class(AssertResponseType.__name__, AssertResponseType)
 
 
-class AssertResponseContentTypeJson(AbstractTest):
+class AssertResponseTypeJson(Command):
     """Check if content type is JSON"""
 
     def parse(self, path):
@@ -101,10 +92,11 @@ class AssertResponseContentTypeJson(AbstractTest):
             self.result.status = False
         else:
             self.result.status = True
+CommandFactory().add_class(AssertResponseTypeJson.__name__, AssertResponseTypeJson)
 
 
 # This class is for check length of response
-class AssertResponseLength(AbstractTest):
+class AssertResponseLength(Command):
     def parse(self, path):
         # assert 'content-length' in TestRunner.response.headers
         # Jeśli 'transfer-encoding' == 'chunked' wtedy nie ma headea content-length
@@ -115,9 +107,10 @@ class AssertResponseLength(AbstractTest):
         else:
             raise Exception("Bad param or not implemented yet")
             # TODO: implementation
+CommandFactory().add_class(AssertResponseLength.__name__, AssertResponseLength)
 
 
-class AssertResponseLengthGreater(AbstractTest):
+class AssertResponseLengthGreater(Command):
     def parse(self, path):
         ResultCollector().add_result(self)
         self.execute(path)
@@ -130,10 +123,11 @@ class AssertResponseLengthGreater(AbstractTest):
             self.result.status = (len(ResultCollector().get_response().content) > int(args))
             self.result.actual = len(ResultCollector().get_response().content)
         self.result.expected = "> " + args
+CommandFactory().add_class(AssertResponseLengthGreater.__name__, AssertResponseLengthGreater)
 
 
 # Is response empty?
-class AssertResponseEmpty(AbstractTest):
+class AssertResponseEmpty(Command):
     def parse(self, path):
         ResultCollector().add_result(self)
         self.execute(path)
@@ -141,10 +135,11 @@ class AssertResponseEmpty(AbstractTest):
     def execute(self, args):
         self.result.status = (ResultCollector().get_response().content == "")
         self.result.actual = ResultCollector().get_response().content
+CommandFactory().add_class(AssertResponseEmpty.__name__, AssertResponseEmpty)
 
 
 # Is response NOT empty?
-class AssertResponseNotEmpty(AbstractTest):
+class AssertResponseNotEmpty(Command):
     def parse(self, path):
         ResultCollector().add_result(self)
         self.execute()
@@ -152,12 +147,13 @@ class AssertResponseNotEmpty(AbstractTest):
     def execute(self):
         self.result.status = (ResultCollector().get_response().content != "")
         self.result.actual = ResultCollector().get_response().content
+CommandFactory().add_class(AssertResponseNotEmpty.__name__, AssertResponseNotEmpty)
 
 
 # Check Time of Response
-class AssertResponseTime(AbstractTest):
+class AssertResponseTime(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertResponseTime, self).__init__()
 
     def parse(self, path):
         ResultCollector().add_result(self)
@@ -165,42 +161,46 @@ class AssertResponseTime(AbstractTest):
 
     def execute(self, args):
         raise Exception("Not implemented yet")
+CommandFactory().add_class(AssertResponseTime.__name__, AssertResponseTime)
 
 
 # ??
-class AssertPath(AbstractTest):
+class AssertPath(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertPath, self).__init__()
 
     def parse(self, path):
         pass  # TODO: implementation
+CommandFactory().add_class(AssertPath.__name__, AssertPath)
 
 
 # Assertions on Cookie
-class AssertCookie(AbstractTest):
+class AssertCookie(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertCookie, self).__init__()
 
     def parse(self, path):
         pass  # TODO: implementation
+CommandFactory().add_class(AssertCookie.__name__, AssertCookie)
 
 
 # Base class for testing time
-class AssertTime(AbstractTest):
+class AssertTime(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertTime, self).__init__()
 
     def parse(self, path):
         new_class_name = self.__class__.__name__ + path[0]
 
         next_step = eval(new_class_name + "()")
         next_step.parse(path[1:])
+CommandFactory().add_class(AssertTime.__name__, AssertTime)
 
 
 # Test total time of request
-class AssertTimeTotal(AbstractTest):
+class AssertTimeTotal(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertTimeTotal, self).__init__()
 
     def parse(self, path):
         ResultCollector().add_result(self)
@@ -208,12 +208,13 @@ class AssertTimeTotal(AbstractTest):
 
     def execute(self, args):
         print("Asserting total request time is {}".format(str(args)))
+CommandFactory().add_class(AssertTimeTotal.__name__, AssertTimeTotal)
 
 
 # Average time per request?
-class AssertTimeAverage(AbstractTest):
+class AssertTimeAverage(Command):
     def __init__(self):
-        super().__init__()
+        super(AssertTimeAverage, self).__init__()
 
     def parse(self, path):
         ResultCollector().add_result(self)
@@ -221,3 +222,4 @@ class AssertTimeAverage(AbstractTest):
 
     def execute(self, args):
         print("Asserting average request time is {}".format(str(args)))
+CommandFactory().add_class(AssertTimeAverage.__name__, AssertTimeAverage)

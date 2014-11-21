@@ -1,11 +1,11 @@
-from abstract_test import AbstractTest
+from command import Command
 from assert_ import Assert
 from connect import Connect
 
 ASSERT_NAME = 'ASSERT'
 
 # Base class for all tests
-class Test(AbstractTest):
+class Test(Command):
     def parse(self, path):
         argument = path[0]
 

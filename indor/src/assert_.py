@@ -1,10 +1,10 @@
-from abstract_test import AbstractTest
+from command import Command
 from asserts import *
 
 # This class inherits from the class Test
 # Base class for Assertions
 
-class Assert(AbstractTest):
+class Assert(Command):
     def parse(self, path):
         # Convert all arguments to CamelCase
         arguments = map(lambda x: x.title(), path)

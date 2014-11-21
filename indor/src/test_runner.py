@@ -1,8 +1,7 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 from requests.structures import CaseInsensitiveDict
-from asserts import AssertResponseStatus, AssertResponseNotEmpty, \
-    AssertResponseContentTypeJson, AssertResponseLengthGreater
+from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater
 from test import Test
 from result_collector import ResultCollector
 
@@ -22,7 +21,7 @@ class TestRunner:
         ResultCollector(self)
 
         TestRunner.tested_classes = []
-        TestRunner.assertions_names[AssertResponseContentTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
+        TestRunner.assertions_names[AssertResponseTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
         TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
         TestRunner.assertions_names[AssertResponseNotEmpty.__name__] = "RESPONSE NOT EMPTY"
         TestRunner.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
