@@ -1,6 +1,0 @@
-Open http://api.geonames.org/postalCodeSearchJSON?postalcode=50316&username=indor
-Assert success
-Assert response is JSON
-Assert response contains '{
-        postalCodes: <array>
-    }'
