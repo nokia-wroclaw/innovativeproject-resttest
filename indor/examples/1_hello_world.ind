@@ -1,0 +1,11 @@
+# This comment.
+# Indor has only one line comments
+
+# Hello world Test.
+# Send GET request for http://api.something.com
+# and verification response status
+
+# End of all commends is dot "."
+
+GET http://api.something.com.
+ASSERT RESPONSE STATUS OK.
