@@ -2,14 +2,16 @@
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
 import sys
-import rest_test
-import indor_input_parser as parser
 import os
+
+import test_runner
+import input_parser as parser
+
 
 args = sys.argv
 
-if (len(args) != 2):
-    print "Usage: python indor.py file.ind"
+if len(args) != 2:
+    print("Usage: python main.py file.ind")
     sys.exit()
 
 logo_file_path = os.path.join("..", "other", "logo.txt")
@@ -23,7 +25,7 @@ f = open(filename, "r")
 file_data = f.read()
 test_data = parser.parse(file_data)
 
-runner = rest_test.TestRunner()
+runner = test_runner.TestRunner()
 runner.run(test_data)
 
 

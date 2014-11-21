@@ -7,6 +7,7 @@ import re
 
 def parse(input_data):
     # TODO: Unit tests!
+    # First tests, then code!
     no_comment = re.sub(r'#.*', "", input_data)
     parsed1 = re.sub(r'\s+', " ", no_comment).replace(". ", "\n")
     parsed2 = re.sub(r'^\s+', "", parsed1)
