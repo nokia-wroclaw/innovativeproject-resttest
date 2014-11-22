@@ -44,13 +44,17 @@
 ## About Indor
 
 Need you writing tests for APIs? Indor is For You!
+
 Indor is language for writing test in user friendly language.
 
 ## How install?
 
 You need [Python](https://www.python.org/downloads/) (We use Python 2.7.8)
-and for simple installation [pip](https://pip.readthedocs.org/en/latest/installing.html)
+
+And for simple installation [pip](https://pip.readthedocs.org/en/latest/installing.html)
+
 Download this project from github, and run
+
 `> pip install setup.py`
 
 ## Tutorial
