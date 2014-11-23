@@ -1,30 +1,90 @@
 from command import Command
 from result_collector import ResultCollector
+import indor_exceptions
 import requests
+from pyparsing import *
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
 AUTH_NAME = "AUTH"
 
 
-def find_keywords_begin_and_end(path, text):
+def find_keywords_begin_and_end(path, section_name):
+    """
+
+    :param path: :type path: str
+    :param section_name:
+    :return: :rtype: list
+    :raise KeywordNotFound:
+    """
+    begin = path.find("%s" % section_name)
+
+    if begin == -1:
+        raise indor_exceptions.KeywordNotFound()
+
+    begin = begin + len(section_name) + 1
+    end = path.find(",", begin)
+    return begin, end
+
+
+def get_part_of_string_by_name_with_split(path, section_name):
+    """
+
+    author Damian Mirecki
+
+    :param path:
+    :type path: str
+    :param section_name: see top of the file (PARAMS_NAME etc.)
+    :type section_name: str
+    :return: list split by space
+    :rtype: list
+    """
+    return get_part_of_string_by_name(path, section_name).split(" ")
+
+
+def get_part_of_string_by_name(path, section_name):
     """
 
     :param path:
     :type path: str
-    :param text:
-    :type text: str
-    :return: (begin, end)
-    :rtype: list
+    :param section_name:
+    :type section_name: str
+    :return:
+    :rtype: str
     """
-    begin = path.find("%s" % text)
 
-    if begin == -1:
-        return 0, 0
+    begin, end = find_keywords_begin_and_end(path, section_name)
 
-    begin = begin + len(text) + 1
-    end = path.find(",", begin)
-    return begin, end
+    if end > 0:
+        fragmented = path[begin: end]
+    else:
+        fragmented = path[begin:]
+
+    return fragmented
+
+
+def get_digest_auth(tokens):
+    """
+    author Damian Mirecki
+
+    :param tokens: should be two-element list with username and password
+    :type tokens: list
+    :return: http auth instance
+    :rtype: requests.auth.HTTPDigestAut
+    """
+    return requests.auth.HTTPDigestAuth(tokens[0], tokens[1])
+
+
+def get_basic_auth(tokens):
+    """
+    author Damian Mirecki
+
+    :param tokens: should be two-element list with username and password
+    :type tokens: list
+    :return: http auth instance
+    :rtype: requests.auth.HTTPBasicAuth
+    """
+    return requests.auth.HTTPBasicAuth(tokens[0], tokens[1])
 
 
 class Connect(Command):
@@ -37,42 +97,50 @@ class Connect(Command):
         self.arguments = ""
 
     def parse_params(self, path):
-        begin, end = find_keywords_begin_and_end(path, PARAMS_NAME)
-
-        if end > 0:
-            splitted = path[begin: end].split(" ")
+        try:
+            fragmented = get_part_of_string_by_name_with_split(self.arguments, PARAMS_NAME)
+        except indor_exceptions.KeywordNotFound:
+            self.params = {}
         else:
-            splitted = path[begin:].split(" ")
-
-        for i in range(0, len(splitted) / 2):
-            self.params[splitted[2 * i]] = splitted[2 * i + 1]
+            for i in range(0, len(fragmented) / 2):
+                self.params[fragmented[2 * i]] = fragmented[2 * i + 1]
 
     def parse_headers(self, path):
-        begin, end = find_keywords_begin_and_end(path, HEADERS_NAME)
-
-        if end > 0:
-            splitted = path[begin: end].split(" ")
+        try:
+            fragmented = get_part_of_string_by_name_with_split(self.arguments, HEADERS_NAME)
+        except indor_exceptions.KeywordNotFound:
+            self.params = {}
         else:
-            splitted = path[begin:].split(" ")
-
-        for i in range(0, len(splitted) / 2):
-            self.headers[splitted[2 * i]] = splitted[2 * i + 1]
+            for i in range(0, len(fragmented) / 2):
+                self.headers[fragmented[2 * i]] = fragmented[2 * i + 1]
 
     def parse_url(self, path):
         args = path.split(" ")
         self.url = args[0].strip(",")
 
     def get_auth(self):
-        begin, end = find_keywords_begin_and_end(self.arguments, AUTH_NAME)
+        """
+        Method use simple grammar to parse auth params. For the present we support basic and digest auth,
+        but I think that we can support e.g. OAuth1, OAuth2 in future.
 
-        if end > 0:
-            splitted = self.arguments[begin: end].split(" ")
-        else:
-            splitted = self.arguments[begin:].split(" ")
+        author Damian Mirecki
 
-        if len(splitted) == 2: #only username and password -> we assume that it is basic auth
-            return requests.auth.HTTPBasicAuth(splitted[0], splitted[1])
-        return []
+        :return: variable that should be pass as auth when making request, see parse method
+        :rtype: requests.auth.HTTPBasicAuth|requests.auth.HTTPDigestAuth|list
+        """
+        try:
+            fragmented = get_part_of_string_by_name(self.arguments, AUTH_NAME)
+        except indor_exceptions.KeywordNotFound:
+            return []
+
+        username = Word(printables)
+        password = Word(printables)
+
+        basic_auth = (Optional(Suppress("BASIC")) + username + password).setParseAction(get_basic_auth)
+        digest_auth = (Suppress("DIGEST") + username + password).setParseAction(get_digest_auth)
+        auth = digest_auth | basic_auth
+
+        return auth.parseString(fragmented)[0]
 
     def parse(self, path):
         argument = path[0]
@@ -87,6 +155,6 @@ class Connect(Command):
         try:
             func = getattr(requests, argument.lower())
         except AttributeError:
-            print('function not found "%s"' % (argument.lower()))
+            raise indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))
         else:
             ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth()))

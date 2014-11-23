@@ -1,0 +1,5 @@
+GET 
+	http://httpbin.org/basic-auth/sam1/sam2,
+AUTH
+	sam1 sam2.
+ASSERT RESPONSE STATUS OK.
