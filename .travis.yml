@@ -7,7 +7,7 @@ deploy:
   provider: pypi
   user: DeeM
   password:
-    secure: gNUMQluBseWOfNqOwujpMRHfWSYWCrCSckBWK9N5uBxe+lc1VcVYsZt3lRL9RY8MegMOGCQ8F6prpnR+gIEAhWwqSUASHdI5fATFq8EdD4Nf+xVK+zeIaiE47vongvwPTUSk5is4YFFjlpba1QCwNm6aFU6eft8vBaPkj8Inlog=
+    secure: oEX2JJIgWuARdnfZMzn4ADI+zoWEZNzlal286n88PoXGd9udsIXX0Ojh6mdoZn9xxIcknWZ8mRhch59s3MctjQo0IacsthjwFrPduplxwR7iO+uf21K+Uqv5YSMELzgHtVe3SgB5e6D2EPfr/oF9nJyc2be6oxIQICVfLKAaU+Q=
   on:
     tags: true
     repo: nokia-wroclaw/innovativeproject-resttest

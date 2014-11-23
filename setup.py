@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='indor',
-    version='0.0.3',
+    version='0.0.3.2',
     install_requires=[
         "requests",
         "pyparsing"
