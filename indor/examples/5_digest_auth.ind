@@ -1,0 +1,5 @@
+GET
+	http://httpbin.org/digest-auth/auth/sam1/sam2,
+AUTH DIGEST
+	sam1 bad_pass.
+ASSERT RESPONSE STATUS 401.

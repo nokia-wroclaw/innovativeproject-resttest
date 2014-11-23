@@ -1,5 +1,0 @@
-    GET
-	http://httpbin.org/basic-auth/sam1/sam2,
-AUTH
-	sam1 bad_pass.
-ASSERT RESPONSE STATUS 401.
