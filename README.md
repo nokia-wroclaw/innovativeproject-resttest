@@ -43,28 +43,28 @@
 
 ## About Indor
 
-Need you writing tests for APIs? Indor is For You!
+Whenever you're writing API tests of any type, Indor is exactelly what you need!
 
-Indor is language for writing test in user friendly language.
+Indor is an open source API testing framework, providing a simple and user-friendly test writing language.
 
 ## How install?
 
-You need [Python](https://www.python.org/downloads/) (We use Python 2.7.8)
+All you need is [Python](https://www.python.org/downloads/) installed (Python >= 2.7.8 supported).
 
-And for simple installation [pip](https://pip.readthedocs.org/en/latest/installing.html)
+Simple instalation is available via [pip](https://pip.readthedocs.org/en/latest/installing.html)
 
-Download this project from github, and run
+Just download this project from github, and then run:
 
-`> pip install setup.py`
+`> pip install indor`
 
 ## Tutorial
 
-Tutorial is [here](https://github.com/nokia-wroclaw/innovativeproject-resttest/tree/master/indor/examples)
+Some basic examples with documented code are available [here](https://github.com/nokia-wroclaw/innovativeproject-resttest/tree/master/indor/examples).
 
 ## Authors
 
-We are study at [Wrocław Uniwersity of Technology](http://www.pwr.edu.pl/index.dhtml) at department of [Fundamental Problem of Technology](http://wppt.pwr.edu.pl/index.dhtml)
-This application is writing at course of Team Programing with support of [Nokia](http://nokiawroclaw.pl/)
+We are all studying at [Wrocław Uniwersity of Technology](http://www.pwr.edu.pl/index.dhtml) in the facoulty of [Fundamental Problems of Technology](http://wppt.pwr.edu.pl/index.dhtml)
+This application is being written for the course of Team Programing, with help and support of [Nokia Wrocław](http://nokiawroclaw.pl/).
 
 Authors:
 [Sławomir Domagała](https://github.com/godlark)
