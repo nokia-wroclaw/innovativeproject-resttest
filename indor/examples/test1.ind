@@ -30,7 +30,6 @@ ASSERT RESPONSE STATUS OK.
 
 
 
-
 # Multiline support for clearer input + very big request
 GET 
 	http://api.something.com:3000, 
@@ -75,8 +74,6 @@ ASSERT PATH path/to/resource NODES COUNT = 4.
 ASSERT PATH path/to/resource NODES COUNT > 7.
 ASSERT PATH path/to/resource FINAL.
 
-
-# Sławek
 ASSERT PATH path/to/resource/ANY/something EXISTS.
 ASSERT PATH path/to/resource/*/something EXISTS.
 ASSERT PATH path/to/resource/ALL/something EXISTS.
@@ -89,12 +86,7 @@ ASSERT
 	PATH path/to/resource CONTAINS ANY data2.
 ASSERT PATH path/to/resource PASSES EACH data1 > data2.
 
-# Przykładowy test
-GET http://api.geonames.org/postalCodeLookupJSON, PARAMS postalcode 50316 username indor.
-ASSERT RESPONSE STATUS OK.
-ASSERT RESPONSE TYPE JSON.
-ASSERT RESPONSE NOT EMPTY.
-ASSERT RESPONSE LENGTH > 200.
 
-# 2014-11-17
-ASSERT RESPONSE TEXT CONTAINS/MATCHES aaaa.
+# Handling response as simple text
+ASSERT RESPONSE TEXT CONTAINS aaaa.
+ASSERT RESPONSE TEXT MATCHES regexp.

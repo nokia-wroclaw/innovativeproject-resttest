@@ -1,21 +1,21 @@
 
-# You can use commend: "GET", "POST", "PUT", "HEAD" and "DELETE" for send request
+# You can use following commands: "GET", "POST", "PUT", "HEAD" and "DELETE" for sending requests
 
-# When you send request, you can give parameters
+# When sending a request, some parameters may be provided
 
-# Port parameter is writing in URL. Example connect at port=3000, http://api.something.com:3000
-# Another parameters, You can give after keywords.
-# PARAMS, HEADERS, AUTH, TIMEOUT , when you use more keyword use comma ","
-# Attention! After URL, You must use comma (not dot), when you use another parameters.
+# Port parameter is given in URL. For example to connect at port=3000, http://api.something.com:3000
+# Other parameters, You may be given after keywords.
+# PARAMS, HEADERS, AUTH, TIMEOUT , when you use more keywords, use comma "," to separate them
+# Important! After URL, You must use comma (not dot), when you providing other parameters.
 
-# You can write all params in one line, but Indor support multiline for clearer input for big request
+# You can write all params in one line, but Indor supports multiline commands for clearer input, especially when request is big
 
 GET
 	http://api.something.com:3000,
 PARAMS
-	name John   # first write name of param filed and next you write value of this field
+	name John   # first write name of param field, then value of this field
 	age 17
-	city "New York", # When value have more words or contains comma or dot, You must use ""
+	city "New York", # When value have more words or contains commas or dots, quotes "" mus be used
 HEADERS
 	Accept-Language pl,
 AUTH
@@ -23,4 +23,4 @@ AUTH
 TIMEOUT
 	200.
 
-# Here, You are writing assertions
+# Here, You may write your assertions
