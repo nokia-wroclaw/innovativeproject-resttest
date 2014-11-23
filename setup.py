@@ -2,12 +2,15 @@
 from distutils.core import setup
 
 setup(
-    name='resttest',
+    name='indor',
     version='0.0.3',
     install_requires=[
         "requests",
+        "pyparsing"
     ],
-    packages=['resttest'],
+    package_dir={'indor': 'indor/src'},
+    packages=['indor'],
+    package_data={'indor': ['logo.txt']},
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
     author='Sławomir Domagała, Damian Mirecki, Tomasz Wlisłocki, Bartosz Zięba',
