@@ -168,7 +168,8 @@ class Connect(Command):
         try:
             func = getattr(requests, argument.lower())
         except AttributeError:
-            raise indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))
+            ResultCollector().add_result(Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
+            return
         else:
             ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth()))
 
