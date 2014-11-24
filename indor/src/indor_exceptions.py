@@ -1,6 +1,7 @@
 
 class KeywordNotFound(Exception):
-    pass
+    def __init__(self, keyword):
+        super(KeywordNotFound, self).__init__("Incorrect keyword: " + keyword)
 
 
 class TypeRequestNotFound(Exception):
@@ -8,4 +9,5 @@ class TypeRequestNotFound(Exception):
 
 
 class URLNotFound(Exception):
-    pass
+    def __init__(self, url):
+        super(URLNotFound, self).__init__("Incorrect URL Address: " + url)

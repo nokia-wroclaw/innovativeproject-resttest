@@ -4,7 +4,8 @@ from result import Passed, Failed, Error
 
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 from requests.structures import CaseInsensitiveDict
-from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater
+from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater, \
+    AssertResponseEmpty
 from test import Test
 from result_collector import ResultCollector
 
@@ -27,6 +28,7 @@ class TestRunner:
         TestRunner.assertions_names[AssertResponseTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
         TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
         TestRunner.assertions_names[AssertResponseNotEmpty.__name__] = "RESPONSE NOT EMPTY"
+        TestRunner.assertions_names[AssertResponseEmpty.__name__] = "RESPONSE EMPTY"
         TestRunner.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
         TestRunner.assertions_names[Connect.__name__] = "MAKING REQUEST"
         TestRunner.request = None

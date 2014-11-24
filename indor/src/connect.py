@@ -22,7 +22,7 @@ def find_keywords_begin_and_end(path, section_name):
     begin = path.find("%s" % section_name)
 
     if begin == -1:
-        raise indor_exceptions.KeywordNotFound()
+        raise indor_exceptions.KeywordNotFound(section_name)
 
     begin = begin + len(section_name) + 1
     end = path.find(",", begin)

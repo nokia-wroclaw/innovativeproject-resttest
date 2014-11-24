@@ -123,7 +123,7 @@ class AssertResponseLengthGreater(Command):
         except ValueError as e:
             ResultCollector().add_result(Error(self, "Oczekiwano liczby"))
             return
-        
+
         if 'content-length' in ResultCollector().get_response().headers:
             content_length = int(ResultCollector().get_response().headers['content-length'])
         else:
@@ -138,8 +138,7 @@ CommandFactory().add_class(AssertResponseLengthGreater.__name__, AssertResponseL
 # Is response empty?
 class AssertResponseEmpty(Command):
     def parse(self, path):
-        ResultCollector().add_result(self)
-        self.execute(path)
+        self.execute()
 
     def execute(self):
         if len(ResultCollector().get_response().content) != 0:
