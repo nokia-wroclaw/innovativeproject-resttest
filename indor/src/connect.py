@@ -1,4 +1,6 @@
 from command import Command
+from command_factory import CommandFactory
+from result import Error
 from result_collector import ResultCollector
 import indor_exceptions
 import requests
@@ -26,7 +28,7 @@ def find_keywords_begin_and_end(path, section_name):
     end = path.find(",", begin)
     return begin, end
 
-
+#Maybe better name, eg. extract_section_by_name
 def get_part_of_string_by_name_with_split(path, section_name):
     """
 
@@ -41,7 +43,9 @@ def get_part_of_string_by_name_with_split(path, section_name):
     """
     return get_part_of_string_by_name(path, section_name).split(" ")
 
-
+#Maybe better name, eg. extract_section_by_name
+#Is it necessary to have function which returns section content with spaces?
+#Splliting spaces takes only 10 characters 'split(" ")'
 def get_part_of_string_by_name(path, section_name):
     """
 
@@ -99,6 +103,7 @@ class Connect(Command):
     def parse_params(self, path):
         try:
             fragmented = get_part_of_string_by_name_with_split(self.arguments, PARAMS_NAME)
+        #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             self.params = {}
         else:
@@ -108,6 +113,7 @@ class Connect(Command):
     def parse_headers(self, path):
         try:
             fragmented = get_part_of_string_by_name_with_split(self.arguments, HEADERS_NAME)
+        #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             self.params = {}
         else:
@@ -116,7 +122,9 @@ class Connect(Command):
 
     def parse_url(self, path):
         args = path.split(" ")
-        self.url = args[0].strip(",")
+        if len(args) < 1 or len(args[0]) < 1:
+            raise indor_exceptions.URLNotFound("Nie podano adres URL")
+        self.url = args[0].rstrip(",")
 
     def get_auth(self):
         """
@@ -130,6 +138,7 @@ class Connect(Command):
         """
         try:
             fragmented = get_part_of_string_by_name(self.arguments, AUTH_NAME)
+        #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             return []
 
@@ -150,7 +159,11 @@ class Connect(Command):
 
         self.parse_params(arguments)
         self.parse_headers(arguments)
-        self.parse_url(arguments)
+        try:
+            self.parse_url(arguments)
+        except indor_exceptions.URLNotFound as e:
+            ResultCollector().add_result(Error(self, e))
+            return
 
         try:
             func = getattr(requests, argument.lower())
@@ -158,3 +171,5 @@ class Connect(Command):
             raise indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))
         else:
             ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth()))
+
+CommandFactory().add_class(Connect.__name__, Connect)

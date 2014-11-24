@@ -1,4 +1,5 @@
 # coding=utf-8
+from connect import Connect
 from result import Passed, Failed, Error
 
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
@@ -27,6 +28,7 @@ class TestRunner:
         TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
         TestRunner.assertions_names[AssertResponseNotEmpty.__name__] = "RESPONSE NOT EMPTY"
         TestRunner.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
+        TestRunner.assertions_names[Connect.__name__] = "MAKING REQUEST"
         TestRunner.request = None
 
     def print_summary(self):
@@ -39,7 +41,7 @@ class TestRunner:
                 print("\t ASSERTION: {}\n\t\tFAILED: EXPECTED {}\tGOT {}".format(
                     TestRunner.assertions_names[result.class_name], result.expected, result.actual))
             elif isinstance(result, Error):
-                print("\t ASSERTION: {}\n\t\tERROR: {}".format(
+                print("\t {}\n\t\tERROR: {}".format(
                     TestRunner.assertions_names[result.class_name], result.error))
             else:
                 print("\t ASSERTION: {}\n\t\tUNKNOWN RESULT".format(

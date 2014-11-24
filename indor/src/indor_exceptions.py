@@ -5,3 +5,7 @@ class KeywordNotFound(Exception):
 
 class TypeRequestNotFound(Exception):
     pass
+
+
+class URLNotFound(Exception):
+    pass

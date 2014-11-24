@@ -59,7 +59,11 @@ class AssertResponseStatus(Command):
         status = args[0]
 
         if not status.isdigit():
-            status = self.map_status_code(status)
+            try:
+                status = self.map_status_code(status)
+            except LookupError as e:
+                ResultCollector().add_result(Error(self, e))
+                return
 
         actual = ResultCollector().get_response().status_code
         expected = int(status)
@@ -88,7 +92,7 @@ class AssertResponseTypeJson(Command):
     def execute(self):
         try:
             ResultCollector().get_response().json()
-        except ValueError, e:
+        except ValueError:
             ResultCollector().add_result(Failed(self, "json", "not json"))
         else:
             ResultCollector().add_result(Passed(self))
@@ -101,8 +105,7 @@ class AssertResponseLength(Command):
             next_step = AssertResponseLengthGreater()
             next_step.parse(path[1:])
         else:
-            raise Exception("Bad param or not implemented yet")
-            # TODO: implementation
+            ResultCollector().add_result(Error(self, "Bad param or not implemented yet"))
 CommandFactory().add_class(AssertResponseLength.__name__, AssertResponseLength)
 
 
@@ -111,12 +114,21 @@ class AssertResponseLengthGreater(Command):
         self.execute(path)
 
     def execute(self, args):
-        content_length = None
+        if len(args) == 0:
+            ResultCollector().add_result(Error(self, "Zbyt mała liczba argumentów"))
+            return
+
+        try:
+            expected_content_length = int(args[0])
+        except ValueError as e:
+            ResultCollector().add_result(Error(self, "Oczekiwano liczby"))
+            return
+        
         if 'content-length' in ResultCollector().get_response().headers:
             content_length = int(ResultCollector().get_response().headers['content-length'])
         else:
             content_length = len(ResultCollector().get_response().content)
-        if content_length > int(args[0]):
+        if content_length > expected_content_length:
             ResultCollector().add_result(Passed(self))
         else:
             ResultCollector().add_result(Failed(self, "> " + args[0], content_length))

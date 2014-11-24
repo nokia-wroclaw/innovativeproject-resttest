@@ -11,6 +11,7 @@ import input_parser as parser
 def read_from_file(filename):
     this_dir, this_filename = os.path.split(__file__)
 
+    #Why do we have logo in src?
     logo_file_path = os.path.join(this_dir, "logo.txt")
     logo_file = open(logo_file_path, "r")
     logo = logo_file.read()
@@ -24,4 +25,11 @@ def read_from_file(filename):
     runner = test_runner.TestRunner()
     runner.run(test_data)
 
+#Don't forget to run Damian
+args = sys.argv
 
+if len(args) != 2:
+    print("Usage: python main.py file.ind")
+    sys.exit()
+
+read_from_file(args[1])

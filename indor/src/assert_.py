@@ -1,15 +1,11 @@
-from command import Command
+# coding=utf-8
 from asserts import *
 
-# This class inherits from the class Test
-# Base class for Assertions
 
 class Assert(Command):
     def parse(self, path):
-        # Convert all arguments to CamelCase
-        arguments = map(lambda x: x.title(), path)
+        if len(path) == 0:
+            ResultCollector().add_result(Error(self, "Za mało argumentów"))
+            return
 
-        new_class_name = self.__class__.__name__ + arguments[0]
-
-        next_step = eval(new_class_name + "()")
-        next_step.parse(arguments[1:])
+        CommandFactory().get_class(self.__class__.__name__, path[0]).parse(path[1:])

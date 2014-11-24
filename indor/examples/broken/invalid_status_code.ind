@@ -1,0 +1,2 @@
+GET http://api.geonames.org/postalCodeLookupJSON.
+ASSERT RESPONSE STATUS sdf3.

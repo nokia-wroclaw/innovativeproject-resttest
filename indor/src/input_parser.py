@@ -15,5 +15,4 @@ def parse(input_data):
 
     test_lines = parsed3.splitlines()
     parsed = map(lambda x: x.split(" "), test_lines)
-
     return parsed
