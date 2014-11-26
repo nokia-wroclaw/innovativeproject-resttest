@@ -24,6 +24,7 @@ class TestRunner:
         self.tested_classes = []  # list of all classes created in this test
         ResultCollector(self)
 
+        # TODO Czemu robimy to tu a nie w poszczególnych klasach? To najbrzydszy kod jaki widziałem :P
         TestRunner.tested_classes = []
         TestRunner.assertions_names[AssertResponseTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
         TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
