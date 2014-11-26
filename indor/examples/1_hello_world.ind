@@ -1,9 +1,16 @@
 # This is a comment.
-# Currently Indor supports only one line comments
+/%
+    This
+    is
+    multiline
+    comment
+%/
 
-# Hello world Test.
-# Send GET request for http://api.something.com
-# and verify response status
+/%
+Hello world Test.
+Send GET request for http://api.something.com
+and verify response status
+%/
 
 # End of every command is a dot "."
 
