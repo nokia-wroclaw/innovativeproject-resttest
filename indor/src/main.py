@@ -25,6 +25,9 @@ def read_from_file(filename):
     runner = test_runner.TestRunner()
     runner.run(test_data)
 
+    f.close()
+
+
 #Don't forget to run Damian
 args = sys.argv
 
