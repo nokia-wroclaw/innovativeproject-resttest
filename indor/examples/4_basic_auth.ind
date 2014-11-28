@@ -1,6 +1,8 @@
 
 # Basic auth example
-GET 
+
+
+GET
 	http://httpbin.org/basic-auth/username/password,
 AUTH
 	username password

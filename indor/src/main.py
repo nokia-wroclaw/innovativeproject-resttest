@@ -24,6 +24,9 @@ def read_from_file(filename):
     runner = test_runner.TestRunner()
     runner.run(test_data)
 
+    f.close()
+
+
 args = sys.argv
 
 if len(args) != 2:

@@ -3,6 +3,7 @@ from assert_ import Assert
 from connect import Connect
 
 ASSERT_NAME = 'ASSERT'
+SCENARIO_NAME = 'SCENARIO'
 
 # Base class for all tests
 class Test(Command):

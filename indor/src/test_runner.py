@@ -25,6 +25,7 @@ class TestRunner:
         ResultCollector(self)
 
         # TODO IMO to narusza DRY jak cholera
+        # TODO Czemu robimy to tu a nie w poszczególnych klasach? To najbrzydszy kod jaki widziałem :P
         TestRunner.tested_classes = []
         TestRunner.assertions_names[AssertResponseTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
         TestRunner.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"

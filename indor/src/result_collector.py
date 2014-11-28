@@ -1,6 +1,6 @@
 from singleton import Singleton
 
-
+# TODO WTF is happening here???!!! Why would we need a facade for TestRunner?!
 class ResultCollector(object):
     __metaclass__ = Singleton
 

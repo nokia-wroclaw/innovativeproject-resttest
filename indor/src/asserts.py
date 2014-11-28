@@ -5,6 +5,7 @@ from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator
 import result
 from result_collector import ResultCollector
+from requests.structures import CaseInsensitiveDict
 
 
 def compare_by_relational_operator(actual, relational_operator, expected):
@@ -99,10 +100,10 @@ CommandFactory().add_class(AssertResponseNot.__name__, AssertResponseNot)
 class AssertResponseStatus(Command):
     def __init__(self):
         super(AssertResponseStatus, self).__init__()
-        self.mapping = {
-            "Ok": 200,
-            "Not found": 404
-        }
+        self.mapping = CaseInsensitiveDict()
+        self.mapping["Ok"] = 200
+        self.mapping["Not found"] = 404
+
 
     def map_status_code(self, status):
         """

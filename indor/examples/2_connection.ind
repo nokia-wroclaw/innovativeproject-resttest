@@ -3,10 +3,12 @@
 
 # When sending a request, some parameters may be provided
 
-# Port parameter is given in URL. For example to connect at port=3000, http://api.something.com:3000
-# Other parameters, You may be given after keywords.
-# PARAMS, HEADERS, AUTH, TIMEOUT , when you use more keywords, use comma "," to separate them
-# Important! After URL, You must use comma (not dot), when you providing other parameters.
+/%
+ Port parameter is given in URL. For example to connect at port=3000, http://api.something.com:3000
+ Other parameters, You may be given after keywords.
+ PARAMS, HEADERS, AUTH, TIMEOUT , when you use more keywords, use comma "," to separate them
+ Important! After URL, You must use comma (not dot), when you providing other parameters.
+%/
 
 # You can write all params in one line, but Indor supports multiline commands for clearer input, especially when request is big
 
