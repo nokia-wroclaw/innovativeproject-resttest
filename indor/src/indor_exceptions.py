@@ -11,3 +11,8 @@ class TypeRequestNotFound(Exception):
 class URLNotFound(Exception):
     def __init__(self, url):
         super(URLNotFound, self).__init__("Incorrect URL Address: " + url)
+
+
+class InvalidRelationalOperator(Exception):
+    def __init__(self, keyword):
+        super(InvalidRelationalOperator, self).__init__("Invalid relational operator: " + keyword)

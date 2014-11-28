@@ -1,3 +1,9 @@
+# coding=utf-8
+
+ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
+ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
+
+
 class Result:
     def __init__(self, class_instance):
         self.class_name = class_instance.__class__.__name__

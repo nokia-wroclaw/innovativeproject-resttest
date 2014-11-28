@@ -9,6 +9,7 @@ from pyparsing import *
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
 AUTH_NAME = "AUTH"
+ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
 
 
 def find_keywords_begin_and_end(path, section_name):
@@ -28,25 +29,8 @@ def find_keywords_begin_and_end(path, section_name):
     end = path.find(",", begin)
     return begin, end
 
-#Maybe better name, eg. extract_section_by_name
-def get_part_of_string_by_name_with_split(path, section_name):
-    """
 
-    author Damian Mirecki
-
-    :param path:
-    :type path: str
-    :param section_name: see top of the file (PARAMS_NAME etc.)
-    :type section_name: str
-    :return: list split by space
-    :rtype: list
-    """
-    return get_part_of_string_by_name(path, section_name).split(" ")
-
-#Maybe better name, eg. extract_section_by_name
-#Is it necessary to have function which returns section content with spaces?
-#Splliting spaces takes only 10 characters 'split(" ")'
-def get_part_of_string_by_name(path, section_name):
+def extract_section_by_name(path, section_name):
     """
 
     :param path:
@@ -102,7 +86,7 @@ class Connect(Command):
 
     def parse_params(self, path):
         try:
-            fragmented = get_part_of_string_by_name_with_split(self.arguments, PARAMS_NAME)
+            fragmented = extract_section_by_name(self.arguments, PARAMS_NAME).split(" ")
         #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             self.params = {}
@@ -112,7 +96,7 @@ class Connect(Command):
 
     def parse_headers(self, path):
         try:
-            fragmented = get_part_of_string_by_name_with_split(self.arguments, HEADERS_NAME)
+            fragmented = extract_section_by_name(self.arguments, HEADERS_NAME).split(" ")
         #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             self.params = {}
@@ -137,7 +121,7 @@ class Connect(Command):
         :rtype: requests.auth.HTTPBasicAuth|requests.auth.HTTPDigestAuth|list
         """
         try:
-            fragmented = get_part_of_string_by_name(self.arguments, AUTH_NAME)
+            fragmented = extract_section_by_name(self.arguments, AUTH_NAME)
         #Why do we treat an exception as a normal behaviour?
         except indor_exceptions.KeywordNotFound:
             return []
@@ -168,9 +152,21 @@ class Connect(Command):
         try:
             func = getattr(requests, argument.lower())
         except AttributeError:
-            ResultCollector().add_result(Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
+            ResultCollector().add_result(
+                Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
             return
         else:
-            ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth()))
+            ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth(),
+                                                allow_redirects=self.get_allow_redirects()))
+
+    def get_allow_redirects(self):
+        """
+        Check if name ALLOW REDIRECTS is in arguments-string.
+
+        :return:
+        :rtype: bool
+        """
+        return ALLOW_REDIRECTS_NAME in self.arguments
+
 
 CommandFactory().add_class(Connect.__name__, Connect)

@@ -5,5 +5,5 @@ GET
 AUTH
 	username password
 	.
-	
+
 ASSERT RESPONSE STATUS OK.
