@@ -5,7 +5,7 @@ from result import Passed, Failed, Error
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater, \
-    AssertResponseEmpty, AssertResponseRedirectsCount
+    AssertResponseEmpty, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue
 from test import Test
 from result_collector import ResultCollector
 
@@ -33,6 +33,8 @@ class TestRunner:
         TestRunner.assertions_names[AssertResponseEmpty.__name__] = "RESPONSE EMPTY"
         TestRunner.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
         TestRunner.assertions_names[AssertResponseRedirectsCount.__name__] = "RESPONSE REDIRECTS COUNT"
+        TestRunner.assertions_names[AssertCookieSet.__name__] = "COOKIE SET"
+        TestRunner.assertions_names[AssertCookieValue.__name__] = "COOKIE VALUE"
         TestRunner.assertions_names[Connect.__name__] = "MAKING REQUEST"
         TestRunner.request = None
 

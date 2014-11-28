@@ -104,7 +104,6 @@ class AssertResponseStatus(Command):
         self.mapping["Ok"] = 200
         self.mapping["Not found"] = 404
 
-
     def map_status_code(self, status):
         """
 
@@ -116,7 +115,6 @@ class AssertResponseStatus(Command):
         :raise LookupError: When status is not implemented yet.
         """
 
-        # TODO: Catching any exceptions and errors.
         if not status in self.mapping:
             raise LookupError("Status " + status + " not found in " + self.mapping.__str__())
 
@@ -254,14 +252,59 @@ class AssertPath(Command):
 CommandFactory().add_class(AssertPath.__name__, AssertPath)
 
 
-# Assertions on Cookie
 class AssertCookie(Command):
-    def __init__(self):
-        super(AssertCookie, self).__init__()
-
     def parse(self, path):
-        pass  # TODO: implementation
+        if len(path) == 0:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step.parse(path[1:])
 CommandFactory().add_class(AssertCookie.__name__, AssertCookie)
+
+
+class AssertCookieSet(Command):
+    def parse(self, path):
+        if len(path) == 0:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        self.execute(path)
+
+    def execute(self, path):
+        cookie_name = path[0]
+        try:
+            ResultCollector().get_response().cookies[cookie_name]
+            ResultCollector().add_result(Passed(self))
+        except KeyError:
+            ResultCollector().add_result(Failed(self, "'" + cookie_name + "' cookie set",
+                                    [cookie.name for cookie in ResultCollector().get_response().cookies].__str__()))
+CommandFactory().add_class(AssertCookieSet.__name__, AssertCookieSet)
+
+
+class AssertCookieValue(Command):
+    def parse(self, path):
+        if len(path) == 0:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        self.execute(path)
+
+    def execute(self, path):
+        cookie_name = path[0]
+        expected_cookie_value = path[1]
+
+        try:
+            actual_cookie_value = ResultCollector().get_response().cookies[cookie_name]
+        except KeyError:
+            ResultCollector().add_result(Error(self, "cookie '" + cookie_name + "' not found"))
+            return
+
+        if expected_cookie_value == actual_cookie_value:
+            ResultCollector().add_result(Passed(self))
+        else:
+            ResultCollector().add_result(Failed(self, expected_cookie_value, actual_cookie_value))
+CommandFactory().add_class(AssertCookieValue.__name__, AssertCookieValue)
 
 
 # Base class for testing time

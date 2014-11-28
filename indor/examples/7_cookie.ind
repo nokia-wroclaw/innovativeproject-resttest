@@ -1,0 +1,8 @@
+GET
+	http://github.com,
+ALLOW REDIRECTS.
+ASSERT COOKIE SET logged_in.
+ASSERT COOKIE SET invalid_cookie.
+ASSERT COOKIE VALUE logged_in no.
+ASSERT COOKIE VALUE logged_in yes.
+ASSERT COOKIE VALUE invalid_cookie invalid_value.
