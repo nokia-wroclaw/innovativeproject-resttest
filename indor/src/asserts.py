@@ -242,14 +242,171 @@ class AssertResponseTime(Command):
 CommandFactory().add_class(AssertResponseTime.__name__, AssertResponseTime)
 
 
-# ??
+# TODO
 class AssertPath(Command):
     def __init__(self):
         super(AssertPath, self).__init__()
 
     def parse(self, path):
-        pass  # TODO: implementation
+        if len(path) < 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        else:
+            url = path[0]
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            path = path[2:]
+            path.insert(0, url)
+            next_step.parse(path)
 CommandFactory().add_class(AssertPath.__name__, AssertPath)
+
+
+class AssertPathExists(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 1:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathExists.__name__, AssertPathExists)
+
+
+class AssertPathContains(Command):
+    def __init__(self):
+        super(AssertPathContains).__init__()
+
+    def parse(self, path):
+        if len(path) < 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        else:
+            url = path[0]
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            path = path[2:]
+            path.insert(0, url)
+            next_step.parse(path)
+CommandFactory().add_class(AssertPathContains.__name__, AssertPathContains)
+
+
+class AssertPathContainsAny(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 1:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathContainsAny.__name__, AssertPathContainsAny)
+
+
+class AssertPathContainsEach(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 1:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathContainsEach.__name__, AssertPathContainsEach)
+
+
+class AssertPathNodes(Command):
+    def __init__(self):
+        super(AssertPathContains).__init__()
+
+    def parse(self, path):
+        if len(path) < 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        else:
+            url = path[0]
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            path = path[2:]
+            path.insert(0, url)
+            next_step.parse(path)
+CommandFactory().add_class(AssertPathNodes.__name__, AssertPathNodes)
+
+
+class AssertPathNodesCount(Command):
+    def __init__(self):
+        super(AssertPathContains).__init__()
+
+    def parse(self, path):
+        if len(path) < 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        else:
+            symbol = path
+            url = path[0]
+            path = path[2:]
+            path.insert(0, url)
+            if symbol == "=":
+                next_step = AssertPathNodesCountEqual()
+                next_step.parse(path)
+            elif symbol == ">":
+                next_step = AssertPathNodesCountGreater()
+                next_step.parse(path)
+            elif symbol == "<":
+                next_step = AssertPathNodesCountLess()
+                next_step.parse(path)
+            else:
+                next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+                next_step.parse(path)
+CommandFactory().add_class(AssertPathNodesCount.__name__, AssertPathNodesCount)
+
+
+class AssertPathNodesCountEqual(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathNodesCountEqual.__name__, AssertPathNodesCountEqual)
+
+
+class AssertPathNodesCountGreater(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathNodesCountGreater.__name__, AssertPathNodesCountGreater)
+
+
+class AssertPathNodesCountLess(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 2:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathNodesCountLess.__name__, AssertPathNodesCountLess)
+
+
+class AssertPathFinal(Command):
+    def __init__(self):
+        super(AssertPathExists).__init__()
+
+    def parse(self, path):
+        if len(path) != 1:
+            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+
+    def execute(self):
+        pass
+CommandFactory().add_class(AssertPathFinal.__name__, AssertPathFinal)
 
 
 class AssertCookie(Command):
