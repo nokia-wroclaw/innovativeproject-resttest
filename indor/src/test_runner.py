@@ -8,6 +8,7 @@ from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponse
     AssertResponseEmpty, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue
 from test import Test
 from result_collector import ResultCollector
+from scenario import Scenario
 
 # Sławek
 # TODO
@@ -21,7 +22,9 @@ class TestRunner:
 
     def __init__(self):
         self.response = None
-        self.tested_classes = []  # list of all classes created in this test
+        self.tested_classes = []        # list of all classes created in this test
+        self.scenarios = []             # list of all scenarios
+        self.current_scenario = None    # currently executed scenario
         ResultCollector(self)
 
         # TODO IMO to narusza DRY jak cholera
@@ -54,9 +57,13 @@ class TestRunner:
                 print("\t ASSERTION: {}\n\t\tUNKNOWN RESULT".format(
                     TestRunner.assertions_names[result.class_name]))
 
+    def add_scenario(self, scenario):
+        self.scenarios.append(scenario)
+        self.current_scenario = scenario
+
     def run(self, test_lines):
         for test_data in test_lines:
-            test = Test()
+            test = Test(self)
             test.parse(test_data)
 
         self.print_summary()
