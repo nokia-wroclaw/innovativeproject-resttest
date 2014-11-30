@@ -1,0 +1,29 @@
+# ASSERTION ON XML Tree
+
+# How check node exist?
+# You need path and this assertion
+
+ASSERT PATH ./path/to/resource EXIST.
+
+# Is node final?
+ASSERT PATH ./path/to/resource FINAL.
+
+# Contains data?
+ASSERT PATH ./path/to/resource CONTAINS ANY data.
+ASSERT PATH ./path/to/resource CONTAINS EACH data.
+
+# Number of nodes in path
+ASSERT PATH ./path/to/resource NODES COUNT = 4.
+ASSERT PATH ./path/to/resource NODES COUNT > 7.
+ASSERT PATH ./path/to/resource NODES COUNT < 7.
+
+/%
+ You can use xPath methods for finding nodes
+ // - all pathes
+ * - one node
+ 
+ .//foo - find all pathes when node is foo
+ ./foo//bar - all bar nodes has been children foo
+ .//bar/*/foo - bar is grandparent of foo
+
+%/
