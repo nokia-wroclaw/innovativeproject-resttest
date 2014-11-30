@@ -21,7 +21,7 @@ def read_from_file(filename):
     file_data = f.read()
     test_data = parser.parse(file_data)
 
-    runner = test_runner.TestRunner()
+    runner = test_runner.TestsRunner()
     runner.run(test_data)
 
     f.close()

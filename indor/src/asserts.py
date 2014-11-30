@@ -1,6 +1,7 @@
 # coding=utf-8
 from command import Command
 from command_factory import CommandFactory
+from command_register import CommandRegister
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator
 import result
@@ -41,65 +42,83 @@ def extract_relational_operator(supposed_operator):
 
 
 class AssertResponseRedirects(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseRedirects, self).__init__(result_collector)
+
     def parse(self, path):
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertResponseRedirects.__name__, AssertResponseRedirects)
 
 
 class AssertResponseRedirectsCount(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseRedirectsCount, self).__init__(result_collector)
+
     def parse(self, path):
         self.execute(path)
 
     def execute(self, args):
         if len(args) < 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
         try:
             relational_operator = extract_relational_operator(args[0])
             expected = int(args[1])
         except ValueError:
-            ResultCollector().add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
             return
         except InvalidRelationalOperator as e:
-            ResultCollector().add_result(Error(self, e.message))
+            self.result_collector.add_result(Error(self, e.message))
             return
 
-        actual = len(ResultCollector().get_response().history)
+        actual = len(self.result_collector.get_response().history)
 
         if compare_by_relational_operator(actual, relational_operator, expected):
-            ResultCollector().add_result(Passed(self))
+            self.result_collector.add_result(Passed(self))
         else:
-            ResultCollector().add_result(Failed(self, relational_operator + " " + args[1], str(actual)))
-CommandFactory().add_class(AssertResponseRedirectsCount.__name__, AssertResponseRedirectsCount)
+            self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], str(actual)))
 
 
 class AssertResponse(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponse, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertResponse.__name__, AssertResponse)
 
 
 class AssertResponseNot(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseNot, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertResponseNot.__name__, AssertResponseNot)
 
 
 class AssertResponseStatus(Command):
-    def __init__(self):
-        super(AssertResponseStatus, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseStatus, self).__init__(result_collector)
         self.mapping = CaseInsensitiveDict()
         self.mapping["Ok"] = 200
         self.mapping["Not found"] = 404
@@ -130,300 +149,342 @@ class AssertResponseStatus(Command):
             try:
                 status = self.map_status_code(status)
             except LookupError as e:
-                ResultCollector().add_result(Error(self, e))
+                self.result_collector.add_result(Error(self, e))
                 return
 
-        actual = ResultCollector().get_response().status_code
+        actual = self.result_collector.get_response().status_code
         expected = int(status)
         if actual == expected:
-            ResultCollector().add_result(Passed(self))
+            self.result_collector.add_result(Passed(self))
         else:
-            ResultCollector().add_result(Failed(self, expected, actual))
-CommandFactory().add_class(AssertResponseStatus.__name__, AssertResponseStatus)
+            self.result_collector.add_result(Failed(self, expected, actual))
 
 
 class AssertResponseType(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseType, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertResponseType.__name__, AssertResponseType)
 
 
 class AssertResponseTypeJson(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseTypeJson, self).__init__(result_collector)
+
     def parse(self, path):
         self.execute()
 
     def execute(self):
         try:
-            ResultCollector().get_response().json()
+            self.result_collector.get_response().json()
         except ValueError:
-            ResultCollector().add_result(Failed(self, "json", "not json"))
+            self.result_collector.add_result(Failed(self, "json", "not json"))
         else:
-            ResultCollector().add_result(Passed(self))
-CommandFactory().add_class(AssertResponseTypeJson.__name__, AssertResponseTypeJson)
+            self.result_collector.add_result(Passed(self))
 
 
 class AssertResponseLength(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseLength, self).__init__(result_collector)
+
     def parse(self, path):
         if path[0] == ">":
-            next_step = AssertResponseLengthGreater()
+            next_step = AssertResponseLengthGreater(self.result_collector)
             next_step.parse(path[1:])
         else:
-            ResultCollector().add_result(Error(self, "Bad param or not implemented yet"))
-CommandFactory().add_class(AssertResponseLength.__name__, AssertResponseLength)
+            self.result_collector.add_result(Error(self, "Bad param or not implemented yet"))
 
 
 class AssertResponseLengthGreater(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseLengthGreater, self).__init__(result_collector)
+
     def parse(self, path):
         self.execute(path)
 
     def execute(self, args):
         if len(args) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
         try:
             expected_content_length = int(args[0])
-        except ValueError as e:
-            ResultCollector().add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+        except ValueError:
+            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
             return
 
-        if 'content-length' in ResultCollector().get_response().headers:
-            content_length = int(ResultCollector().get_response().headers['content-length'])
+        if 'content-length' in self.result_collector.get_response().headers:
+            content_length = int(self.result_collector.get_response().headers['content-length'])
         else:
-            content_length = len(ResultCollector().get_response().content)
+            content_length = len(self.result_collector.get_response().content)
         if content_length > expected_content_length:
-            ResultCollector().add_result(Passed(self))
+            self.result_collector.add_result(Passed(self))
         else:
-            ResultCollector().add_result(Failed(self, "> " + args[0], content_length))
-CommandFactory().add_class(AssertResponseLengthGreater.__name__, AssertResponseLengthGreater)
+            self.result_collector.add_result(Failed(self, "> " + args[0], content_length))
 
 
-# Is response empty?
 class AssertResponseEmpty(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseEmpty, self).__init__(result_collector)
+
     def parse(self, path):
         self.execute()
 
     def execute(self):
-        if len(ResultCollector().get_response().content) != 0:
-            ResultCollector().add_result(Failed(self, "`EMPTY`", "`NOT EMPTY`"))
+        if len(self.result_collector.get_response().content) != 0:
+            self.result_collector.add_result(Failed(self, "`EMPTY`", "`NOT EMPTY`"))
         else:
-            ResultCollector().add_result(Passed(self))
-CommandFactory().add_class(AssertResponseEmpty.__name__, AssertResponseEmpty)
+            self.result_collector.add_result(Passed(self))
 
 
 class AssertResponseNotEmpty(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseNotEmpty, self).__init__(result_collector)
+
     def parse(self, path):
         self.execute()
 
     def execute(self):
-        if len(ResultCollector().get_response().content) == 0:
-            ResultCollector().add_result(Failed(self, "`NOT EMPTY`", "`EMPTY`"))
+        if len(self.result_collector.get_response().content) == 0:
+            self.result_collector.add_result(Failed(self, "`NOT EMPTY`", "`EMPTY`"))
         else:
-            ResultCollector().add_result(Passed(self))
-CommandFactory().add_class(AssertResponseNotEmpty.__name__, AssertResponseNotEmpty)
+            self.result_collector.add_result(Passed(self))
 
 
-# Check Time of Response
 class AssertResponseTime(Command):
-    def __init__(self):
-        super(AssertResponseTime, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertResponseTime, self).__init__(result_collector)
 
     def parse(self, path):
-        ResultCollector().add_result(self)
+        self.result_collector.add_result(self)
         self.execute(path)
 
     def execute(self, args):
         raise Exception("Not implemented yet")
-CommandFactory().add_class(AssertResponseTime.__name__, AssertResponseTime)
 
 
 # TODO
 class AssertPath(Command):
-    def __init__(self):
-        super(AssertPath, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPath, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) < 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             url = path[0]
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
             path = path[2:]
             path.insert(0, url)
             next_step.parse(path)
-CommandFactory().add_class(AssertPath.__name__, AssertPath)
 
 
 class AssertPathExists(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathExists, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 1:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathExists.__name__, AssertPathExists)
 
 
 class AssertPathContains(Command):
-    def __init__(self):
-        super(AssertPathContains).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathContains, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) < 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             url = path[0]
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
             path = path[2:]
             path.insert(0, url)
             next_step.parse(path)
-CommandFactory().add_class(AssertPathContains.__name__, AssertPathContains)
 
 
 class AssertPathContainsAny(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathContainsAny, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 1:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathContainsAny.__name__, AssertPathContainsAny)
 
 
 class AssertPathContainsEach(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathContainsEach, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 1:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathContainsEach.__name__, AssertPathContainsEach)
 
 
 class AssertPathNodes(Command):
-    def __init__(self):
-        super(AssertPathContains).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathNodes, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) < 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             url = path[0]
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
             path = path[2:]
             path.insert(0, url)
             next_step.parse(path)
-CommandFactory().add_class(AssertPathNodes.__name__, AssertPathNodes)
 
 
 class AssertPathNodesCount(Command):
-    def __init__(self):
-        super(AssertPathContains).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathNodesCount, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) < 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             symbol = path
             url = path[0]
             path = path[2:]
             path.insert(0, url)
             if symbol == "=":
-                next_step = AssertPathNodesCountEqual()
+                next_step = AssertPathNodesCountEqual(self.result_collector)
                 next_step.parse(path)
             elif symbol == ">":
-                next_step = AssertPathNodesCountGreater()
+                next_step = AssertPathNodesCountGreater(self.result_collector)
                 next_step.parse(path)
             elif symbol == "<":
-                next_step = AssertPathNodesCountLess()
+                next_step = AssertPathNodesCountLess(self.result_collector)
                 next_step.parse(path)
             else:
-                next_step = CommandFactory().get_class(self.__class__.__name__, path[1])
+                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
                 next_step.parse(path)
-CommandFactory().add_class(AssertPathNodesCount.__name__, AssertPathNodesCount)
 
 
 class AssertPathNodesCountEqual(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathNodesCountEqual, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathNodesCountEqual.__name__, AssertPathNodesCountEqual)
 
 
 class AssertPathNodesCountGreater(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathNodesCountGreater, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathNodesCountGreater.__name__, AssertPathNodesCountGreater)
 
 
 class AssertPathNodesCountLess(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathNodesCountLess, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 2:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathNodesCountLess.__name__, AssertPathNodesCountLess)
 
 
 class AssertPathFinal(Command):
-    def __init__(self):
-        super(AssertPathExists).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertPathFinal, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 1:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
 
     def execute(self):
         pass
-CommandFactory().add_class(AssertPathFinal.__name__, AssertPathFinal)
 
 
 class AssertCookie(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertCookie, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertCookie.__name__, AssertCookie)
 
 
 class AssertCookieSet(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertCookieSet, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
         self.execute(path)
@@ -431,18 +492,22 @@ class AssertCookieSet(Command):
     def execute(self, path):
         cookie_name = path[0]
         try:
-            ResultCollector().get_response().cookies[cookie_name]
-            ResultCollector().add_result(Passed(self))
+            self.result_collector.get_response().cookies[cookie_name]
+            self.result_collector.add_result(Passed(self))
         except KeyError:
-            ResultCollector().add_result(Failed(self, "'" + cookie_name + "' cookie set",
+            self.result_collector.add_result(Failed(self, "'" + cookie_name + "' cookie set",
                                     [cookie.name for cookie in ResultCollector().get_response().cookies].__str__()))
-CommandFactory().add_class(AssertCookieSet.__name__, AssertCookieSet)
 
 
 class AssertCookieValue(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertCookieValue, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
-            ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
         self.execute(path)
@@ -452,49 +517,52 @@ class AssertCookieValue(Command):
         expected_cookie_value = path[1]
 
         try:
-            actual_cookie_value = ResultCollector().get_response().cookies[cookie_name]
+            actual_cookie_value = self.result_collector.get_response().cookies[cookie_name]
         except KeyError:
-            ResultCollector().add_result(Error(self, "cookie '" + cookie_name + "' not found"))
+            self.result_collector.add_result(Error(self, "cookie '" + cookie_name + "' not found"))
             return
 
         if expected_cookie_value == actual_cookie_value:
-            ResultCollector().add_result(Passed(self))
+            self.result_collector.add_result(Passed(self))
         else:
-            ResultCollector().add_result(Failed(self, expected_cookie_value, actual_cookie_value))
-CommandFactory().add_class(AssertCookieValue.__name__, AssertCookieValue)
+            self.result_collector.add_result(Failed(self, expected_cookie_value, actual_cookie_value))
 
 
 # Base class for testing time
 class AssertTime(Command):
-    def __init__(self):
-        super(AssertTime, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertTime, self).__init__(result_collector)
 
     def parse(self, path):
         new_class_name = self.__class__.__name__ + path[0]
 
         next_step = eval(new_class_name + "()")
         next_step.parse(path[1:])
-CommandFactory().add_class(AssertTime.__name__, AssertTime)
 
 
 # Test total time of request
 class AssertTimeTotal(Command):
-    def __init__(self):
-        super(AssertTimeTotal, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertTimeTotal, self).__init__(result_collector)
 
     def parse(self, path):
-        ResultCollector().add_result(self)
+        self.result_collector.add_result(self)
         self.execute(path)
 
     def execute(self, args):
         print("Asserting total request time is {}".format(str(args)))
-CommandFactory().add_class(AssertTimeTotal.__name__, AssertTimeTotal)
 
 
 # Average time per request?
 class AssertTimeAverage(Command):
-    def __init__(self):
-        super(AssertTimeAverage, self).__init__()
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertTimeAverage, self).__init__(result_collector)
 
     def parse(self, path):
         ResultCollector().add_result(self)
@@ -502,4 +570,3 @@ class AssertTimeAverage(Command):
 
     def execute(self, args):
         print("Asserting average request time is {}".format(str(args)))
-CommandFactory().add_class(AssertTimeAverage.__name__, AssertTimeAverage)

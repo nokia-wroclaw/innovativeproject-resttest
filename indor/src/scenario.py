@@ -1,21 +1,13 @@
 # coding=utf-8
+from command import Command
+from scenario_data import ScenarioData
+
 __author__ = 'Tomasz M. Wlisłocki'
 
-# TODO review, I'm not sure it's the very best way to do this
-# TODO Summary of every scenario
-class Scenario(object):
 
-    def __init__(self, test_runner, scenario_data):
-        self.test_runner = test_runner
-        self.name = scenario_data[0]
-        self.flags = scenario_data[2:]
-        self.test_runner.add_scenario(self)
+class Scenario(Command):
+    def __init__(self, result_collector):
+        super(Scenario, self).__init__(result_collector)
 
-    def set_response(self, response):
-        self.test_runner.response = response
-
-    def get_response(self):
-        return self.test_runner.response
-
-    def add_result(self, result):
-        self.test_runner.tested_classes.append(result)
+    def parse(self, path):
+        self.result_collector.visit_by_scenario(ScenarioData(path[0], path[2:]))

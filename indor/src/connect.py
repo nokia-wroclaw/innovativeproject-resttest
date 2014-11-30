@@ -78,7 +78,8 @@ def get_basic_auth(tokens):
 class Connect(Command):
     """Make request"""
 
-    def __init__(self):
+    def __init__(self, result_collector):
+        super(Connect, self).__init__(result_collector)
         self.params = {}
         self.headers = {}
         self.url = ""
@@ -146,17 +147,17 @@ class Connect(Command):
         try:
             self.parse_url(arguments)
         except indor_exceptions.URLNotFound as e:
-            ResultCollector().add_result(Error(self, e))
+            self.result_collector.add_result(Error(self, e))
             return
 
         try:
             func = getattr(requests, argument.lower())
         except AttributeError:
-            ResultCollector().add_result(
+            self.result_collector.add_result(
                 Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
             return
         else:
-            ResultCollector().set_response(func(url=self.url, params=self.params, auth=self.get_auth(),
+            self.result_collector.set_response(func(url=self.url, params=self.params, auth=self.get_auth(),
                                                 allow_redirects=self.get_allow_redirects()))
 
     def get_allow_redirects(self):
