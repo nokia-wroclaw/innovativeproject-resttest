@@ -6,6 +6,7 @@ from indor_exceptions import InvalidRelationalOperator
 import result
 from result_collector import ResultCollector
 from requests.structures import CaseInsensitiveDict
+import xml.etree.ElementTree as ET
 
 
 def compare_by_relational_operator(actual, relational_operator, expected):
@@ -261,14 +262,25 @@ CommandFactory().add_class(AssertPath.__name__, AssertPath)
 
 class AssertPathExists(Command):
     def __init__(self):
-        super(AssertPathExists).__init__()
+        pass
 
     def parse(self, path):
         if len(path) != 1:
             ResultCollector().add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        elif "xml" in ResultCollector().get_response().headers.get('content-type'):
+            self.execute(path[0])
+        else:
+            ResultCollector().add_result(Error(self, result.ERROR_WRONG_CONTENT_TYPE))
 
-    def execute(self):
-        pass
+    def execute(self, url):
+        doc = ET.fromstring(ResultCollector().get_response().content)
+        url.replace("\"", "" , 2)
+        if len(doc.findall( url))>0:
+            ResultCollector().add_result(Passed(self))
+        else:
+            ResultCollector().add_result(Failed(self,"EXISTS", "NO EXISTS"))
+
+
 CommandFactory().add_class(AssertPathExists.__name__, AssertPathExists)
 
 
