@@ -1,9 +1,9 @@
 __author__ = 'slawomir'
+from command import Command
 from command_factory import CommandFactory
-from abc import ABCMeta
 
 
-class CommandRegister(ABCMeta):
+class CommandRegister(Command.__metaclass__):
     def __init__(cls, name, bases, dic):
         super(CommandRegister, cls).__init__(name, bases, dic)
         CommandFactory().add_class(name, cls)

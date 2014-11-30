@@ -7,7 +7,8 @@ setup(
     install_requires=[
         "requests",
         "pyparsing",
-        'mock'
+        'mock',
+        'nose'
     ],
     package_dir={'indor': 'indor/src'},
     packages=['indor'],
