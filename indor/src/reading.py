@@ -1,9 +1,7 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
-import sys
 import os
-
 import test_runner
 import input_parser as parser
 
@@ -25,12 +23,3 @@ def read_from_file(filename):
     runner.run(test_data)
 
     f.close()
-
-
-args = sys.argv
-
-if len(args) != 2:
-    print("Usage: python reading.py file.ind")
-    sys.exit()
-
-read_from_file(args[1])
