@@ -7,6 +7,7 @@ from indor_exceptions import InvalidRelationalOperator
 import result
 from result_collector import ResultCollector
 from requests.structures import CaseInsensitiveDict
+import xml.etree.ElementTree as ET
 
 
 def compare_by_relational_operator(actual, relational_operator, expected):
@@ -310,9 +311,18 @@ class AssertPathExists(Command):
     def parse(self, path):
         if len(path) != 1:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        elif "xml" in self.result_collector.get_response().headers.get('content-type'):
+            self.execute(path[0])
+        else:
+            self.result_collector.add_result(Error(self, result.ERROR_WRONG_CONTENT_TYPE))
 
-    def execute(self):
-        pass
+    def execute(self, url):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        url.replace("\"", "", 2)
+        if len(doc.findall(url)) > 0:
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self,"EXISTS", "NO EXISTS"))
 
 
 class AssertPathContains(Command):
@@ -565,7 +575,7 @@ class AssertTimeAverage(Command):
         super(AssertTimeAverage, self).__init__(result_collector)
 
     def parse(self, path):
-        ResultCollector().add_result(self)
+        self.result_collector.add_result(self)
         self.execute(path)
 
     def execute(self, args):

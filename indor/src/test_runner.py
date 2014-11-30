@@ -5,10 +5,11 @@ from result import Passed, Failed, Error
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater, \
-    AssertResponseEmpty, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue
+    AssertResponseEmpty, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertPathExists, \
+    AssertPathNodesCountEqual, AssertPathNodesCountGreater, AssertPathNodesCountLess, AssertPathContainsAny, \
+    AssertPathContainsEach, AssertPathFinal
 from test import Test
 from result_collector import ResultCollector
-from scenario import Scenario
 
 
 class TestsRunner:
@@ -35,6 +36,13 @@ class TestsRunner:
         TestsRunner.assertions_names[AssertCookieSet.__name__] = "COOKIE SET"
         TestsRunner.assertions_names[AssertCookieValue.__name__] = "COOKIE VALUE"
         TestsRunner.assertions_names[Connect.__name__] = "MAKING REQUEST"
+        TestsRunner.assertions_names[AssertPathExists.__name__] = "ASSERT PATH EXISTS"
+        TestsRunner.assertions_names[AssertPathContainsAny.__name__] = "ASSERT PATH CONTAINS ANY"
+        TestsRunner.assertions_names[AssertPathContainsEach.__name__] = "ASSERT PATH CONTAINS EACH"
+        TestsRunner.assertions_names[AssertPathNodesCountEqual.__name__] = "ASSERT PATH NODES COUNT EQUAL"
+        TestsRunner.assertions_names[AssertPathNodesCountGreater.__name__] = "ASSERT PATH NODES COUNT GREATER"
+        TestsRunner.assertions_names[AssertPathNodesCountLess.__name__] = "ASSERT PATH NODES COUNT LESS"
+        TestsRunner.assertions_names[AssertPathFinal.__name__] = "ASSERT PATH FINAL"
         TestsRunner.request = None
 
     def print_summary(self):

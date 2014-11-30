@@ -2,6 +2,7 @@
 
 ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
 ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
+ERROR_WRONG_CONTENT_TYPE = "Zły typ contentu"
 
 
 class Result:
