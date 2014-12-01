@@ -284,7 +284,6 @@ class AssertResponseTime(Command):
         raise Exception("Not implemented yet")
 
 
-# TODO
 class AssertPath(Command):
     __metaclass__ = CommandRegister
 
@@ -349,11 +348,22 @@ class AssertPathContainsAny(Command):
         super(AssertPathContainsAny, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 1:
+        if len(path) != 2:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        elif "xml" in self.result_collector.get_response().headers.get('content-type'):
+            self.execute(path)
+        else:
+            self.result_collector.add_result(Error(self, result.ERROR_WRONG_CONTENT_TYPE))
 
-    def execute(self):
-        pass
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        for e in doc.findall(path[0]):
+            if path[1] == e.text:
+                self.result_collector.add_result(Passed(self))
+                return
+
+        self.result_collector.add_result(Failed(self,"ASSERT PATH CONTAINS ANY", "NOP"))
 
 
 class AssertPathContainsEach(Command):
@@ -363,11 +373,22 @@ class AssertPathContainsEach(Command):
         super(AssertPathContainsEach, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 1:
+        if len(path) != 2:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        elif "xml" in self.result_collector.get_response().headers.get('content-type'):
+            self.execute(path)
+        else:
+            self.result_collector.add_result(Error(self, result.ERROR_WRONG_CONTENT_TYPE))
 
-    def execute(self):
-        pass
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        for e in doc.findall(path[0]):
+            if path[1] == e.text:
+                self.result_collector.add_result(Failed(self),"ASSERT PATH CONTAINS EACH", "NOP")
+                return
+        self.result_collector.add_result(Passed(self))
+
 
 
 class AssertPathNodes(Command):
@@ -397,7 +418,7 @@ class AssertPathNodesCount(Command):
         if len(path) < 2:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
-            symbol = path
+            symbol = path[1]
             url = path[0]
             path = path[2:]
             path.insert(0, url)
@@ -422,11 +443,17 @@ class AssertPathNodesCountEqual(Command):
         super(AssertPathNodesCountEqual, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        if len(path) >= 2:
+            self.execute(path)
 
-    def execute(self):
-        pass
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        num = len(doc.findall(path[0]))
+        if num == int(path[1]):
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT EQUAL", "IS :"+ str(num)+" expected "+ path[1]))
 
 
 class AssertPathNodesCountGreater(Command):
@@ -436,11 +463,17 @@ class AssertPathNodesCountGreater(Command):
         super(AssertPathNodesCountGreater, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        if len(path) >= 2:
+            self.execute(path)
 
-    def execute(self):
-        pass
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        num = len(doc.findall(path[0]))
+        if num > int(path[1]):
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT GREATER", "IS :"+ str(num)+" expected more than "+ path[1]))
 
 
 class AssertPathNodesCountLess(Command):
@@ -450,11 +483,17 @@ class AssertPathNodesCountLess(Command):
         super(AssertPathNodesCountLess, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        if len(path) >= 2:
+            self.execute(path)
 
-    def execute(self):
-        pass
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        num = len(doc.findall(path[0]))
+        if num < int(path[1]):
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT LESS", "IS :"+ str(num)+" expected less than "+ path[1]))
 
 
 class AssertPathFinal(Command):
@@ -466,9 +505,16 @@ class AssertPathFinal(Command):
     def parse(self, path):
         if len(path) != 1:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+        else:
+            self.execute(path)
+    def execute(self, path):
+        doc = ET.fromstring(self.result_collector.get_response().content)
+        path[0].replace("\"", "", 2)
+        if len(doc.findall(path[0]))>0 and len(doc.findall(path[0]+"/*")) == 0:
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self,"ASSERT PATH FINAL","NOT FINAL"))
 
-    def execute(self):
-        pass
 
 
 class AssertCookie(Command):
