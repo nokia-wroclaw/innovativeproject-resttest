@@ -21,7 +21,7 @@ ASSERT PATH ./path/to/resource NODES COUNT < 7.
  You can use xPath methods for finding nodes
  // - all pathes
  * - one node
- 
+
  .//foo - find all pathes when node is foo
  ./foo//bar - all bar nodes has been children foo
  .//bar/*/foo - bar is grandparent of foo
