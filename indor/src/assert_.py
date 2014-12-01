@@ -5,6 +5,9 @@ from asserts import *
 class Assert(Command):
     __metaclass__ = CommandRegister
 
+    def __init__(self, result_collector):
+        super(Assert, self).__init__(result_collector)
+
     def parse(self, path):
         if len(path) == 0:
             self.result_collector.add_result(Error(self, "Za mało argumentów"))
