@@ -1,5 +1,5 @@
 import sys
-from src import read_from_file
+from reading import read_from_file
 
 __author__ = 'slawomir'
 
