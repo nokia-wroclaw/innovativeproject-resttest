@@ -12,4 +12,6 @@ class CommandFactory:
 
     def get_class(self, prefix, suffix, result_collector):
         new_class_name = prefix + suffix.title()
+        if new_class_name not in self.dict:
+            return None
         return self.dict[new_class_name](result_collector)

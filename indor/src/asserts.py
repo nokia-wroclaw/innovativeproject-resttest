@@ -3,7 +3,7 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator
+from indor_exceptions import InvalidRelationalOperator, KeywordNotFound
 import result
 from result_collector import ResultCollector
 from requests.structures import CaseInsensitiveDict
@@ -97,6 +97,10 @@ class AssertResponse(Command):
             return
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
+        if next_step is None:
+            self.result_collector.add_result(Error(self, KeywordNotFound(path[0])))
+            return
+
         next_step.parse(path[1:])
 
 

@@ -8,7 +8,8 @@ setup(
         "requests",
         "pyparsing",
         'mock',
-        'nose'
+        'nose',
+        'nose-cov'
     ],
     package_dir={'indor': 'indor/src'},
     packages=['indor'],
