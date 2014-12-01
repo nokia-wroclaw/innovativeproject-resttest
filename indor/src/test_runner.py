@@ -1,20 +1,12 @@
 # coding=utf-8
-from connect import Connect
 from printer import Printer
 
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
-from requests.structures import CaseInsensitiveDict
-from asserts import AssertResponseStatus, AssertResponseNotEmpty, AssertResponseTypeJson, AssertResponseLengthGreater, \
-    AssertResponseEmpty, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertPathExists, \
-    AssertPathNodesCountEqual, AssertPathNodesCountGreater, AssertPathNodesCountLess, AssertPathContainsAny, \
-    AssertPathContainsEach, AssertPathFinal
 from test import Test
 from result_collector import ResultCollector
 
 
 class TestsRunner:
-    assertions_names = CaseInsensitiveDict()
-
     def __init__(self):
         self.response = None
         self.result_collector = ResultCollector(self)

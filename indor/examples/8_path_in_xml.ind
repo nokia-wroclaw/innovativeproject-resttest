@@ -3,7 +3,7 @@
 # How check node exist?
 # You need path and this assertion
 
-ASSERT PATH ./path/to/resource EXIST.
+ASSERT PATH ./path/to/resource EXISTS.
 
 # Is node final?
 ASSERT PATH ./path/to/resource FINAL.

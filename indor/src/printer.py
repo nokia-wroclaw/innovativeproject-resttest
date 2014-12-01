@@ -1,4 +1,5 @@
 # coding=utf-8
+from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseTypeJson, AssertResponseLengthGreater, AssertResponseNotEmpty, AssertResponseEmpty, \
     AssertResponseStatus, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertPathExists, \
     AssertPathContainsAny, AssertPathContainsEach, AssertPathNodesCountEqual, AssertPathNodesCountGreater, \
@@ -36,7 +37,7 @@ class Printer:
 #TW: Czemu robimy to tu a nie w poszczególnych klasach? To najbrzydszy kod jaki widziałem :P
 #SD: W jaki sposób to narusza DRY?
 #SD: Czego klasa odpowiedzialna za testowanie ma wiedzieć, jak się użytkownikowi drukować?
-Printer.assertions_names = {}
+Printer.assertions_names = CaseInsensitiveDict()
 Printer.assertions_names[AssertResponseTypeJson.__name__] = "RESPONSE CONTENT TYPE IS JSON"
 Printer.assertions_names[AssertResponseLengthGreater.__name__] = "RESPONSE LENGTH GREATER"
 Printer.assertions_names[AssertResponseNotEmpty.__name__] = "RESPONSE NOT EMPTY"
