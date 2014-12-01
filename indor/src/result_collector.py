@@ -1,4 +1,5 @@
 from scenario_data import ScenarioData
+from scenario_results import ScenarioResults
 
 
 class ResultCollector(object):
@@ -9,7 +10,7 @@ class ResultCollector(object):
     def set_response(self, response):
         self.test_runner.response = response
         if len(self.scenarios) == 0:
-            self.scenarios.append(ScenarioData("ANONYMOUS", []))
+            self.scenarios.append(ScenarioResults(ScenarioData("ANONYMOUS", [])))
         self.scenarios[-1].add_test(response.url)
 
     def get_response(self):
@@ -19,6 +20,6 @@ class ResultCollector(object):
         self.scenarios[-1].add_result(result)
 
     def visit_by_scenario(self, scenario_data):
-        self.scenarios.append(ScenarioData(scenario_data.name, scenario_data.flags))
+        self.scenarios.append(ScenarioResults(scenario_data))
         last_test_name = self.scenarios[-2].get_last_test_name()
         self.scenarios[-1].add_test(last_test_name)

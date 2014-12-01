@@ -506,7 +506,7 @@ class AssertCookieSet(Command):
             self.result_collector.add_result(Passed(self))
         except KeyError:
             self.result_collector.add_result(Failed(self, "'" + cookie_name + "' cookie set",
-                                    [cookie.name for cookie in ResultCollector().get_response().cookies].__str__()))
+                                    [cookie.name for cookie in self.result_collector.get_response().cookies].__str__()))
 
 
 class AssertCookieValue(Command):
