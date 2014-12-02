@@ -3,7 +3,7 @@ from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseTypeJson, AssertResponseLengthGreater, AssertResponseNotEmpty, AssertResponseEmpty, \
     AssertResponseStatus, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertPathExists, \
     AssertPathContainsAny, AssertPathContainsEach, AssertPathNodesCountEqual, AssertPathNodesCountGreater, \
-    AssertPathNodesCountLess, AssertPathFinal
+    AssertPathNodesCountLess, AssertPathFinal, AssertHeaderSet, AssertHeaderValue
 from connect import Connect
 
 __author__ = 'Sławomir Domagała'
@@ -46,6 +46,8 @@ Printer.assertions_names[AssertResponseStatus.__name__] = "RESPONSE STATUS"
 Printer.assertions_names[AssertResponseRedirectsCount.__name__] = "RESPONSE REDIRECTS COUNT"
 Printer.assertions_names[AssertCookieSet.__name__] = "COOKIE SET"
 Printer.assertions_names[AssertCookieValue.__name__] = "COOKIE VALUE"
+Printer.assertions_names[AssertHeaderSet.__name__] = "HEADER SET"
+Printer.assertions_names[AssertHeaderValue.__name__] = "HEADER VALUE"
 Printer.assertions_names[Connect.__name__] = "MAKING REQUEST"
 Printer.assertions_names[AssertPathExists.__name__] = "ASSERT PATH EXISTS"
 Printer.assertions_names[AssertPathContainsAny.__name__] = "ASSERT PATH CONTAINS ANY"

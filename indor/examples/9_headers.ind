@@ -1,0 +1,9 @@
+# HEADERS EXAMPLE
+
+GET
+    http://httpbin.org/response-headers?my-header=InDoR.
+ASSERT HEADER SET my-header.
+ASSERT HEADER VALUE my-header InDoR.
+ASSERT HEADER VALUE my-header bad-value.
+ASSERT HEADER SET not-exists-header.
+ASSERT HEADER VALUE not-exists-header value.

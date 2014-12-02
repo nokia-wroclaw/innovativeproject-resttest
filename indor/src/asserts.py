@@ -520,7 +520,6 @@ class AssertPathFinal(Command):
             self.result_collector.add_result(Failed(self,"ASSERT PATH FINAL","NOT FINAL"))
 
 
-
 class AssertCookie(Command):
     __metaclass__ = CommandRegister
 
@@ -586,6 +585,74 @@ class AssertCookieValue(Command):
             self.result_collector.add_result(Passed(self))
         else:
             self.result_collector.add_result(Failed(self, expected_cookie_value, actual_cookie_value))
+
+
+class AssertHeader(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertHeader, self).__init__(result_collector)
+
+    def parse(self, path):
+        if len(path) == 0:
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
+        next_step.parse(path[1:])
+
+
+class AssertHeaderSet(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertHeaderSet, self).__init__(result_collector)
+
+    def parse(self, path):
+        if len(path) == 0:
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        self.execute(path)
+
+    def execute(self, path):
+        header_name = path[0]
+
+        headers = self.result_collector.get_response().headers
+
+        if headers.get(header_name):
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self, "'" + header_name + "' header set", headers.keys().__str__()))
+
+
+class AssertHeaderValue(Command):
+    __metaclass__ = CommandRegister
+
+    def __init__(self, result_collector):
+        super(AssertHeaderValue, self).__init__(result_collector)
+
+    def parse(self, path):
+        if len(path) == 0:
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        self.execute(path)
+
+    def execute(self, path):
+        header_name = path[0]
+        expected_header_value = path[1]
+
+        actual_header_value = self.result_collector.get_response().headers.get(header_name)
+
+        if actual_header_value is None:
+            self.result_collector.add_result(Error(self, "header '" + header_name + "' not found"))
+            return
+
+        if expected_header_value == actual_header_value:
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self, expected_header_value, actual_header_value))
 
 
 # Base class for testing time
