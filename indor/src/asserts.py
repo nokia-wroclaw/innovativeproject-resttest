@@ -5,9 +5,8 @@ from command_register import CommandRegister
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator, KeywordNotFound
 import result
-from result_collector import ResultCollector
 from requests.structures import CaseInsensitiveDict
-import xml.etree.ElementTree as ET
+from assert_path import AssertPath
 
 
 def compare_by_relational_operator(actual, relational_operator, expected):

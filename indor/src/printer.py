@@ -1,9 +1,10 @@
 # coding=utf-8
 from requests.structures import CaseInsensitiveDict
 from asserts import AssertResponseTypeJson, AssertResponseLengthGreater, AssertResponseNotEmpty, AssertResponseEmpty, \
-    AssertResponseStatus, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertPathExists, \
-    AssertPathContainsAny, AssertPathContainsEach, AssertPathNodesCountEqual, AssertPathNodesCountGreater, \
-    AssertPathNodesCountLess, AssertPathFinal, AssertHeaderSet, AssertHeaderValue
+    AssertResponseStatus, AssertResponseRedirectsCount, AssertCookieSet, AssertCookieValue, AssertHeaderSet, \
+    AssertHeaderValue
+from assert_path import AssertPathExists, AssertPathContainsAny, AssertPathContainsEach, AssertPathNodesCountEqual, AssertPathNodesCountGreater, \
+    AssertPathNodesCountLess, AssertPathFinal
 from connect import Connect
 
 __author__ = 'Sławomir Domagała'

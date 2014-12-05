@@ -1,7 +1,6 @@
 from command import Command
 from command_factory import CommandFactory
 from result import Error
-from result_collector import ResultCollector
 import indor_exceptions
 import requests
 from pyparsing import *

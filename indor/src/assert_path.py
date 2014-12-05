@@ -1,3 +1,11 @@
+import xml.etree.ElementTree as ET
+from command import Command
+from command_factory import CommandFactory
+from command_register import CommandRegister
+from result import Error, Passed, Failed
+import result
+
+
 class AssertPath(Command):
     __metaclass__ = CommandRegister
 
@@ -49,6 +57,8 @@ class AssertPathContains(Command):
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             url = path[0]
+            from command_factory import CommandFactory
+
             next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
             path = path[2:]
             path.insert(0, url)
