@@ -44,6 +44,8 @@ def extract_relational_operator(supposed_operator):
 class AssertResponseRedirects(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE REDIRECTS"
+
     def __init__(self, result_collector):
         super(AssertResponseRedirects, self).__init__(result_collector)
 
@@ -54,6 +56,8 @@ class AssertResponseRedirects(Command):
 
 class AssertResponseRedirectsCount(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "RESPONSE REDIRECTS COUNT"
 
     def __init__(self, result_collector):
         super(AssertResponseRedirectsCount, self).__init__(result_collector)
@@ -87,6 +91,8 @@ class AssertResponseRedirectsCount(Command):
 class AssertResponse(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE"
+
     def __init__(self, result_collector):
         super(AssertResponse, self).__init__(result_collector)
 
@@ -106,6 +112,8 @@ class AssertResponse(Command):
 class AssertResponseNot(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE NOT"
+
     def __init__(self, result_collector):
         super(AssertResponseNot, self).__init__(result_collector)
 
@@ -120,6 +128,8 @@ class AssertResponseNot(Command):
 
 class AssertResponseStatus(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "RESPONSE STATUS"
 
     def __init__(self, result_collector):
         super(AssertResponseStatus, self).__init__(result_collector)
@@ -167,6 +177,8 @@ class AssertResponseStatus(Command):
 class AssertResponseType(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE TYPE"
+
     def __init__(self, result_collector):
         super(AssertResponseType, self).__init__(result_collector)
 
@@ -181,6 +193,7 @@ class AssertResponseType(Command):
 
 class AssertResponseTypeJson(Command):
     __metaclass__ = CommandRegister
+    pretty_name = "RESPONSE CONTENT TYPE IS JSON"
 
     def __init__(self, result_collector):
         super(AssertResponseTypeJson, self).__init__(result_collector)
@@ -200,6 +213,8 @@ class AssertResponseTypeJson(Command):
 class AssertResponseLength(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE LENGTH"
+
     def __init__(self, result_collector):
         super(AssertResponseLength, self).__init__(result_collector)
 
@@ -213,6 +228,8 @@ class AssertResponseLength(Command):
 
 class AssertResponseLengthGreater(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "RESPONSE LENGTH GREATER"
 
     def __init__(self, result_collector):
         super(AssertResponseLengthGreater, self).__init__(result_collector)
@@ -244,6 +261,8 @@ class AssertResponseLengthGreater(Command):
 class AssertResponseEmpty(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "RESPONSE EMPTY"
+
     def __init__(self, result_collector):
         super(AssertResponseEmpty, self).__init__(result_collector)
 
@@ -259,6 +278,8 @@ class AssertResponseEmpty(Command):
 
 class AssertResponseNotEmpty(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "RESPONSE NOT EMPTY"
 
     def __init__(self, result_collector):
         super(AssertResponseNotEmpty, self).__init__(result_collector)
@@ -276,6 +297,8 @@ class AssertResponseNotEmpty(Command):
 class AssertResponseTime(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT RESPONSE TIME"
+
     def __init__(self, result_collector):
         super(AssertResponseTime, self).__init__(result_collector)
 
@@ -289,6 +312,8 @@ class AssertResponseTime(Command):
 
 class AssertCookie(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT COOKIE"
 
     def __init__(self, result_collector):
         super(AssertCookie, self).__init__(result_collector)
@@ -304,6 +329,8 @@ class AssertCookie(Command):
 
 class AssertCookieSet(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "COOKIE SET"
 
     def __init__(self, result_collector):
         super(AssertCookieSet, self).__init__(result_collector)
@@ -327,6 +354,8 @@ class AssertCookieSet(Command):
 
 class AssertCookieValue(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "COOKIE VALUE"
 
     def __init__(self, result_collector):
         super(AssertCookieValue, self).__init__(result_collector)
@@ -357,6 +386,8 @@ class AssertCookieValue(Command):
 class AssertHeader(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT HEADER"
+
     def __init__(self, result_collector):
         super(AssertHeader, self).__init__(result_collector)
 
@@ -371,6 +402,8 @@ class AssertHeader(Command):
 
 class AssertHeaderSet(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "HEADER SET"
 
     def __init__(self, result_collector):
         super(AssertHeaderSet, self).__init__(result_collector)
@@ -395,6 +428,8 @@ class AssertHeaderSet(Command):
 
 class AssertHeaderValue(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "HEADER VALUE"
 
     def __init__(self, result_collector):
         super(AssertHeaderValue, self).__init__(result_collector)
@@ -426,6 +461,8 @@ class AssertHeaderValue(Command):
 class AssertTime(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT TIME"
+
     def __init__(self, result_collector):
         super(AssertTime, self).__init__(result_collector)
 
@@ -439,6 +476,8 @@ class AssertTime(Command):
 # Test total time of request
 class AssertTimeTotal(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT TIME TOTAL"
 
     def __init__(self, result_collector):
         super(AssertTimeTotal, self).__init__(result_collector)
@@ -454,6 +493,8 @@ class AssertTimeTotal(Command):
 # Average time per request?
 class AssertTimeAverage(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT TIME AVERAGE"
 
     def __init__(self, result_collector):
         super(AssertTimeAverage, self).__init__(result_collector)

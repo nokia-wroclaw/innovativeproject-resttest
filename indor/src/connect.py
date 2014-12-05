@@ -1,5 +1,6 @@
 from command import Command
 from command_factory import CommandFactory
+from command_register import CommandRegister
 from result import Error
 import indor_exceptions
 import requests
@@ -76,6 +77,10 @@ def get_basic_auth(tokens):
 
 class Connect(Command):
     """Make request"""
+
+    __metaclass__ = CommandRegister
+
+    pretty_name = "MAKING REQUEST"
 
     def __init__(self, result_collector):
         super(Connect, self).__init__(result_collector)
@@ -157,7 +162,7 @@ class Connect(Command):
             return
         else:
             self.result_collector.set_response(func(url=self.url, params=self.params, auth=self.get_auth(),
-                                                allow_redirects=self.get_allow_redirects()))
+                                                    allow_redirects=self.get_allow_redirects()))
 
     def get_allow_redirects(self):
         """

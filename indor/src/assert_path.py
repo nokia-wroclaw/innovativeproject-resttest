@@ -9,6 +9,8 @@ import result
 class AssertPath(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT PATH"
+
     def __init__(self, result_collector):
         super(AssertPath, self).__init__(result_collector)
 
@@ -25,6 +27,8 @@ class AssertPath(Command):
 
 class AssertPathExists(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH EXISTS"
 
     def __init__(self, result_collector):
         super(AssertPathExists, self).__init__(result_collector)
@@ -49,6 +53,8 @@ class AssertPathExists(Command):
 class AssertPathContains(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT PATH CONTAINS"
+
     def __init__(self, result_collector):
         super(AssertPathContains, self).__init__(result_collector)
 
@@ -67,6 +73,8 @@ class AssertPathContains(Command):
 
 class AssertPathContainsAny(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH CONTAINS ANY"
 
     def __init__(self, result_collector):
         super(AssertPathContainsAny, self).__init__(result_collector)
@@ -87,11 +95,13 @@ class AssertPathContainsAny(Command):
                 self.result_collector.add_result(Passed(self))
                 return
 
-        self.result_collector.add_result(Failed(self,"ASSERT PATH CONTAINS ANY", "NOP"))
+        self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS ANY", "NOP"))
 
 
 class AssertPathContainsEach(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH CONTAINS EACH"
 
     def __init__(self, result_collector):
         super(AssertPathContainsEach, self).__init__(result_collector)
@@ -109,7 +119,7 @@ class AssertPathContainsEach(Command):
         path[0].replace("\"", "", 2)
         for e in doc.findall(path[0]):
             if path[1] == e.text:
-                self.result_collector.add_result(Failed(self),"ASSERT PATH CONTAINS EACH", "NOP")
+                self.result_collector.add_result(Failed(self), "ASSERT PATH CONTAINS EACH", "NOP")
                 return
         self.result_collector.add_result(Passed(self))
 
@@ -117,6 +127,8 @@ class AssertPathContainsEach(Command):
 
 class AssertPathNodes(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH NODES"
 
     def __init__(self, result_collector):
         super(AssertPathNodes, self).__init__(result_collector)
@@ -134,6 +146,8 @@ class AssertPathNodes(Command):
 
 class AssertPathNodesCount(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH NODES COUNT"
 
     def __init__(self, result_collector):
         super(AssertPathNodesCount, self).__init__(result_collector)
@@ -163,6 +177,8 @@ class AssertPathNodesCount(Command):
 class AssertPathNodesCountEqual(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT PATH NODES COUNT EQUAL"
+
     def __init__(self, result_collector):
         super(AssertPathNodesCountEqual, self).__init__(result_collector)
 
@@ -177,11 +193,14 @@ class AssertPathNodesCountEqual(Command):
         if num == int(path[1]):
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT EQUAL", "IS :"+ str(num)+" expected "+ path[1]))
+            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT EQUAL", "IS :" + str(num)
+                                                    + " expected " + path[1]))
 
 
 class AssertPathNodesCountGreater(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH NODES COUNT GREATER"
 
     def __init__(self, result_collector):
         super(AssertPathNodesCountGreater, self).__init__(result_collector)
@@ -197,11 +216,14 @@ class AssertPathNodesCountGreater(Command):
         if num > int(path[1]):
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT GREATER", "IS :"+ str(num)+" expected more than "+ path[1]))
+            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT GREATER", "IS :" + str(num)
+                                                    + " expected more than " + path[1]))
 
 
 class AssertPathNodesCountLess(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH NODES COUNT LESS"
 
     def __init__(self, result_collector):
         super(AssertPathNodesCountLess, self).__init__(result_collector)
@@ -217,11 +239,14 @@ class AssertPathNodesCountLess(Command):
         if num < int(path[1]):
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self,"ASSERT PATH NODES COUNT LESS", "IS :"+ str(num)+" expected less than "+ path[1]))
+            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT LESS", "IS :" + str(num)
+                                                    + " expected less than " + path[1]))
 
 
 class AssertPathFinal(Command):
     __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT PATH FINAL"
 
     def __init__(self, result_collector):
         super(AssertPathFinal, self).__init__(result_collector)
@@ -237,4 +262,4 @@ class AssertPathFinal(Command):
         if len(doc.findall(path[0]))>0 and len(doc.findall(path[0]+"/*")) == 0:
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self,"ASSERT PATH FINAL","NOT FINAL"))
+            self.result_collector.add_result(Failed(self, "ASSERT PATH FINAL", "NOT FINAL"))

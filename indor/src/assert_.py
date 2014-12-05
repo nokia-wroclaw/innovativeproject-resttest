@@ -5,6 +5,8 @@ from asserts import *
 class Assert(Command):
     __metaclass__ = CommandRegister
 
+    pretty_name = "ASSERT"
+
     def __init__(self, result_collector):
         super(Assert, self).__init__(result_collector)
 

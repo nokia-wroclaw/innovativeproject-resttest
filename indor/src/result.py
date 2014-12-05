@@ -7,7 +7,7 @@ ERROR_WRONG_CONTENT_TYPE = "Zły typ contentu"
 
 class Result:
     def __init__(self, class_instance):
-        self.class_name = class_instance.__class__.__name__
+        self.pretty_name = class_instance.__class__.pretty_name
 
 
 class Passed(Result):
