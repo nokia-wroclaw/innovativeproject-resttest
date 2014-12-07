@@ -4,12 +4,14 @@ from command_register import CommandRegister
 from result import Error
 import indor_exceptions
 import requests
+import ast
 from pyparsing import *
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
 AUTH_NAME = "AUTH"
 ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
+JSON_NAME = "JSON"
 
 
 def find_keywords_begin_and_end(path, section_name):
@@ -18,12 +20,11 @@ def find_keywords_begin_and_end(path, section_name):
     :param path: :type path: str
     :param section_name:
     :return: :rtype: list
-    :raise KeywordNotFound:
     """
     begin = path.find("%s" % section_name)
 
     if begin == -1:
-        raise indor_exceptions.KeywordNotFound(section_name)
+        return -1, -1
 
     begin = begin + len(section_name) + 1
     end = path.find(",", begin)
@@ -42,6 +43,9 @@ def extract_section_by_name(path, section_name):
     """
 
     begin, end = find_keywords_begin_and_end(path, section_name)
+
+    if begin == -1 and end == -1:
+        return None
 
     if end > 0:
         fragmented = path[begin: end]
@@ -90,24 +94,24 @@ class Connect(Command):
         self.arguments = ""
 
     def parse_params(self, path):
-        try:
-            fragmented = extract_section_by_name(self.arguments, PARAMS_NAME).split(" ")
-        #Why do we treat an exception as a normal behaviour?
-        except indor_exceptions.KeywordNotFound:
-            self.params = {}
-        else:
-            for i in range(0, len(fragmented) / 2):
-                self.params[fragmented[2 * i]] = fragmented[2 * i + 1]
+        section = extract_section_by_name(self.arguments, PARAMS_NAME)
+
+        if section is None:
+            return
+
+        fragmented = section.split(" ")
+        for i in range(0, len(fragmented) / 2):
+            self.params[fragmented[2 * i]] = fragmented[2 * i + 1]
 
     def parse_headers(self, path):
-        try:
-            fragmented = extract_section_by_name(self.arguments, HEADERS_NAME).split(" ")
-        #Why do we treat an exception as a normal behaviour?
-        except indor_exceptions.KeywordNotFound:
-            self.params = {}
-        else:
-            for i in range(0, len(fragmented) / 2):
-                self.headers[fragmented[2 * i]] = fragmented[2 * i + 1]
+        section = extract_section_by_name(self.arguments, HEADERS_NAME)
+
+        if section is None:
+            return
+
+        fragmented = section.split(" ")
+        for i in range(0, len(fragmented) / 2):
+            self.headers[fragmented[2 * i]] = fragmented[2 * i + 1]
 
     def parse_url(self, path):
         args = path.split(" ")
@@ -125,10 +129,9 @@ class Connect(Command):
         :return: variable that should be pass as auth when making request, see parse method
         :rtype: requests.auth.HTTPBasicAuth|requests.auth.HTTPDigestAuth|list
         """
-        try:
-            fragmented = extract_section_by_name(self.arguments, AUTH_NAME)
-        #Why do we treat an exception as a normal behaviour?
-        except indor_exceptions.KeywordNotFound:
+        fragmented = extract_section_by_name(self.arguments, AUTH_NAME)
+
+        if fragmented is None:
             return []
 
         username = Word(printables)
@@ -161,7 +164,7 @@ class Connect(Command):
                 Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
             return
         else:
-            self.result_collector.set_response(func(url=self.url, params=self.params, auth=self.get_auth(),
+            self.result_collector.set_response(func(url=self.url, data=self.params, auth=self.get_auth(),
                                                     allow_redirects=self.get_allow_redirects()))
 
     def get_allow_redirects(self):
@@ -172,6 +175,7 @@ class Connect(Command):
         :rtype: bool
         """
         return ALLOW_REDIRECTS_NAME in self.arguments
+
 
 
 CommandFactory().add_class(Connect.__name__, Connect)

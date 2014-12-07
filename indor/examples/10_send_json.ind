@@ -1,0 +1,9 @@
+
+POST
+	http://httpbin.org/post,
+JSON
+    {
+        "name": "Joe",
+        "age": 17
+	}.
+ASSERT RESPONSE STATUS OK.

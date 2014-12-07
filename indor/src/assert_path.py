@@ -256,6 +256,7 @@ class AssertPathFinal(Command):
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
         else:
             self.execute(path)
+
     def execute(self, path):
         doc = ET.fromstring(self.result_collector.get_response().content)
         path[0].replace("\"", "", 2)
