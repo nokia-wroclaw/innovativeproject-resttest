@@ -446,6 +446,45 @@ class AssertHeaderValue(Command):
             self.result_collector.add_result(Failed(self, expected_header_value, actual_header_value))
 
 
+class AssertText(Command):
+    __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT TEXT"
+
+    def __init__(self, result_collector):
+        super(AssertText, self).__init__(result_collector)
+
+    def parse(self, path):
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
+        next_step.parse(path[1:])
+
+
+class AssertTextContains(Command):
+    __metaclass__ = CommandRegister
+
+    pretty_name = "ASSERT TEXT CONTAINS"
+
+    def __init__(self, result_collector):
+        super(AssertTextContains, self).__init__(result_collector)
+
+    def parse(self, path):
+        if len(path) == 0:
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        self.execute(path)
+
+    def execute(self, path):
+        needle = ' '.join(path)
+        haystack = self.result_collector.get_response().text
+
+        if needle in haystack:
+            self.result_collector.add_result(Passed(self))
+        else:
+            self.result_collector.add_result(Failed(self, needle + " not found", ""))
+
+
+
 # Base class for testing time
 class AssertTime(Command):
     __metaclass__ = CommandRegister

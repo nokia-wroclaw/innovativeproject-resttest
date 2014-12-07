@@ -124,7 +124,6 @@ class AssertPathContainsEach(Command):
         self.result_collector.add_result(Passed(self))
 
 
-
 class AssertPathNodes(Command):
     __metaclass__ = CommandRegister
 

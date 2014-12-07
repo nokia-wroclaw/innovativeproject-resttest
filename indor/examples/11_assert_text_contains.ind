@@ -1,0 +1,5 @@
+GET
+    http://httpbin.org.
+ASSERT TEXT CONTAINS Returns.
+ASSERT TEXT CONTAINS HTML form that submits to.
+ASSERT TEXT CONTAINS blablabla.
