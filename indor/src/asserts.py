@@ -219,43 +219,32 @@ class AssertResponseLength(Command):
         super(AssertResponseLength, self).__init__(result_collector)
 
     def parse(self, path):
-        if path[0] == ">":
-            next_step = AssertResponseLengthGreater(self.result_collector)
-            next_step.parse(path[1:])
-        else:
-            self.result_collector.add_result(Error(self, "Bad param or not implemented yet"))
-
-
-class AssertResponseLengthGreater(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "RESPONSE LENGTH GREATER"
-
-    def __init__(self, result_collector):
-        super(AssertResponseLengthGreater, self).__init__(result_collector)
-
-    def parse(self, path):
         self.execute(path)
 
     def execute(self, args):
-        if len(args) == 0:
+        if len(args) < 2:
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
         try:
-            expected_content_length = int(args[0])
+            relational_operator = extract_relational_operator(args[0])
+            expected = int(args[1])
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+            return
+        except InvalidRelationalOperator as e:
+            self.result_collector.add_result(Error(self, e.message))
             return
 
         if 'content-length' in self.result_collector.get_response().headers:
             content_length = int(self.result_collector.get_response().headers['content-length'])
         else:
             content_length = len(self.result_collector.get_response().content)
-        if content_length > expected_content_length:
+
+        if content_length > expected:
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self, "> " + args[0], content_length))
+            self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
 
 
 class AssertResponseEmpty(Command):
