@@ -236,12 +236,9 @@ class AssertResponseLength(Command):
             self.result_collector.add_result(Error(self, e.message))
             return
 
-        if 'content-length' in self.result_collector.get_response().headers:
-            content_length = int(self.result_collector.get_response().headers['content-length'])
-        else:
-            content_length = len(self.result_collector.get_response().content)
+        content_length = len(self.result_collector.get_response().content)
 
-        if content_length > expected:
+        if compare_by_relational_operator(content_length, relational_operator, expected):
             self.result_collector.add_result(Passed(self))
         else:
             self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
