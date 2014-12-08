@@ -17,7 +17,7 @@ class Test(Command):
         if argument == ASSERT_NAME:
             next_step = Assert(self.result_collector)
             next_step.parse(path[1:])
-        elif argument in ['GET', 'POST', 'PUT', 'DELETE']:
+        elif argument in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']:
             next_step = Connect(self.result_collector)
             next_step.parse(path[0:])
         elif argument == SCENARIO_NAME:

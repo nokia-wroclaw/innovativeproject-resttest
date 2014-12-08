@@ -35,13 +35,13 @@ class TestInputParser(unittest.TestCase):
 
     def test_comments(self):
         input2 = """
+                wgfdlq whwqgs
                 # Our first working test
                 GET
                     http://api.geonames.org/postalCodeLookupJSON,
                 PARAMS
                     postalcode 50316
                     username indor.
-
                 ASSERT RESPONSE STATUS OK.
                 ASSERT RESPONSE TYPE JSON.
                 /% asdfasfhasdkfas
@@ -51,8 +51,7 @@ class TestInputParser(unittest.TestCase):
                 EWERQWERasadf
                 asdfasd%/
                 ASSERT RESPONSE /% Inline comment %/ EMPTY.
-                ASSERT RESPONSE LENGTH > 200.
-                """
+                ASSERT RESPONSE LENGTH > 200."""
 
         parsed = parser.parse(input2)
 
