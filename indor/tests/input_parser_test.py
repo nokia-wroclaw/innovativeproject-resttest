@@ -152,3 +152,37 @@ class TestInputParser(unittest.TestCase):
         ]
 
         self.assertItemsEqual(actual, expected)
+
+    def test_expression_in_braces_as_one(self):
+        to_be_parsed = """
+                GET
+                    http://api.org/,
+                JSON
+                    {
+                        "key": "value",
+                        "key1": [
+                            {"key": "no /%comment %/"},
+                            {"key": "#no comment"}
+                        ]
+                    }
+                    .
+                """
+
+        actual = parser.parse(to_be_parsed)
+
+        expected = [
+            [
+                "GET",
+                "http://api.org/",
+                "JSON",
+                """{
+                        "key": "value",
+                        "key1": [
+                            {"key": "no /%comment %/"},
+                            {"key": "#no comment"}
+                        ]
+                    }"""
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)

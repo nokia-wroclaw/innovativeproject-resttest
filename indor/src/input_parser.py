@@ -5,20 +5,6 @@ import re
 from pyparsing import *
 
 
-def remove_comments(test_data):
-    """
-
-    :param test_data:
-    :type test_data: str
-    :return: :rtype: str
-    """
-    inline_comment = Suppress(Literal("#") + SkipTo(lineEnd))
-    multi_line_comment = nestedExpr('/%', '%/').suppress()
-    comments = inline_comment | multi_line_comment
-
-    return comments.transformString(test_data)
-
-
 def parse_token(token):
     if token == ".":    # This happens when a quoted string is the last token in expression
         returned = parse_token.expression[:]
@@ -61,9 +47,12 @@ def parse(input_data):
     comment = multi_line_comment | inline_comment
 
     quoted_string = QuotedString("\"", multiline=True, escQuote="\"", unquoteResults=False)
+    expression_in_bracket = originalTextFor(nestedExpr("{","}"))    # I hate it. I really hate it. I spent 1.5 h on it,
+                                                                    # checked 1000000000 ways of do it and finally
+                                                                    # I added only half of line. I hate it.
     word = Word(printables)
 
-    token = quoted_string | word
+    token = expression_in_bracket | quoted_string | word
     parser = ZeroOrMore(token)
     parser.ignore(comment)
 
