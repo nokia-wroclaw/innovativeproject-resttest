@@ -45,9 +45,11 @@ def parse(input_data):
 
     no_comments = remove_comments(input_data)
 
-    p = delimitedList(Regex('([a-zA-z0-9/\,: \t\n]|(\.[^\n]))*'), Literal('.') + lineEnd)
+    as_one = ZeroOrMore(QuotedString("\"", multiline=True) | Word(printables))
 
-    return p.parseString(no_comments)
+    #p = delimitedList(Regex('([a-zA-z0-9/\,: \t\n]|(\.[^\n]))*'), Literal('.') + lineEnd)
+
+    return as_one.parseString(no_comments)
 
     # # Exclude newlines from the default whitespace characters.
     # # We need to deal with them manually.

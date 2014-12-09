@@ -93,3 +93,42 @@ class TestInputParser(unittest.TestCase):
 
         self.assertItemsEqual(parsed[0], expected)
 
+    def test_quoted_expression_as_one(self):
+        input2 = """
+                GET
+                    http://api.geonames.org/postalCodeLookupJSON,
+                PARAMS
+                    postalcode "really
+                    long.
+                    and.
+                    bad\" #no comment
+
+                    /% no comment %/
+
+
+                    example"
+                    username indor."""
+
+        parsed = parser.parse(input2)
+
+        expected = [
+            [
+                "GET",
+                "http://api.geonames.org/postalCodeLookupJSON",
+                "PARAMS",
+                "postalcode",
+                """really
+                    long.
+                    and.
+                    bad\" #no comment
+
+                    /% no comment %/
+
+
+                    example"""
+                "username",
+                "indor"
+            ]
+        ]
+
+        self.assertItemsEqual(parsed, expected)
