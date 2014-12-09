@@ -9,7 +9,8 @@ setup(
         "pyparsing",
         'mock',
         'nose',
-        'nose-cov'
+        'nose-cov',
+        'xml2json'
     ],
     package_dir={'indor': 'indor/src'},
     packages=['indor'],
