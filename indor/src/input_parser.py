@@ -19,6 +19,17 @@ def remove_comments(test_data):
     return comments.transformString(test_data)
 
 
+def parse_token(token):
+    if token.endswith("."):
+        parse_token.expression += [token[:-1]]
+        returned = parse_token.expression[:]
+        parse_token.expression = []
+        return returned
+    else:
+        parse_token.expression += [token]
+        return None
+
+
 def parse(input_data):
     # # no_comments
     # no_comment = re.sub(r'#.*', "", input_data)
@@ -49,7 +60,13 @@ def parse(input_data):
 
     #p = delimitedList(Regex('([a-zA-z0-9/\,: \t\n]|(\.[^\n]))*'), Literal('.') + lineEnd)
 
-    return as_one.parseString(no_comments)
+    all_tokens = as_one.parseString(no_comments)
+
+    parse_token.expression = []
+
+    unfiltered_expressions = map(lambda token: parse_token(token), all_tokens)
+
+    return filter(lambda expression: expression is not None, unfiltered_expressions)
 
     # # Exclude newlines from the default whitespace characters.
     # # We need to deal with them manually.
