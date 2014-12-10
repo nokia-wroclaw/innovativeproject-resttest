@@ -186,3 +186,25 @@ class TestInputParser(unittest.TestCase):
         ]
 
         self.assertItemsEqual(actual, expected)
+
+    def test_expression_in_quoted_braces(self):
+        to_be_parsed = """
+                GET
+                    http://api.org/,
+                PARAMS
+                    username "pas{word}".
+                """
+
+        actual = parser.parse(to_be_parsed)
+
+        expected = [
+            [
+                "GET",
+                "http://api.org/",
+                "PARAMS",
+                "username",
+                "pas{word}"
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)
