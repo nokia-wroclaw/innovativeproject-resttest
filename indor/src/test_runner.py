@@ -1,4 +1,5 @@
 # coding=utf-8
+from junit_xml_printer import JunitXMlPrinter
 from printer import Printer
 
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
@@ -17,4 +18,4 @@ class TestsRunner:
             test = Test(self.result_collector)
             test.parse(test_data)
 
-        Printer(self.result_collector.scenarios).print_summary()
+        JunitXMlPrinter(self.result_collector.scenarios).print_summary()
