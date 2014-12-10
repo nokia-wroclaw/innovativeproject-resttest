@@ -1,7 +1,6 @@
 # Install with: `pip install -r requirements.txt`
 requests>=2.4.3
 pyparsing>=2.0.3
--e git+http://github.com/hay/xml2json.git@#egg=xml2json
 
 # Testing
 nose>=1.0
