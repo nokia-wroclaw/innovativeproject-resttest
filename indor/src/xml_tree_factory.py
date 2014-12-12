@@ -10,16 +10,11 @@ class XmlTreeFactory:
 
     def add_class(self, class_name, class_type):
         self.dict[class_name] = class_type
-        print class_name
 
     def get_class(self, contentType):
-        # TODO Bartek: troszke malo faktorkowo ale poprawie
-        if "xml" in contentType:
-            class_name = "TextXml"
-        elif "json" in contentType:
-            class_name = "TextJson"
-        else:
-            class_name = "None"
-        if class_name not in self.dict:
-            return None
+        t = contentType[:contentType.index(';')]
+        t = t.split("/")
+        class_name = ""
+        for i in range(0,len(t)):
+            class_name += t[i].lower().title()
         return self.dict[class_name]()

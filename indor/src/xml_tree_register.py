@@ -6,7 +6,6 @@ from xml_tree import XmlTree
 
 class XmlTreeRegister(XmlTree.__metaclass__):
     def __init__(cls, name, bases, dic):
-        print "ala ma kota"
         cls.property_name_for_printer = 'pretty_name'
         if cls.property_name_for_printer not in dic:
             raise ClassPropertyNotFound(name, cls.property_name_for_printer)
