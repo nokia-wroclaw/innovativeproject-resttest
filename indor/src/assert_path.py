@@ -18,14 +18,17 @@ class AssertPath(Command):
         super(AssertPath, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            url = path[0]
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-            path = path[2:]
-            path.insert(0, url)
-            next_step.parse(path)
+        try:
+            if len(path) < 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                url = path[0]
+                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+                path = path[2:]
+                path.insert(0, url)
+                next_step.parse(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
 class AssertPathExists(Command):
@@ -37,10 +40,13 @@ class AssertPathExists(Command):
         super(AssertPathExists, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 1:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            self.execute(path[0])
+        try:
+            if len(path) != 1:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                self.execute(path[0])
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, url):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
@@ -61,16 +67,19 @@ class AssertPathContains(Command):
         super(AssertPathContains, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            url = path[0]
-            from command_factory import CommandFactory
+        try:
+            if len(path) < 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                url = path[0]
+                from command_factory import CommandFactory
 
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-            path = path[2:]
-            path.insert(0, url)
-            next_step.parse(path)
+                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+                path = path[2:]
+                path.insert(0, url)
+                next_step.parse(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
 class AssertPathContainsAny(Command):
@@ -82,10 +91,13 @@ class AssertPathContainsAny(Command):
         super(AssertPathContainsAny, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            self.execute(path)
+        try:
+            if len(path) != 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
@@ -108,10 +120,13 @@ class AssertPathContainsEach(Command):
         super(AssertPathContainsEach, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            self.execute(path)
+        try:
+            if len(path) != 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
     def execute(self, path):
@@ -134,14 +149,17 @@ class AssertPathNodes(Command):
         super(AssertPathNodes, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            url = path[0]
-            next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-            path = path[2:]
-            path.insert(0, url)
-            next_step.parse(path)
+        try:
+            if len(path) < 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                url = path[0]
+                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+                path = path[2:]
+                path.insert(0, url)
+                next_step.parse(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
 class AssertPathNodesCount(Command):
@@ -153,25 +171,28 @@ class AssertPathNodesCount(Command):
         super(AssertPathNodesCount, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            symbol = path[1]
-            url = path[0]
-            path = path[2:]
-            path.insert(0, url)
-            if symbol == "=":
-                next_step = AssertPathNodesCountEqual(self.result_collector)
-                next_step.parse(path)
-            elif symbol == ">":
-                next_step = AssertPathNodesCountGreater(self.result_collector)
-                next_step.parse(path)
-            elif symbol == "<":
-                next_step = AssertPathNodesCountLess(self.result_collector)
-                next_step.parse(path)
+        try:
+            if len(path) < 2:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
-                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-                next_step.parse(path)
+                symbol = path[1]
+                url = path[0]
+                path = path[2:]
+                path.insert(0, url)
+                if symbol == "=":
+                    next_step = AssertPathNodesCountEqual(self.result_collector)
+                    next_step.parse(path)
+                elif symbol == ">":
+                    next_step = AssertPathNodesCountGreater(self.result_collector)
+                    next_step.parse(path)
+                elif symbol == "<":
+                    next_step = AssertPathNodesCountLess(self.result_collector)
+                    next_step.parse(path)
+                else:
+                    next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+                    next_step.parse(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
 class AssertPathNodesCountEqual(Command):
@@ -183,8 +204,11 @@ class AssertPathNodesCountEqual(Command):
         super(AssertPathNodesCountEqual, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) >= 2:
-            self.execute(path)
+        try:
+            if len(path) >= 2:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
@@ -207,8 +231,11 @@ class AssertPathNodesCountGreater(Command):
         super(AssertPathNodesCountGreater, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) >= 2:
-            self.execute(path)
+        try:
+            if len(path) >= 2:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
@@ -231,8 +258,11 @@ class AssertPathNodesCountLess(Command):
         super(AssertPathNodesCountLess, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) >= 2:
-            self.execute(path)
+        try:
+            if len(path) >= 2:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
@@ -255,10 +285,13 @@ class AssertPathFinal(Command):
         super(AssertPathFinal, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 1:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-        else:
-            self.execute(path)
+        try:
+            if len(path) != 1:
+                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            else:
+                self.execute(path)
+        except Exception as e:
+            self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
