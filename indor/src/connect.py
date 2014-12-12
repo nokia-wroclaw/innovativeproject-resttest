@@ -102,7 +102,7 @@ def get_json(path):
     if json is None:
         return None
 
-    return ast.literal_eval(json)
+    return ast.literal_eval(json[0])
 
 
 def parse_url(path):

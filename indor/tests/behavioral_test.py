@@ -116,3 +116,26 @@ class TestBehavioral(unittest.TestCase):
         self.assertEqual(2, len(results))
         self.assertAllPassed(results)
 
+    def test_send_json(self):
+        test = """
+            POST
+                http://httpbin.org/post,
+            ALLOW REDIRECTS,
+            JSON
+                {
+                    "name": "Joe",
+                    "age": 17
+                }.
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(1, len(results))
+        self.assertAllPassed(results)
+
+
