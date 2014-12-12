@@ -1,12 +1,13 @@
+#-*- coding: utf-8 -*-
 import xml.etree.ElementTree as ET
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from xml_tree_factory import XmlTreeFactory
-from xml_tree_register import XmlTreeRegister
 from result import Error, Passed, Failed
 import result
-import parsers_to_xml_tree
+
+
 
 
 class AssertPath(Command):
@@ -51,7 +52,6 @@ class AssertPathExists(Command):
     def execute(self, url):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        url.replace("\"", "", 2)
         if len(doc.findall(url)) > 0:
             self.result_collector.add_result(Passed(self))
         else:
@@ -102,12 +102,16 @@ class AssertPathContainsAny(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         for e in doc.findall(path[0]):
-            if path[1] == e.text:
-                self.result_collector.add_result(Passed(self))
-                return
-
+            if e.text != None:
+                if type(e.text) is 'unicode':
+                    if path[1].decode('utf-8') in e.text.decode('utf-8'):
+                        self.result_collector.add_result(Passed(self))
+                        return
+                else:
+                    if path[1].decode('utf-8') in e.text:
+                        self.result_collector.add_result(Passed(self))
+                        return
         self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS ANY", "NOP"))
 
 
@@ -132,10 +136,22 @@ class AssertPathContainsEach(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         for e in doc.findall(path[0]):
-            if path[1] == e.text:
-                self.result_collector.add_result(Failed(self), "ASSERT PATH CONTAINS EACH", "NOP")
+            if e.text != None:
+                if type(e.text) is 'unicode':
+                    if path[1].decode('utf-8') in e.text.decode('utf-8'):
+                        continue
+                    else:
+                        self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
+                        return
+                else:
+                    if path[1].decode('utf-8') in e.text:
+                        continue
+                    else:
+                        self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
+                        return
+            else:
+                self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
                 return
         self.result_collector.add_result(Passed(self))
 
@@ -213,7 +229,6 @@ class AssertPathNodesCountEqual(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         num = len(doc.findall(path[0]))
         if num == int(path[1]):
             self.result_collector.add_result(Passed(self))
@@ -240,7 +255,6 @@ class AssertPathNodesCountGreater(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         num = len(doc.findall(path[0]))
         if num > int(path[1]):
             self.result_collector.add_result(Passed(self))
@@ -267,7 +281,6 @@ class AssertPathNodesCountLess(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         num = len(doc.findall(path[0]))
         if num < int(path[1]):
             self.result_collector.add_result(Passed(self))
@@ -296,7 +309,6 @@ class AssertPathFinal(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        path[0].replace("\"", "", 2)
         if len(doc.findall(path[0]))>0 and len(doc.findall(path[0]+"/*")) == 0:
             self.result_collector.add_result(Passed(self))
         else:
