@@ -10,11 +10,3 @@ ASSERT RESPONSE TYPE JSON.		# Other options: XML, HTML
 ASSERT RESPONSE NOT EMPTY.
 ASSERT RESPONSE LENGTH = 1234.  # Options: "=" , "<" , ">" , "<=" , ">="
 ASSERT RESPONSE TIME < 200.     # in milliseconds
-
-# Basic assertions on Cookies
-ASSERT COOKIE SET cookie-name.
-ASSERT COOKIE VALUE cookie-name cookie-value.
-
-# Basic assertions on Headers
-ASSERT HEADER SET header-name.
-ASSERT HEADER VALUE header-name header-value.

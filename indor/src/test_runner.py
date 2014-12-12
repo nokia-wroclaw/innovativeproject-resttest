@@ -17,4 +17,4 @@ class TestsRunner:
             test = Test(self.result_collector)
             test.parse(test_data)
 
-        Printer(self.result_collector.scenarios).print_summary()
+        return self.result_collector.scenarios

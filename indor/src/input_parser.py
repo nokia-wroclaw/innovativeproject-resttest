@@ -1,43 +1,25 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
-import re
 from pyparsing import *
 
 
-def parse_token(token):
-    if token == ".":    # This happens when a quoted string is the last token in expression
-        returned = parse_token.expression[:]
-        parse_token.expression = []
-        return returned
+def flat_list(x):
+    """
+    If there is list [["sth, "sth"]] then this method return just ["sth", "sth"].
+    If x = ["sth", "sth"] method return ["sth", "sth"]
 
-    if token.startswith("\"") and token.endswith("\""):
-        ready_token = token[1:-1]       # We remove quotes from string
-    else:
-        if token.endswith(","):         # We are in else, so we do not strip commas from strings
-            ready_token = token[:-1]
-        else:
-            ready_token = token[:]
-
-    if token.endswith("."):     # This means the given token is the last one in expression
-        parse_token.expression += [token[:-1]]
-        returned = parse_token.expression[:]
-        parse_token.expression = []
-        return returned
-    else:
-        parse_token.expression += [ready_token]
-        return None
-
-
-def group_expressions(tokens):
-    parse_token.expression = []
-    unfiltered_expressions = map(lambda token: parse_token(token), tokens)
-    return filter(lambda expression: expression is not None, unfiltered_expressions)
+    :param x:
+    :type x: list
+    :return:
+    :rtype: list
+    """
+    if len(x) == 1:
+        return x[0]
+    return x
 
 
 def parse(input_data):
-    ParserElement.setDefaultWhitespaceChars(" \t\n\r")
-
     hashmark = '#'
     multi_line_comment_start = '/%'
     multi_line_comment_end = '%/'
@@ -46,17 +28,19 @@ def parse(input_data):
     multi_line_comment = nestedExpr(multi_line_comment_start, multi_line_comment_end)
     comment = multi_line_comment | inline_comment
 
-    quoted_string = QuotedString("\"", multiline=True, escQuote="\"", unquoteResults=False)
+    quoted_string = QuotedString("\"", multiline=True, escQuote="\"", unquoteResults=True)
     expression_in_bracket = originalTextFor(nestedExpr("{","}"))    # I hate it. I really hate it. I spent 1.5 h on it,
                                                                     # checked 1000000000 ways of do it and finally
-                                                                    # I added only half of line. I hate it.
-    word = Word(printables)
+                                                                    # I added only half a line. I hate it.
+    word = Regex('[a-zA-Z0-9.><=:/$&+;?@|^*()%!-]*[a-zA-Z0-9><=:/$&+;?@|^*()%!-]')
 
     token = expression_in_bracket | quoted_string | word
-    parser = ZeroOrMore(token)
+
+    sub_command = Group(OneOrMore(token) + Optional(Literal(",").suppress()))
+    command = Group(OneOrMore(sub_command) + ("." + LineEnd()).suppress())
+
+    parser = OneOrMore(command)
     parser.ignore(comment)
 
-    all_tokens = parser.parseString(input_data)
-    expressions = group_expressions(all_tokens)
-
-    return expressions
+    all_commands = parser.parseString(input_data).asList()
+    return map(flat_list, all_commands)

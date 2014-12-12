@@ -2,8 +2,6 @@
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
 import os
-import test_runner
-import input_parser as parser
 
 
 def read_from_file(filename):
@@ -17,9 +15,7 @@ def read_from_file(filename):
     f = open(filename, "r")
 
     file_data = f.read()
-    test_data = parser.parse(file_data)
-
-    runner = test_runner.TestsRunner()
-    runner.run(test_data)
 
     f.close()
+
+    return file_data

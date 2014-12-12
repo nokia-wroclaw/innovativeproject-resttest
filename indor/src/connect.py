@@ -14,45 +14,25 @@ ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
 JSON_NAME = "JSON"
 
 
-def find_keywords_begin_and_end(path, section_name):
-    """
-
-    :param path: :type path: str
-    :param section_name:
-    :return: :rtype: list
-    """
-    begin = path.find("%s" % section_name)
-
-    if begin == -1:
-        return -1, -1
-
-    begin = begin + len(section_name) + 1
-    end = path.find(",", begin)
-    return begin, end
-
-
 def extract_section_by_name(path, section_name):
     """
 
     :param path:
-    :type path: str
+    :type path: list
     :param section_name:
     :type section_name: str
     :return:
-    :rtype: str
+    :rtype: list|None
     """
 
-    begin, end = find_keywords_begin_and_end(path, section_name)
+    section = section_name.split(" ")
 
-    if begin == -1 and end == -1:
+    predicate = lambda x, section: section == x[:len(section)]
+
+    try:
+        return next(x[len(section):] for x in path if predicate(x, section))
+    except StopIteration:
         return None
-
-    if end > 0:
-        fragmented = path[begin: end]
-    else:
-        fragmented = path[begin:]
-
-    return fragmented
 
 
 def get_digest_auth(tokens):
@@ -79,6 +59,77 @@ def get_basic_auth(tokens):
     return requests.auth.HTTPBasicAuth(tokens[0], tokens[1])
 
 
+def get_allow_redirects(path):
+    """
+    Check if name ALLOW REDIRECTS is in arguments-string.
+
+    :return:
+    :rtype: bool
+    """
+    return extract_section_by_name(path, ALLOW_REDIRECTS_NAME) is not None
+
+
+def get_auth(path):
+    """
+    Method use simple grammar to parse auth params. For the present we support basic and digest auth,
+    but I think that we can support e.g. OAuth1, OAuth2 in future.
+
+    author Damian Mirecki
+
+    :return: variable that should be pass as auth when making request, see parse method
+    :rtype: requests.auth.HTTPBasicAuth|requests.auth.HTTPDigestAuth|None
+    """
+    fragmented = extract_section_by_name(path, AUTH_NAME)
+
+    if fragmented is None:
+        return None
+
+    s = ' '.join(fragmented)
+
+    username = Word(printables)
+    password = Word(printables)
+
+    basic_auth = (Optional(Suppress("BASIC")) + username + password).setParseAction(get_basic_auth)
+    digest_auth = (Suppress("DIGEST") + username + password).setParseAction(get_digest_auth)
+    auth = digest_auth | basic_auth
+
+    return auth.parseString(s)[0]
+
+
+def get_json(path):
+    json = extract_section_by_name(path, JSON_NAME)
+
+    if json is None:
+        return None
+
+    return ast.literal_eval(json)
+
+
+def parse_url(path):
+    if isinstance(path[0], list):
+        return path[0][0], path[0][1]
+
+    return path[0], path[1]
+
+
+def get_headers(path):
+    section = extract_section_by_name(path, HEADERS_NAME)
+
+    if section is None:
+        return None
+
+    return dict(zip(section[0::2], section[1::2]))
+
+
+def get_params(path):
+    section = extract_section_by_name(path, PARAMS_NAME)
+
+    if section is None:
+        return None
+
+    return dict(zip(section[0::2], section[1::2]))
+
+
 class Connect(Command):
     """Make request"""
 
@@ -88,94 +139,21 @@ class Connect(Command):
 
     def __init__(self, result_collector):
         super(Connect, self).__init__(result_collector)
-        self.params = {}
-        self.headers = {}
-        self.url = ""
-        self.arguments = ""
-
-    def parse_params(self, path):
-        section = extract_section_by_name(self.arguments, PARAMS_NAME)
-
-        if section is None:
-            return
-
-        fragmented = section.split(" ")
-        for i in range(0, len(fragmented) / 2):
-            self.params[fragmented[2 * i]] = fragmented[2 * i + 1]
-
-    def parse_headers(self, path):
-        section = extract_section_by_name(self.arguments, HEADERS_NAME)
-
-        if section is None:
-            return
-
-        fragmented = section.split(" ")
-        for i in range(0, len(fragmented) / 2):
-            self.headers[fragmented[2 * i]] = fragmented[2 * i + 1]
-
-    def parse_url(self, path):
-        args = path.split(" ")
-        if len(args) < 1 or len(args[0]) < 1:
-            raise indor_exceptions.URLNotFound("Nie podano adres URL")
-        self.url = args[0].rstrip(",")
-
-    def get_auth(self):
-        """
-        Method use simple grammar to parse auth params. For the present we support basic and digest auth,
-        but I think that we can support e.g. OAuth1, OAuth2 in future.
-
-        author Damian Mirecki
-
-        :return: variable that should be pass as auth when making request, see parse method
-        :rtype: requests.auth.HTTPBasicAuth|requests.auth.HTTPDigestAuth|list
-        """
-        fragmented = extract_section_by_name(self.arguments, AUTH_NAME)
-
-        if fragmented is None:
-            return []
-
-        username = Word(printables)
-        password = Word(printables)
-
-        basic_auth = (Optional(Suppress("BASIC")) + username + password).setParseAction(get_basic_auth)
-        digest_auth = (Suppress("DIGEST") + username + password).setParseAction(get_digest_auth)
-        auth = digest_auth | basic_auth
-
-        return auth.parseString(fragmented)[0]
 
     def parse(self, path):
-        argument = path[0]
-
-        arguments = " ".join(path[1:])
-        self.arguments = arguments
-
-        self.parse_params(arguments)
-        self.parse_headers(arguments)
         try:
-            self.parse_url(arguments)
+            request_type, url = parse_url(path)
+            func = getattr(requests, request_type.lower())
         except indor_exceptions.URLNotFound as e:
             self.result_collector.add_result(Error(self, e))
             return
-
-        try:
-            func = getattr(requests, argument.lower())
         except AttributeError:
             self.result_collector.add_result(
-                Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (argument.lower()))))
+                Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
             return
         else:
-            self.result_collector.set_response(func(url=self.url, data=self.params, auth=self.get_auth(),
-                                                    allow_redirects=self.get_allow_redirects()))
-
-    def get_allow_redirects(self):
-        """
-        Check if name ALLOW REDIRECTS is in arguments-string.
-
-        :return:
-        :rtype: bool
-        """
-        return ALLOW_REDIRECTS_NAME in self.arguments
-
-
-
+            self.result_collector.set_response(func(url=url, data=get_params(path), auth=get_auth(path),
+                                                    allow_redirects=get_allow_redirects(path),
+                                                    json=get_json(path),
+                                                    headers=get_headers(path)))
 CommandFactory().add_class(Connect.__name__, Connect)

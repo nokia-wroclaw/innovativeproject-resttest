@@ -13,22 +13,39 @@ class TestInputParser(unittest.TestCase):
                     http://api.geonames.org/postalCodeLookupJSON,
                 PARAMS
                     postalcode 50316
-                    username indor.
+                    username indor,
+                HEADERS
+                    sth sth.
 
-                ASSERT RESPONSE STATUS OK.
-                ASSERT RESPONSE TYPE JSON.
-                ASSERT RESPONSE EMPTY.
-                ASSERT RESPONSE LENGTH > 200.
-                """
+                ASSERT RESPONSE STATUS OK."""
 
         parsed = parser.parse(to_be_parsed)
 
         expected = [
-            """GET http://api.geonames.org/postalCodeLookupJSON PARAMS postalcode 50316 username indor""".split(" "),
-            """ASSERT RESPONSE STATUS OK""".split(" "),
-            """ASSERT RESPONSE TYPE JSON""".split(" "),
-            """ASSERT RESPONSE EMPTY""".split(" "),
-            """ASSERT RESPONSE LENGTH > 200""".split(" ")
+            [
+                [
+                    "GET",
+                    "http://api.geonames.org/postalCodeLookupJSON"
+                ],
+                [
+                    "PARAMS",
+                    "postalcode",
+                    "50316",
+                    "username",
+                    "indor"
+                ],
+                [
+                    "HEADERS",
+                    "sth",
+                    "sth"
+                ]
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "OK"
+            ]
         ]
 
         self.assertItemsEqual(parsed, expected)
@@ -55,13 +72,17 @@ class TestInputParser(unittest.TestCase):
 
         expected = [
             [
-                "some",
-                "text",
-                "GET",
-                "http://api.org/",
-                "PARAMS",
-                "username",
-                "indor"
+                [
+                    "some",
+                    "text",
+                    "GET",
+                    "http://api.org/"
+                ],
+                [
+                    "PARAMS",
+                    "username",
+                    "indor"
+                ]
             ],
             [
                 "ASSERT",
@@ -95,23 +116,33 @@ class TestInputParser(unittest.TestCase):
                     username "indor indorowski,.".
 
                 ASSERT RESPONSE STATUS OK.
-                ASSERT RESPONSE TYPE JSON.
-                /% asdfasfhasdkfas
-                asddASDasd
-                asdAKDHavsd
-                ASDasdASD
-                EWERQWERasadf
-                asdfasd%/
-                ASSERT RESPONSE /% Inline comment %/ EMPTY.
-                ASSERT RESPONSE LENGTH > 200.
                 """
 
         parsed = parser.parse(to_be_parsed)
 
-        expected = ["GET", """http://api.geonames.org/postalCodeLookupJSON""", "PARAMS", "postalcode", "50316",
-                    "username", "indor indorowski,."]
+        expected = [
+            [
+                [
+                    "GET",
+                    "http://api.geonames.org/postalCodeLookupJSON"
+                ],
+                [
+                    "PARAMS",
+                    "postalcode",
+                    "50316",
+                    "username",
+                    "indor indorowski,."
+                ]
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "OK"
+            ]
+        ]
 
-        self.assertItemsEqual(parsed[0], expected)
+        self.assertItemsEqual(parsed, expected)
 
     def test_quoted_expression_as_one(self):
         to_be_parsed = """
@@ -133,11 +164,14 @@ class TestInputParser(unittest.TestCase):
 
         expected = [
             [
-                "GET",
-                "http://api.geonames.org/postalCodeLookupJSON",
-                "PARAMS",
-                "postalcode",
-                """really
+                [
+                    "GET",
+                    "http://api.geonames.org/postalCodeLookupJSON"
+                ],
+                [
+                    "PARAMS",
+                    "postalcode",
+                    """really
                     long.
                     and. #no comment
                     snarky\"
@@ -146,8 +180,9 @@ class TestInputParser(unittest.TestCase):
 
 
                     example.""",
-                "username",
-                "indor"
+                    "username",
+                    "indor"
+                ]
             ]
         ]
 
@@ -172,16 +207,20 @@ class TestInputParser(unittest.TestCase):
 
         expected = [
             [
-                "GET",
-                "http://api.org/",
-                "JSON",
-                """{
+                [
+                    "GET",
+                    "http://api.org/"
+                ],
+                [
+                    "JSON",
+                    """{
                         "key": "value",
                         "key1": [
                             {"key": "no /%comment %/"},
                             {"key": "#no comment"}
                         ]
                     }"""
+                ]
             ]
         ]
 
@@ -199,12 +238,24 @@ class TestInputParser(unittest.TestCase):
 
         expected = [
             [
-                "GET",
-                "http://api.org/",
-                "PARAMS",
-                "username",
-                "pas{word}"
+                [
+                    "GET",
+                    "http://api.org/"
+                ],
+                [
+                    "PARAMS",
+                    "username",
+                    "pas{word}"
+                ]
             ]
         ]
 
         self.assertItemsEqual(actual, expected)
+
+    def test_incompatible_with_grammar(self):
+        to_be_parsed = """
+                BAD EXAMPLE <>
+            """
+
+        #actual = parser.parse(to_be_parsed)
+        #TODO implementation

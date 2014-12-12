@@ -1,6 +1,7 @@
 
 POST
 	http://httpbin.org/post,
+ALLOW REDIRECTS,
 JSON
     {
         "name": "Joe",

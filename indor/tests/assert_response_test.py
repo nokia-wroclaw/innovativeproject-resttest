@@ -12,6 +12,7 @@ class AssertResponseTest(unittest.TestCase):
         src.asserts.AssertResponse(result_collector_mock).parse([])
         self.assertTrue(result_collector_mock.add_result.called)
         self.assertEqual(1, len(result_collector_mock.add_result.call_args_list))
+        #TODO Printowanie w testach???
         print(result_collector_mock.add_result.call_args_list[0][0][0].__class__)
         self.assertTrue(isinstance(result_collector_mock.add_result.call_args_list[0][0][0],
                                    src.result.Error))
@@ -21,5 +22,6 @@ class AssertResponseTest(unittest.TestCase):
         src.asserts.AssertResponse(result_collector_mock).parse(["JasIMalgosia"])
         self.assertTrue(result_collector_mock.add_result.called)
         self.assertEqual(1, len(result_collector_mock.add_result.call_args_list))
+        #TODO Printowanie w testach???
         print(result_collector_mock.add_result.call_args_list[0][0][0].__class__)
         self.assertTrue(isinstance(result_collector_mock.add_result.call_args_list[0][0][0], src.result.Error))
