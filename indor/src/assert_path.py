@@ -1,13 +1,15 @@
 #-*- coding: utf-8 -*-
-import xml.etree.ElementTree as ET
+__author__ = 'Bartosz Zięba'
+
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from xml_tree_factory import XmlTreeFactory
 from result import Error, Passed, Failed
+from indor_exceptions import InvalidRelationalOperator
 import result
-
-
+from relational_operators import compare_by_relational_operator
+from relational_operators import extract_relational_operator
 
 
 class AssertPath(Command):
@@ -55,7 +57,7 @@ class AssertPathExists(Command):
         if len(doc.findall(url)) > 0:
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self,"EXISTS", "NO EXISTS"))
+            self.result_collector.add_result(Failed(self, "EXISTS", "NO EXISTS"))
 
 
 class AssertPathContains(Command):
@@ -132,7 +134,6 @@ class AssertPathContainsEach(Command):
         except Exception as e:
             self.result_collector.add_result(Error(self, e.message))
 
-
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
@@ -191,102 +192,27 @@ class AssertPathNodesCount(Command):
             if len(path) < 2:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
-                symbol = path[1]
-                url = path[0]
-                path = path[2:]
-                path.insert(0, url)
-                if symbol == "=":
-                    next_step = AssertPathNodesCountEqual(self.result_collector)
-                    next_step.parse(path)
-                elif symbol == ">":
-                    next_step = AssertPathNodesCountGreater(self.result_collector)
-                    next_step.parse(path)
-                elif symbol == "<":
-                    next_step = AssertPathNodesCountLess(self.result_collector)
-                    next_step.parse(path)
-                else:
-                    next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-                    next_step.parse(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
-
-
-class AssertPathNodesCountEqual(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT PATH NODES COUNT EQUAL"
-
-    def __init__(self, result_collector):
-        super(AssertPathNodesCountEqual, self).__init__(result_collector)
-
-    def parse(self, path):
-        try:
-            if len(path) >= 2:
                 self.execute(path)
         except Exception as e:
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
-        num = len(doc.findall(path[0]))
-        if num == int(path[1]):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT EQUAL", "IS :" + str(num)
-                                                    + " expected " + path[1]))
-
-
-class AssertPathNodesCountGreater(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT PATH NODES COUNT GREATER"
-
-    def __init__(self, result_collector):
-        super(AssertPathNodesCountGreater, self).__init__(result_collector)
-
-    def parse(self, path):
         try:
-            if len(path) >= 2:
-                self.execute(path)
-        except Exception as e:
+            relational_operator = extract_relational_operator(path[1])
+            expected = int(path[2])
+        except ValueError:
+            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+            return
+        except InvalidRelationalOperator as e:
             self.result_collector.add_result(Error(self, e.message))
-
-    def execute(self, path):
+            return
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
         num = len(doc.findall(path[0]))
-        if num > int(path[1]):
+        if compare_by_relational_operator(num, relational_operator, expected):
             self.result_collector.add_result(Passed(self))
         else:
-            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT GREATER", "IS :" + str(num)
-                                                    + " expected more than " + path[1]))
-
-
-class AssertPathNodesCountLess(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT PATH NODES COUNT LESS"
-
-    def __init__(self, result_collector):
-        super(AssertPathNodesCountLess, self).__init__(result_collector)
-
-    def parse(self, path):
-        try:
-            if len(path) >= 2:
-                self.execute(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
-
-    def execute(self, path):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
-        num = len(doc.findall(path[0]))
-        if num < int(path[1]):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, "ASSERT PATH NODES COUNT LESS", "IS :" + str(num)
-                                                    + " expected less than " + path[1]))
+            self.result_collector.add_result(Failed(self, relational_operator + " " + path[2], num))
 
 
 class AssertPathFinal(Command):
@@ -309,7 +235,7 @@ class AssertPathFinal(Command):
     def execute(self, path):
         tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
         doc = tree.parse(self.result_collector.get_response().content)
-        if len(doc.findall(path[0]))>0 and len(doc.findall(path[0]+"/*")) == 0:
+        if len(doc.findall(path[0])) > 0 and len(doc.findall(path[0]+"/*")) == 0:
             self.result_collector.add_result(Passed(self))
         else:
             self.result_collector.add_result(Failed(self, "ASSERT PATH FINAL", "NOT FINAL"))
