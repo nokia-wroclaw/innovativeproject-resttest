@@ -252,18 +252,24 @@ class TestInputParser(unittest.TestCase):
 
         self.assertItemsEqual(actual, expected)
 
-
     def test_defines(self):
         to_be_parsed = """
                 DEFINE URL = http://api.geonames.org/postalCodeLookupJSON
                 DEFINE POST = http://api.geonames.org/postalCodeLookupXML
                 DEFINE SOME_TEXT = username indor
+
+                DEFINE BASE = http://httpbin.org
+
                 GET
                     @URL@,
                 PARAMS
                     postalcode 41800,
                     @SOME_TEXT@.
-                POST @POST@."""
+
+                POST @POST@.
+
+                DELETE @BASE@/delete.
+                """
 
         actual = parser.parse(to_be_parsed)
         expected = [
@@ -285,6 +291,10 @@ class TestInputParser(unittest.TestCase):
             [
                 "POST",
                 "http://api.geonames.org/postalCodeLookupXML"
+            ],
+            [
+                "DELETE",
+                "http://httpbin.org/delete"
             ]
         ]
 

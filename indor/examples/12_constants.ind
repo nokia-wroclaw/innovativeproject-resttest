@@ -1,0 +1,32 @@
+/%
+	You may define constants in order not to type some repeating long text many times.
+	The keyword DEFINE must be used. To use the const, simply put the const name between two @ chars.
+	Important! Consts may have many words and do not end with a dot!
+%/
+DEFINE URL = http://api.geonames.org/postalCodeLookupJSON
+DEFINE URL2 = http://api.geonames.org/postalCodeLookupXML
+DEFINE SOME_PARAMS = username indor
+
+POST
+	@URL@,
+PARAMS
+	postalcode 41800,
+	@SOME_PARAMS@.
+	
+GET @URL2@.
+
+/% Is equivalent to: %/
+POST
+	http://api.geonames.org/postalCodeLookupJSON,
+PARAMS
+	postalcode 41800,
+	username indor. 
+	
+GET http://api.geonames.org/postalCodeLookupXML.
+
+
+/% Feel free to use consts as part of a bigger input, eg: %/
+POST
+	@URL@/something/more,
+PARAMS
+	data "Something @DATA@ other".

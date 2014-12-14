@@ -22,25 +22,25 @@ def flat_list(x):
     return x
 
 
-def parse_macros(input_data):
-    macro_definition = Suppress("DEFINE") + word + Suppress("=") + empty + restOfLine
-    macros = dict(list(macro_definition.searchString(input_data)))
+def parse_constants(input_data):
+    # Getting all defined macros
+    const_definition = Suppress("DEFINE") + word + Suppress("=") + empty + restOfLine
+    constants = dict(list(const_definition.searchString(input_data)))
 
-    def substitute_macro(s, l, t):
-        match = re.search(r"@(?P<key>\w+)@", t[0])
+    # Replacing consts values in input text
+    constants_replaced = input_data
+    for key, value in constants.items():
+        const = Literal("@") + Literal(key) + Literal("@")
+        const.setParseAction(replaceWith(value))
+        constants_replaced = const.transformString(constants_replaced)
 
-        if match is not None and match.group("key") in macros:
-            return macros[t[0][1:-1]]
-
-    word.setParseAction(substitute_macro)
-    replaced_macros = word.transformString(input_data)
-
-    macro_definition.setParseAction(replaceWith(""))
-    return macro_definition.transformString(replaced_macros)
+    # Removing consts definitions
+    const_definition.setParseAction(replaceWith(""))
+    return const_definition.transformString(constants_replaced)
 
 
 def parse(input_data):
-    pre_processed = parse_macros(input_data)
+    consts_replaced = parse_constants(input_data)
 
     hashmark = '#'
     multi_line_comment_start = '/%'
@@ -63,5 +63,5 @@ def parse(input_data):
     parser = OneOrMore(command)
     parser.ignore(comment)
 
-    all_commands = parser.parseString(pre_processed).asList()
+    all_commands = parser.parseString(consts_replaced).asList()
     return map(flat_list, all_commands)
