@@ -252,10 +252,49 @@ class TestInputParser(unittest.TestCase):
 
         self.assertItemsEqual(actual, expected)
 
+
+    def test_defines(self):
+        to_be_parsed = """
+                DEFINE URL = http://api.geonames.org/postalCodeLookupJSON
+                DEFINE POST = http://api.geonames.org/postalCodeLookupXML
+                DEFINE SOME_TEXT = username indor
+                GET
+                    @URL@,
+                PARAMS
+                    postalcode 41800,
+                    @SOME_TEXT@.
+                POST @POST@."""
+
+        actual = parser.parse(to_be_parsed)
+        expected = [
+            [
+                [
+                    "GET",
+                    "http://api.geonames.org/postalCodeLookupJSON"
+                ],
+                [
+                    "PARAMS",
+                    "postalcode",
+                    "41800",
+                ],
+                [
+                    "username",
+                    "indor"
+                ]
+            ],
+            [
+                "POST",
+                "http://api.geonames.org/postalCodeLookupXML"
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)
+
+
     def test_incompatible_with_grammar(self):
         to_be_parsed = """
                 BAD EXAMPLE <>
             """
 
-        #actual = parser.parse(to_be_parsed)
+        # actual = parser.parse(to_be_parsed)
         #TODO implementation
