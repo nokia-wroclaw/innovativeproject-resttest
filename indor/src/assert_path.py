@@ -7,8 +7,7 @@ from command_register import CommandRegister
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator
 import result
-from relational_operators import compare_by_relational_operator
-from relational_operators import extract_relational_operator
+from relational_operators import compare_by_supposed_relational_operator
 
 
 class AssertPath(Command):
@@ -202,21 +201,19 @@ class AssertPathNodesCount(Command):
 
     def execute(self, path):
         try:
-            relational_operator = extract_relational_operator(path[1])
+            relational_operator = path[1]
             expected = int(path[2])
+            doc = self.result_collector.get_response_ET()
+            num = len(doc.findall(path[0]))
+            if compare_by_supposed_relational_operator(num, relational_operator, expected):
+                self.result_collector.add_result(Passed(self))
+            else:
+                self.result_collector.add_result(Failed(self, relational_operator + " " + path[2], num))
+
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
-            return
         except InvalidRelationalOperator as e:
             self.result_collector.add_result(Error(self, e.message))
-            return
-        doc = self.result_collector.get_response_ET()
-        num = len(doc.findall(path[0]))
-        if compare_by_relational_operator(num, relational_operator, expected):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, relational_operator + " " + path[2], num))
-
 
 class AssertPathFinal(Command):
     __metaclass__ = CommandRegister

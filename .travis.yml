@@ -12,3 +12,9 @@ deploy:
     tags: true
     repo: nokia-wroclaw/innovativeproject-resttest
     all_branches: true
+notifications:
+  email:
+    - dmirecki.DM@gmail.com
+    - slawomir.karol.domagala@gmail.com
+    - tomasz.wlislocki@gmail.com
+    - bartoszzieba@hotmail.com

@@ -6,6 +6,7 @@ from scenario import Scenario
 ASSERT_NAME = 'ASSERT'
 SCENARIO_NAME = 'SCENARIO'
 
+http_request_types = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']
 
 class Test(Command):
     def __init__(self, result_collector):
@@ -17,8 +18,7 @@ class Test(Command):
         if argument == ASSERT_NAME:
             next_step = Assert(self.result_collector)
             next_step.parse(path[1:])
-        # TODO - Damian Mirecki, duplikacja kodu
-        elif argument in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD'] or argument[0] in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']:
+        elif argument in http_request_types or argument[0] in http_request_types:
             next_step = Connect(self.result_collector)
             next_step.parse(path[0:])
         elif argument == SCENARIO_NAME:

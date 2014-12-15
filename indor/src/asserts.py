@@ -1,16 +1,13 @@
 # coding=utf-8
+from requests.structures import CaseInsensitiveDict
+
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator, KeywordNotFound
 import result
-from requests.structures import CaseInsensitiveDict
-from assert_path import AssertPath
-from relational_operators import compare_by_relational_operator
-from relational_operators import extract_relational_operator
-
-
+from relational_operators import compare_by_supposed_relational_operator
 
 
 class AssertResponseRedirects(Command):
@@ -43,21 +40,19 @@ class AssertResponseRedirectsCount(Command):
             return
 
         try:
-            relational_operator = extract_relational_operator(args[0])
+            relational_operator = args[0]
             expected = int(args[1])
+
+            actual = len(self.result_collector.get_response().history)
+
+            if compare_by_supposed_relational_operator(actual, relational_operator, expected):
+                self.result_collector.add_result(Passed(self))
+            else:
+                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], str(actual)))
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
-            return
         except InvalidRelationalOperator as e:
             self.result_collector.add_result(Error(self, e.message))
-            return
-
-        actual = len(self.result_collector.get_response().history)
-
-        if compare_by_relational_operator(actual, relational_operator, expected):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], str(actual)))
 
 
 class AssertResponse(Command):
@@ -120,8 +115,7 @@ class AssertResponseStatus(Command):
         :raise LookupError: When status is not implemented yet.
         """
 
-        # TODO - Damian Mirecki - PEP 8
-        if not status in self.mapping:
+        if status not in self.mapping:
             raise LookupError("Status " + status + " not found in " + self.mapping.__str__())
 
         return self.mapping[status]
@@ -166,6 +160,7 @@ class AssertResponseType(Command):
 
 class AssertResponseTypeJson(Command):
     __metaclass__ = CommandRegister
+
     pretty_name = "RESPONSE CONTENT TYPE IS JSON"
 
     def __init__(self, result_collector):
@@ -200,21 +195,19 @@ class AssertResponseLength(Command):
             return
 
         try:
-            relational_operator = extract_relational_operator(args[0])
+            relational_operator = args[0]
             expected = int(args[1])
+
+            content_length = len(self.result_collector.get_response().content)
+
+            if compare_by_supposed_relational_operator(content_length, relational_operator, expected):
+                self.result_collector.add_result(Passed(self))
+            else:
+                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
-            return
         except InvalidRelationalOperator as e:
             self.result_collector.add_result(Error(self, e.message))
-            return
-
-        content_length = len(self.result_collector.get_response().content)
-
-        if compare_by_relational_operator(content_length, relational_operator, expected):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
 
 
 class AssertResponseEmpty(Command):
@@ -303,14 +296,14 @@ class AssertCookieSet(Command):
 
     def execute(self, path):
         cookie_name = path[0]
-        try:
-            # TODO - Damian Mirecki - Wydaje mi się, że łatwiej sprawdzić czy Key istnieje niż zmuszać
-            # do rzucania wyjątku
-            self.result_collector.get_response().cookies[cookie_name]
-            self.result_collector.add_result(Passed(self))
-        except KeyError:
+
+        if cookie_name not in self.result_collector.get_response().cookies:
             self.result_collector.add_result(Failed(self, "'" + cookie_name + "' cookie set",
-                                    [cookie.name for cookie in self.result_collector.get_response().cookies].__str__()))
+                                                    [cookie.name for cookie in
+                                                     self.result_collector.get_response().cookies].__str__()))
+            return
+
+        self.result_collector.add_result(Passed(self))
 
 
 class AssertCookieValue(Command):
@@ -332,18 +325,17 @@ class AssertCookieValue(Command):
         cookie_name = path[0]
         expected_cookie_value = path[1]
 
-        #TODO - Wydaje mi się, że łatwiej sprawdzić, czy Key istnieje niż zmuszać do rzucania wyjątku
-        #TODO - Damian Mirecki
-        try:
-            actual_cookie_value = self.result_collector.get_response().cookies[cookie_name]
-        except KeyError:
+        if cookie_name not in self.result_collector.get_response().cookies:
             self.result_collector.add_result(Error(self, "cookie '" + cookie_name + "' not found"))
             return
 
-        if expected_cookie_value == actual_cookie_value:
-            self.result_collector.add_result(Passed(self))
-        else:
+        actual_cookie_value = self.result_collector.get_response().cookies[cookie_name]
+
+        if expected_cookie_value != actual_cookie_value:
             self.result_collector.add_result(Failed(self, expected_cookie_value, actual_cookie_value))
+            return
+
+        self.result_collector.add_result(Passed(self))
 
 
 class AssertHeader(Command):
