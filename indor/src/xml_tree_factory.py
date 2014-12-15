@@ -1,4 +1,7 @@
 __author__ = 'Bartek'
+# TODO - Do not touch until the test will be created
+import xml_tree_register
+import parsers_to_xml_tree
 from singleton import Singleton
 
 
