@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from xml_tree_register import XmlTreeRegister
 import json
 
+
 class TextXml(XmlTree):
     __metaclass__ = XmlTreeRegister
 

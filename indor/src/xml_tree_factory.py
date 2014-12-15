@@ -1,5 +1,4 @@
 __author__ = 'Bartek'
-
 from singleton import Singleton
 
 
@@ -19,7 +18,3 @@ class XmlTreeFactory:
         for i in range(0,len(t)):
             class_name += t[i].lower().title()
         return self.dict[class_name]()
-
-# import classes to factory
-import xml_tree_register
-import parsers_to_xml_tree

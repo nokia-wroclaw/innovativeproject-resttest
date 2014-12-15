@@ -1,5 +1,4 @@
 # coding=utf-8
-__author__ = 'Sławomir Domagała'
 from test_results import TestResults
 
 

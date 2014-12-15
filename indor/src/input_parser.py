@@ -1,13 +1,15 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
-import re
 from pyparsing import *
 
+# TODO - Tomasz Wlisłocki - Uprościć tego regexa
 word = Regex('[a-zA-Z0-9.><=:/$&+;?@|^*()%!-_]*[a-zA-Z0-9><=:/$&+;?@|^*()%!-]')
 
 
-def flat_list(x):
+def flatten_list(x):
+    # TODO - Ja Cię lubię, ale Twój komentarz jest wyjaśniający jest dłuższy niż kod
+    # TODO - Wystarczy tylko :param, :type, :return, :rtype
     """
     If there is list [["sth, "sth"]] then this method return just ["sth", "sth"].
     If x = ["sth", "sth"] method return ["sth", "sth"]
@@ -64,4 +66,4 @@ def parse(input_data):
     parser.ignore(comment)
 
     all_commands = parser.parseString(consts_replaced).asList()
-    return map(flat_list, all_commands)
+    return map(flatten_list, all_commands)

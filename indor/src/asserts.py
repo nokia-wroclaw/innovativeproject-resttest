@@ -120,6 +120,7 @@ class AssertResponseStatus(Command):
         :raise LookupError: When status is not implemented yet.
         """
 
+        # TODO - Damian Mirecki - PEP 8
         if not status in self.mapping:
             raise LookupError("Status " + status + " not found in " + self.mapping.__str__())
 
@@ -303,6 +304,8 @@ class AssertCookieSet(Command):
     def execute(self, path):
         cookie_name = path[0]
         try:
+            # TODO - Damian Mirecki - Wydaje mi się, że łatwiej sprawdzić czy Key istnieje niż zmuszać
+            # do rzucania wyjątku
             self.result_collector.get_response().cookies[cookie_name]
             self.result_collector.add_result(Passed(self))
         except KeyError:
@@ -329,6 +332,8 @@ class AssertCookieValue(Command):
         cookie_name = path[0]
         expected_cookie_value = path[1]
 
+        #TODO - Wydaje mi się, że łatwiej sprawdzić, czy Key istnieje niż zmuszać do rzucania wyjątku
+        #TODO - Damian Mirecki
         try:
             actual_cookie_value = self.result_collector.get_response().cookies[cookie_name]
         except KeyError:
@@ -451,7 +456,6 @@ class AssertTextContains(Command):
             self.result_collector.add_result(Passed(self))
         else:
             self.result_collector.add_result(Failed(self, needle + " not found", ""))
-
 
 
 # Base class for testing time

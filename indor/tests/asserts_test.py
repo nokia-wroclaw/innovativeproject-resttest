@@ -1,5 +1,4 @@
 __author__ = 'Damian Mirecki'
-
 import unittest
 import relational_operators
 from indor_exceptions import InvalidRelationalOperator

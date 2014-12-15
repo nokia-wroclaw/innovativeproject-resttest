@@ -156,4 +156,3 @@ class Connect(Command):
                                                     allow_redirects=get_allow_redirects(path),
                                                     json=get_json(path),
                                                     headers=get_headers(path)))
-CommandFactory().add_class(Connect.__name__, Connect)

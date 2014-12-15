@@ -2,8 +2,6 @@
 from command import Command
 from scenario_data import ScenarioData
 
-__author__ = 'Tomasz M. Wlisłocki'
-
 
 class Scenario(Command):
     def __init__(self, result_collector):

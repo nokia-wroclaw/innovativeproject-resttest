@@ -17,6 +17,7 @@ class Test(Command):
         if argument == ASSERT_NAME:
             next_step = Assert(self.result_collector)
             next_step.parse(path[1:])
+        # TODO - Damian Mirecki, duplikacja kodu
         elif argument in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD'] or argument[0] in ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']:
             next_step = Connect(self.result_collector)
             next_step.parse(path[0:])

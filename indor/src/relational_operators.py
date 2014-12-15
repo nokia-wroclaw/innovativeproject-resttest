@@ -2,7 +2,14 @@
 
 from indor_exceptions import InvalidRelationalOperator
 
+
 def compare_by_relational_operator(actual, relational_operator, expected):
+    # TODO - Nie podoba mi się to
+    # Nie wydaje mi się, że powinniśmy to w taki sposób robić
+    # Eval jest brzydki, niebezpieczny i wolny
+    # Używamy również operatorów Pythona
+    # Robimy konwersje do stringa
+    # Może po prostu użyć ___eq___, ___gt___, ___nt___
     return eval(str(actual) + " " + relational_operator + " " + str(expected))
 
 
@@ -27,7 +34,7 @@ def extract_relational_operator(supposed_operator):
     if supposed_operator in inequality_operators:
         return "!="
 
-    if not supposed_operator in valid_operators:
+    if supposed_operator not in valid_operators:
         raise InvalidRelationalOperator("got '" + supposed_operator + "' but only " + (
             valid_operators + equality_operators + inequality_operators).__str__() + " is accepted")
 

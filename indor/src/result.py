@@ -2,6 +2,7 @@
 
 ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
 ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
+# TODO - Bartosz Zięba - polskie komunikaty proszę, nie polsko-angielskie
 ERROR_WRONG_CONTENT_TYPE = "Zły typ contentu"
 
 
