@@ -1,5 +1,6 @@
 # coding=utf-8
 from asserts import *
+from assert_path import * # DONT"T TOUCH !!! NEVER!!!
 
 
 class Assert(Command):
