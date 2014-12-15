@@ -4,7 +4,6 @@ __author__ = 'Bartosz Zięba'
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
-from xml_tree_factory import XmlTreeFactory
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator
 import result
@@ -52,8 +51,7 @@ class AssertPathExists(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, url):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
+        doc = self.result_collector.get_response_ET()
         if len(doc.findall(url)) > 0:
             self.result_collector.add_result(Passed(self))
         else:
@@ -102,8 +100,7 @@ class AssertPathContainsAny(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
+        doc = self.result_collector.get_response_ET()
         for e in doc.findall(path[0]):
             if e.text != None:
                 if type(e.text) is 'unicode':
@@ -135,8 +132,7 @@ class AssertPathContainsEach(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
+        doc = self.result_collector.get_response_ET()
         for e in doc.findall(path[0]):
             if e.text != None:
                 if type(e.text) is 'unicode':
@@ -206,8 +202,7 @@ class AssertPathNodesCount(Command):
         except InvalidRelationalOperator as e:
             self.result_collector.add_result(Error(self, e.message))
             return
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
+        doc = self.result_collector.get_response_ET()
         num = len(doc.findall(path[0]))
         if compare_by_relational_operator(num, relational_operator, expected):
             self.result_collector.add_result(Passed(self))
@@ -233,8 +228,7 @@ class AssertPathFinal(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        tree = XmlTreeFactory().get_class(self.result_collector.get_response().headers.get('content-type'))
-        doc = tree.parse(self.result_collector.get_response().content)
+        doc = self.result_collector.get_response_ET()
         if len(doc.findall(path[0])) > 0 and len(doc.findall(path[0]+"/*")) == 0:
             self.result_collector.add_result(Passed(self))
         else:

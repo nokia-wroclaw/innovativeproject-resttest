@@ -1,5 +1,6 @@
 from scenario_data import ScenarioData
 from scenario_results import ScenarioResults
+from xml_tree_factory import XmlTreeFactory
 
 
 class ResultCollector(object):
@@ -23,3 +24,9 @@ class ResultCollector(object):
         self.scenarios.append(ScenarioResults(scenario_data))
         last_test_name = self.scenarios[-2].get_last_test_name()
         self.scenarios[-1].add_test(last_test_name)
+
+    def get_response_ET(self):
+        if self.test_runner.responseXML == None:
+            tree = XmlTreeFactory().get_class(self.test_runner.response.headers.get('content-type'))
+            self.test_runner.responseXML = tree.parse(self.test_runner.response.content)
+        return self.test_runner.responseXML

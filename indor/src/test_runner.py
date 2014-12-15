@@ -10,6 +10,7 @@ class TestsRunner:
     def __init__(self):
         self.response = None
         self.result_collector = ResultCollector(self)
+        self.responseXML = None
         TestsRunner.request = None
 
     def run(self, test_lines):
