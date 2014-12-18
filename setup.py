@@ -1,9 +1,11 @@
 # coding=utf-8
-from distutils.core import setup
+from setuptools import setup
+
+VERSION = '0.1'
 
 setup(
     name='indor',
-    version='0.0.3.2',
+    version=VERSION,
     install_requires=[
         "requests",
         "pyparsing",
@@ -19,5 +21,11 @@ setup(
     license='',
     author='Sławomir Domagała, Damian Mirecki, Tomasz Wlisłocki, Bartosz Zięba',
     author_email='',
-    description='Tool for running rest-api tests written in plain language.'
+    description='Tool for running rest-api tests written in plain language.',
+    entry_points={
+        'console_scripts': [
+            'indor = indor.main:main',
+        ]
+    }
 )
+

@@ -53,9 +53,19 @@ All you need is [Python](https://www.python.org/downloads/) installed (Python >=
 
 Simple instalation is available via [pip](https://pip.readthedocs.org/en/latest/installing.html)
 
-Just download this project from github, and then run:
+Just type in console:
 
 `> pip install indor`
+
+## How to use?
+
+You can run your test simply:
+
+`> indor path/to/indor_file.ind`
+
+For more information take a look at:
+
+`> indor --help`
 
 ## Tutorial
 
