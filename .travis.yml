@@ -2,7 +2,7 @@ language: python
 python:
 - '2.7'
 install: pip install -r requirements.txt
-script: nosetests indor
+script: nosetests indor -v --with-coverage --cover-test
 deploy:
   provider: pypi
   user: DeeM
