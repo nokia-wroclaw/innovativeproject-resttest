@@ -8,6 +8,7 @@ SCENARIO_NAME = 'SCENARIO'
 
 http_request_types = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']
 
+
 class Test(Command):
     def __init__(self, result_collector):
         super(Test, self).__init__(result_collector)
@@ -24,5 +25,3 @@ class Test(Command):
         elif argument == SCENARIO_NAME:
             next_step = Scenario(self.result_collector)
             next_step.parse(path[1:])
-
-        return False

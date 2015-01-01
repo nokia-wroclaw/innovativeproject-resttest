@@ -53,9 +53,7 @@ def parse(input_data):
     comment = multi_line_comment | inline_comment
 
     quoted_string = QuotedString("\"", multiline=True, escQuote="\"", unquoteResults=True)
-    expression_in_bracket = originalTextFor(nestedExpr("{", "}"))  # I hate it. I really hate it. I spent 1.5 h on it,
-    # checked 1000000000 ways of do it and finally
-    # I added only half a line. I hate it.
+    expression_in_bracket = originalTextFor(nestedExpr("{", "}"))
 
     token = expression_in_bracket | quoted_string | word
 

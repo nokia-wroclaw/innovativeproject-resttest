@@ -39,11 +39,17 @@ class AssertResponseRedirectsCount(Command):
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
         try:
             relational_operator = args[0]
             expected = int(args[1])
 
-            actual = len(self.result_collector.get_response().history)
+            actual = len(response.history)
 
             if compare_by_supposed_relational_operator(actual, relational_operator, expected):
                 self.result_collector.add_result(Passed(self))
@@ -133,8 +139,15 @@ class AssertResponseStatus(Command):
                 self.result_collector.add_result(Error(self, e))
                 return
 
-        actual = self.result_collector.get_response().status_code
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        actual = response.status_code
         expected = int(status)
+
         if actual == expected:
             self.result_collector.add_result(Passed(self))
         else:
@@ -170,8 +183,14 @@ class AssertResponseTypeJson(Command):
         self.execute()
 
     def execute(self):
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
         try:
-            self.result_collector.get_response().json()
+            response.json()
         except ValueError:
             self.result_collector.add_result(Failed(self, "json", "not json"))
         else:
@@ -194,11 +213,17 @@ class AssertResponseLength(Command):
             self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             return
 
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
         try:
             relational_operator = args[0]
             expected = int(args[1])
 
-            content_length = len(self.result_collector.get_response().content)
+            content_length = len(response.content)
 
             if compare_by_supposed_relational_operator(content_length, relational_operator, expected):
                 self.result_collector.add_result(Passed(self))
@@ -222,7 +247,13 @@ class AssertResponseEmpty(Command):
         self.execute()
 
     def execute(self):
-        if len(self.result_collector.get_response().content) != 0:
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        if len(response.content) != 0:
             self.result_collector.add_result(Failed(self, "`EMPTY`", "`NOT EMPTY`"))
         else:
             self.result_collector.add_result(Passed(self))
@@ -240,7 +271,13 @@ class AssertResponseNotEmpty(Command):
         self.execute()
 
     def execute(self):
-        if len(self.result_collector.get_response().content) == 0:
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        if len(response.content) == 0:
             self.result_collector.add_result(Failed(self, "`NOT EMPTY`", "`EMPTY`"))
         else:
             self.result_collector.add_result(Passed(self))
@@ -297,10 +334,16 @@ class AssertCookieSet(Command):
     def execute(self, path):
         cookie_name = path[0]
 
-        if cookie_name not in self.result_collector.get_response().cookies:
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        if cookie_name not in response.cookies:
             self.result_collector.add_result(Failed(self, "'" + cookie_name + "' cookie set",
                                                     [cookie.name for cookie in
-                                                     self.result_collector.get_response().cookies].__str__()))
+                                                     response.cookies].__str__()))
             return
 
         self.result_collector.add_result(Passed(self))
@@ -325,11 +368,17 @@ class AssertCookieValue(Command):
         cookie_name = path[0]
         expected_cookie_value = path[1]
 
-        if cookie_name not in self.result_collector.get_response().cookies:
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        if cookie_name not in response.cookies:
             self.result_collector.add_result(Error(self, "cookie '" + cookie_name + "' not found"))
             return
 
-        actual_cookie_value = self.result_collector.get_response().cookies[cookie_name]
+        actual_cookie_value = response.cookies[cookie_name]
 
         if expected_cookie_value != actual_cookie_value:
             self.result_collector.add_result(Failed(self, expected_cookie_value, actual_cookie_value))
@@ -373,7 +422,13 @@ class AssertHeaderSet(Command):
     def execute(self, path):
         header_name = path[0]
 
-        headers = self.result_collector.get_response().headers
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        headers = response.headers
 
         if headers.get(header_name):
             self.result_collector.add_result(Passed(self))
@@ -400,7 +455,13 @@ class AssertHeaderValue(Command):
         header_name = path[0]
         expected_header_value = path[1]
 
-        actual_header_value = self.result_collector.get_response().headers.get(header_name)
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        actual_header_value = response.headers.get(header_name)
 
         if actual_header_value is None:
             self.result_collector.add_result(Error(self, "header '" + header_name + "' not found"))
@@ -441,8 +502,14 @@ class AssertTextContains(Command):
         self.execute(path)
 
     def execute(self, path):
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
         needle = ' '.join(path)
-        haystack = self.result_collector.get_response().text
+        haystack = response.text
 
         if needle in haystack:
             self.result_collector.add_result(Passed(self))

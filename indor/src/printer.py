@@ -1,6 +1,6 @@
 # coding=utf-8
 __author__ = 'Sławomir Domagała'
-from result import Passed, Failed, Error
+from result import Passed, Failed, Error, ConnectionError
 
 
 class Printer:
@@ -19,7 +19,7 @@ class Printer:
                     elif isinstance(result, Failed):
                         print("\t\t ASSERTION: {}\n\t\tFAILED: EXPECTED {}\tGOT {}"
                               .format(result.pretty_name, result.expected, result.actual))
-                    elif isinstance(result, Error):
+                    elif isinstance(result, (Error, ConnectionError)):
                         print("\t\t {}\n\t\tERROR: {}".format(result.pretty_name, result.error))
                     else:
                         print("\t\t ASSERTION: {}\n\t\tUNKNOWN RESULT".format(result.pretty_name))

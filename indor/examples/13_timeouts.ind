@@ -1,0 +1,14 @@
+/%
+This test will failed, because to small timeout value.
+%/
+POST
+    http://httpbin.org/post,
+TIMEOUT 100.                    # in miliseconds
+ASSERT RESPONSE STATUS OK.
+
+
+
+POST
+    http://httpbin.org/post,
+TIMEOUT 1000.
+ASSERT RESPONSE STATUS OK.

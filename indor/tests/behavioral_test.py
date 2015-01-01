@@ -2,7 +2,7 @@ __author__ = 'Damian Mirecki'
 
 import unittest
 from scenario_results import ScenarioResults
-from result import Passed, Error, Failed
+from result import Passed, Error, Failed, ConnectionError
 import test_runner
 import input_parser as parser
 
@@ -21,6 +21,22 @@ class TestBehavioral(unittest.TestCase):
         self.assertEqual(count, len(result))
         for scenario in result:
             self.assertIsInstance(scenario, ScenarioResults)
+
+    def test_no_url(self):
+        test = """
+            POST .
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(2, len(results))
+        self.assertIsInstance(results[0], ConnectionError)
+        self.assertIsInstance(results[1], Error)
 
     def test_hello_world(self):
         test = """
@@ -137,5 +153,40 @@ class TestBehavioral(unittest.TestCase):
         results = scenario.test_results[0].results
         self.assertEqual(1, len(results))
         self.assertAllPassed(results)
+
+    def test_timeout_ok(self):
+        test = """
+            POST
+                http://httpbin.org/post,
+            TIMEOUT 1000.
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(1, len(results))
+        self.assertAllPassed(results)
+
+    def test_timeout_failed(self):
+        test = """
+            POST
+                http://httpbin.org/post,
+            TIMEOUT 10.
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(2, len(results))
+        self.assertIsInstance(results[0], ConnectionError)
+        self.assertIsInstance(results[1], Error)
 
 

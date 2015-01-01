@@ -1,7 +1,8 @@
+import result
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
-from result import Error
+from result import Error, ConnectionError
 import indor_exceptions
 import requests
 import ast
@@ -12,6 +13,7 @@ HEADERS_NAME = "HEADERS"
 AUTH_NAME = "AUTH"
 ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
 JSON_NAME = "JSON"
+TIMEOUT_NAME = "TIMEOUT"
 
 
 def extract_section_by_name(path, section_name):
@@ -107,7 +109,12 @@ def get_json(path):
 
 def parse_url(path):
     if isinstance(path[0], list):
+        if len(path[0]) < 2:
+            raise indor_exceptions.URLNotFound("Nie podano adres URL")
         return path[0][0], path[0][1]
+
+    if len(path) < 2:
+        raise indor_exceptions.URLNotFound("Nie podano adres URL")
 
     return path[0], path[1]
 
@@ -130,6 +137,15 @@ def get_params(path):
     return dict(zip(section[0::2], section[1::2]))
 
 
+def get_timeout(path):
+    section = extract_section_by_name(path, TIMEOUT_NAME)
+
+    if section is None:
+        return None
+
+    return float(section[0]) / 1000.0
+
+
 class Connect(Command):
     """Make request"""
 
@@ -144,15 +160,17 @@ class Connect(Command):
         try:
             request_type, url = parse_url(path)
             func = getattr(requests, request_type.lower())
-        except indor_exceptions.URLNotFound as e:
-            self.result_collector.add_result(Error(self, e))
-            return
-        except AttributeError:
-            self.result_collector.add_result(
-                Error(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
-            return
-        else:
+            self.result_collector.add_test(url)
             self.result_collector.set_response(func(url=url, data=get_params(path), auth=get_auth(path),
                                                     allow_redirects=get_allow_redirects(path),
                                                     json=get_json(path),
-                                                    headers=get_headers(path)))
+                                                    headers=get_headers(path),
+                                                    timeout=get_timeout(path)))
+        except indor_exceptions.URLNotFound as e:
+            self.result_collector.add_test("NO URL")
+            self.result_collector.add_result(ConnectionError(self, e))
+        except AttributeError:
+            self.result_collector.add_result(
+                ConnectionError(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
+        except requests.exceptions.Timeout as e:
+            self.result_collector.add_result(ConnectionError(self, result.ERROR_CONNECTION_TIMEOUT))
