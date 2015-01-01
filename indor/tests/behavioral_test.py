@@ -196,7 +196,7 @@ class TestBehavioral(unittest.TestCase):
         test = """
             GET http://httpbin.org/ .
             ASSERT RESPONSE TIME < 100000.
-            ASSERT RESPONSE TIME > 100.
+            ASSERT RESPONSE TIME > 1.
         """
 
         result = self.run_indor(test)
