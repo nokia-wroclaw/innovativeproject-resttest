@@ -309,12 +309,12 @@ class AssertResponseTime(Command):
             relational_operator = args[0]
             expected = int(args[1])
 
-            content_length = response.elapsed.total_seconds() * 1000
+            response_time = response.elapsed.total_seconds() * 1000
 
-            if compare_by_supposed_relational_operator(content_length, relational_operator, expected):
+            if compare_by_supposed_relational_operator(response_time, relational_operator, expected):
                 self.result_collector.add_result(Passed(self))
             else:
-                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
+                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], response_time))
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
         except InvalidRelationalOperator as e:
