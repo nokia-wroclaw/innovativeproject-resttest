@@ -178,7 +178,7 @@ class TestBehavioral(unittest.TestCase):
         test = """
             POST
                 http://httpbin.org/post,
-            TIMEOUT 10.
+            TIMEOUT 1.
             ASSERT RESPONSE STATUS OK.
         """
 
