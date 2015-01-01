@@ -22,6 +22,9 @@ class TestBehavioral(unittest.TestCase):
         for scenario in result:
             self.assertIsInstance(scenario, ScenarioResults)
 
+    def assertResultIsFailed(self, obj):
+        self.assertIsInstance(obj, Failed)
+
     def test_no_url(self):
         test = """
             POST .
@@ -188,5 +191,36 @@ class TestBehavioral(unittest.TestCase):
         self.assertEqual(2, len(results))
         self.assertIsInstance(results[0], ConnectionError)
         self.assertIsInstance(results[1], Error)
+
+    def test_response_time_assertion_passed(self):
+        test = """
+            GET http://httpbin.org/ .
+            ASSERT RESPONSE TIME < 1000.
+            ASSERT RESPONSE TIME > 100.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(2, len(results))
+        self.assertAllPassed(results)
+
+    def test_response_time_assertion_failed(self):
+        test = """
+            GET http://httpbin.org/ .
+            ASSERT RESPONSE TIME < 1.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(1, len(results))
+        self.assertResultIsFailed(results[0])
 
 

@@ -292,11 +292,33 @@ class AssertResponseTime(Command):
         super(AssertResponseTime, self).__init__(result_collector)
 
     def parse(self, path):
-        self.result_collector.add_result(self)
         self.execute(path)
 
     def execute(self, args):
-        raise Exception("Not implemented yet")
+        if len(args) < 2:
+            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
+            return
+
+        response = self.result_collector.get_response()
+
+        if response is None:
+            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
+            return
+
+        try:
+            relational_operator = args[0]
+            expected = int(args[1])
+
+            content_length = response.elapsed.total_seconds() * 1000
+
+            if compare_by_supposed_relational_operator(content_length, relational_operator, expected):
+                self.result_collector.add_result(Passed(self))
+            else:
+                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
+        except ValueError:
+            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+        except InvalidRelationalOperator as e:
+            self.result_collector.add_result(Error(self, e.message))
 
 
 class AssertCookie(Command):
@@ -515,53 +537,3 @@ class AssertTextContains(Command):
             self.result_collector.add_result(Passed(self))
         else:
             self.result_collector.add_result(Failed(self, needle + " not found", ""))
-
-
-# Base class for testing time
-class AssertTime(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT TIME"
-
-    def __init__(self, result_collector):
-        super(AssertTime, self).__init__(result_collector)
-
-    def parse(self, path):
-        new_class_name = self.__class__.__name__ + path[0]
-
-        next_step = eval(new_class_name + "()")
-        next_step.parse(path[1:])
-
-
-# Test total time of request
-class AssertTimeTotal(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT TIME TOTAL"
-
-    def __init__(self, result_collector):
-        super(AssertTimeTotal, self).__init__(result_collector)
-
-    def parse(self, path):
-        self.result_collector.add_result(self)
-        self.execute(path)
-
-    def execute(self, args):
-        print("Asserting total request time is {}".format(str(args)))
-
-
-# Average time per request?
-class AssertTimeAverage(Command):
-    __metaclass__ = CommandRegister
-
-    pretty_name = "ASSERT TIME AVERAGE"
-
-    def __init__(self, result_collector):
-        super(AssertTimeAverage, self).__init__(result_collector)
-
-    def parse(self, path):
-        self.result_collector.add_result(self)
-        self.execute(path)
-
-    def execute(self, args):
-        print("Asserting average request time is {}".format(str(args)))

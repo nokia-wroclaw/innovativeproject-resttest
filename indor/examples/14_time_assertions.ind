@@ -1,0 +1,2 @@
+GET http://httpbin.org/ .
+ASSERT RESPONSE TIME < 1000.
