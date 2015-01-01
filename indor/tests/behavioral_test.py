@@ -195,7 +195,7 @@ class TestBehavioral(unittest.TestCase):
     def test_response_time_assertion_passed(self):
         test = """
             GET http://httpbin.org/ .
-            ASSERT RESPONSE TIME < 3000.
+            ASSERT RESPONSE TIME < 100000.
             ASSERT RESPONSE TIME > 100.
         """
 
