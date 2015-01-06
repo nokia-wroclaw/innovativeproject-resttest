@@ -1,4 +1,6 @@
 import argparse
+from pyparsing import ParseException
+from general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED
 
 from junit_xml_printer import JunitXMlPrinter
 from reading import read_from_file
@@ -15,11 +17,13 @@ def main():
 
     args = arg_parser.parse_args()
 
-    file_data = read_from_file(args.file)
-
-    test_data = parser.parse(file_data)
-    runner = test_runner.TestsRunner()
-    result = runner.run(test_data)
+    try:
+        file_data = read_from_file(args.file)
+        test_data = parser.parse(file_data)
+        runner = test_runner.TestsRunner()
+        result = runner.run(test_data)
+    except ParseException:
+        result = [GeneralError(GENERAL_ERROR_PARSE_FAILED + args.file)]
 
     if args.xml_output:
         JunitXMlPrinter(result).print_summary()

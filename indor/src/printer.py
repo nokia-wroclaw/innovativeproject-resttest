@@ -1,4 +1,6 @@
 # coding=utf-8
+from general_error import GeneralError
+
 __author__ = 'Sławomir Domagała'
 from result import Passed, Failed, Error, ConnectionError
 
@@ -10,6 +12,10 @@ class Printer:
     def print_summary(self):
         print("Execution finished")
         for scenario_result in self.scenarios_results:
+            if isinstance(scenario_result, GeneralError):
+                print("ERROR: " + scenario_result.message)
+                continue
+
             print("Scenario \"{}\" with flags: {}".format(scenario_result.name, scenario_result.flags))
             for test_result in scenario_result.test_results:
                 print("\tTest {}".format(test_result.name))

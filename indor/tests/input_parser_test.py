@@ -300,11 +300,9 @@ class TestInputParser(unittest.TestCase):
 
         self.assertItemsEqual(actual, expected)
 
-
     def test_incompatible_with_grammar(self):
         to_be_parsed = """
                 BAD EXAMPLE <>
             """
 
-        # actual = parser.parse(to_be_parsed)
-        #TODO implementation
+        actual = parser.parse(to_be_parsed)
