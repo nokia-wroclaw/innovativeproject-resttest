@@ -222,17 +222,3 @@ class TestBehavioral(unittest.TestCase):
         results = scenario.test_results[0].results
         self.assertEqual(1, len(results))
         self.assertResultIsFailed(results[0])
-
-    def test_invalid_string(self):
-        test = """
-                BAD EXAMPLE <>
-            """
-
-        result = self.run_indor(test)
-        self.assertScenarioCount(1, result)
-
-        scenario = result[0]
-
-        results = scenario.test_results[0].results
-        self.assertEqual(1, len(results))
-        self.assertResultIsFailed(results[0])
