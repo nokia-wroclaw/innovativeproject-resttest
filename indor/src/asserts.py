@@ -1,5 +1,6 @@
 # coding=utf-8
 from requests.structures import CaseInsensitiveDict
+from requests.status_codes import codes
 
 from command import Command
 from command_factory import CommandFactory
@@ -137,6 +138,10 @@ class AssertResponseStatus(Command):
                 status = self.map_status_code(status)
             except LookupError as e:
                 self.result_collector.add_result(Error(self, e))
+                return
+        else:
+            if status not in codes:
+                self.result_collector.add_result(Error(self, result.ERROR_INVALID_STATUS_CODE))
                 return
 
         response = self.result_collector.get_response()
