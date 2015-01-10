@@ -25,6 +25,9 @@ class TestBehavioral(unittest.TestCase):
     def assertResultIsFailed(self, obj):
         self.assertIsInstance(obj, Failed)
 
+    def assertResultIsError(self, obj):
+        self.assertIsInstance(obj, Error)
+
     def test_no_url(self):
         test = """
             POST .
@@ -222,3 +225,19 @@ class TestBehavioral(unittest.TestCase):
         results = scenario.test_results[0].results
         self.assertEqual(1, len(results))
         self.assertResultIsFailed(results[0])
+
+    def test_invalid_response_status_code(self):
+        test = """
+            GET http://httpbin.org/ .
+            ASSERT RESPONSE STATUS 800.
+        """
+
+        result = self.run_indor(test)
+        self.assertScenarioCount(1, result)
+
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(1, len(results))
+        self.assertResultIsError(results[0])
+

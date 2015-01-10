@@ -6,6 +6,7 @@ ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
 ERROR_WRONG_CONTENT_TYPE = "Zły typ contentu"
 ERROR_RESPONSE_NOT_FOUND = "Brak odpowiedzi od testowanego serwera"
 ERROR_CONNECTION_TIMEOUT = "Przekroczono zdefiniowany czas połączenia"
+ERROR_INVALID_STATUS_CODE = "Niepoprawny kod statusu"
 
 
 class Result:
