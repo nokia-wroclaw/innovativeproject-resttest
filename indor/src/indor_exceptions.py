@@ -22,3 +22,8 @@ class InvalidRelationalOperator(Exception):
 class ClassPropertyNotFound(Exception):
     def __init__(self, class_name, property_name):
         super(ClassPropertyNotFound, self).__init__("Property {} not found in {}".format(property_name, class_name))
+
+
+class InvalidRepeatParameters(Exception):
+    def __init__(self, params):
+        super(InvalidRepeatParameters, self).__init__("Invalid parameters for REPEAT statement: " + params)

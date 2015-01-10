@@ -112,7 +112,7 @@ class TestInputParser(unittest.TestCase):
                 GET
                     http://api.geonames.org/postalCodeLookupJSON,
                 PARAMS
-                    postalcode 50316
+                    postalcode "50316"
                     username "indor indorowski,.".
 
                 ASSERT RESPONSE STATUS OK.
@@ -251,6 +251,158 @@ class TestInputParser(unittest.TestCase):
         ]
 
         self.assertItemsEqual(actual, expected)
+
+    def test_repeats(self):
+        to_be_parsed = """
+                DEFINE BASE = http://httpbin.org
+
+                GET @BASE@.
+                ASSERT RESPONSE STATUS OK.
+
+                REPEAT FOR
+                {
+                    "run1a": {"url": "http://www.wp.pl", "expected_code": 200},
+                    "run1b": {"url": "http://ww.wp.pl", "expected_code": 404}
+                }
+                    GET #url#.
+                    ASSERT RESPONSE STATUS #expected_code#.
+                END REPEAT
+
+
+                POST @BASE@.
+                ASSERT RESPONSE STATUS OK.
+
+                REPEAT FOR
+                {
+                    "run2a": {"url": "http://www.onet.pl", "expected_code": 200},
+                    "run2b": {"url": "http://ww.onet.pl", "expected_code": 404}
+                }
+                    GET #url#.
+                    ASSERT RESPONSE STATUS #expected_code#.
+                END REPEAT
+                """
+        actual = parser.parse(to_be_parsed)
+
+        expected = [
+            [
+                "GET",
+                "http://httpbin.org"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "OK"
+            ],
+            [
+                "GET",
+                "http://www.wp.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "200"
+            ],
+            [
+                "GET",
+                "http://ww.wp.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "404"
+            ],
+            [
+                "POST",
+                "http://httpbin.org"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "OK"
+            ],
+            [
+                "GET",
+                "http://www.onet.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "200"
+            ],
+            [
+                "GET",
+                "http://ww.onet.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "404"
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)
+
+    def test_repeated_scenarios(self):
+        to_be_parsed = """
+                REPEAT FOR
+                {
+                    "run1": {"url": "http://www.onet.pl", "expected_code": 200},
+                    "run2": {"url": "http://ww.onet.pl", "expected_code": 404}
+                }
+                    SCENARIO "Test 1 with repeats" FLAGS heavy important.
+                        GET #url#.
+                        ASSERT RESPONSE STATUS #expected_code#.
+                END REPEAT
+                """
+        actual = parser.parse(to_be_parsed)
+
+        expected = [
+            [
+                "REPEATED_SCENARIO",
+                "run1",
+                "Test 1 with repeats",
+                "FLAGS",
+                "heavy",
+                "important"
+            ],
+            [
+                "GET",
+                "http://www.onet.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "200"
+            ],
+            [
+                "REPEATED_SCENARIO",
+                "run2",
+                "Test 1 with repeats",
+                "FLAGS",
+                "heavy",
+                "important"
+            ],
+            [
+                "GET",
+                "http://ww.onet.pl"
+            ],
+            [
+                "ASSERT",
+                "RESPONSE",
+                "STATUS",
+                "404"
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)
+
 
     def test_defines(self):
         to_be_parsed = """

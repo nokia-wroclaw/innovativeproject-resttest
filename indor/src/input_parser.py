@@ -2,14 +2,22 @@
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
 from pyparsing import *
+import json
+
+import indor_exceptions
 
 # TODO - Tomasz Wlisłocki - Uprościć tego regexa
+# TODO - Sławomir Domagała - ja go tu tylko przeniosłem :P
 word = Regex('[a-zA-Z0-9.><=:/$&+;?@|^*()%!-_]*[a-zA-Z0-9><=:/$&+;?@|^*()%!-]')
+expression_in_bracket = originalTextFor(nestedExpr("{", "}"))
+quoted_string = QuotedString("\"", multiline=True, escQuote="\\", unquoteResults=True)
+token = expression_in_bracket | quoted_string | word
 
 
 def flatten_list(x):
     # TODO - Ja Cię lubię, ale Twój komentarz jest wyjaśniający jest dłuższy niż kod
     # TODO - Wystarczy tylko :param, :type, :return, :rtype
+    # TODO - TW: Przyłączam się, ja też bardzo lubię Damiana ;)
     """
     If there is list [["sth, "sth"]] then this method return just ["sth", "sth"].
     If x = ["sth", "sth"] method return ["sth", "sth"]
@@ -41,6 +49,39 @@ def parse_constants(input_data):
     return const_definition.transformString(constants_replaced)
 
 
+def parse_repeat_statement(start, length, tokens):
+    repetitions_json, commands = list(tokens)
+    try:
+        repetitions = json.loads(repetitions_json)
+    except:
+        raise indor_exceptions.InvalidRepeatParameters(repetitions_json)
+
+    parsed_string = ""
+
+    for repetition_name, repetition_params in repetitions.items():
+        scenario = Literal("SCENARIO")
+        scenario.setParseAction(replaceWith('REPEATED_SCENARIO "' + str(repetition_name) + '"'))
+
+        repetition = scenario.transformString(commands)
+        for param_name, param_value in repetition_params.items():
+            param = Literal("#") + Literal(param_name) + Literal("#")
+            param.setParseAction(replaceWith(param_value))
+            repetition = param.transformString(repetition)
+
+        parsed_string += repetition
+
+    return parsed_string
+
+
+def parse_repeats(input_data):
+    # repeats_definition = nestedExpr("REPEAT FOR", "END REPEAT")
+    repeats_definition = Suppress("REPEAT FOR") + expression_in_bracket + SkipTo("END REPEAT") + Suppress("END REPEAT")
+
+    repeats_definition.setParseAction(parse_repeat_statement)
+
+    return repeats_definition.transformString(input_data)
+
+
 def parse(input_data):
     consts_replaced = parse_constants(input_data)
 
@@ -52,10 +93,7 @@ def parse(input_data):
     multi_line_comment = nestedExpr(multi_line_comment_start, multi_line_comment_end)
     comment = multi_line_comment | inline_comment
 
-    quoted_string = QuotedString("\"", multiline=True, escQuote="\"", unquoteResults=True)
-    expression_in_bracket = originalTextFor(nestedExpr("{", "}"))
-
-    token = expression_in_bracket | quoted_string | word
+    repeats_parsed = parse_repeats(consts_replaced)
 
     sub_command = Group(OneOrMore(token) + Optional(Literal(",").suppress()))
     command = Group(OneOrMore(sub_command) + ("." + LineEnd()).suppress())
@@ -63,5 +101,5 @@ def parse(input_data):
     parser = OneOrMore(command)
     parser.ignore(comment)
 
-    all_commands = parser.parseString(consts_replaced).asList()
-    return map(flatten_list, all_commands)
+    all_commands = parser.parseString(repeats_parsed).asList()
+    return map(flatten_list, all_commands)  # TW: Ta linijka kodu to piękno najczystszej postaci <3

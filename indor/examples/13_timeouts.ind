@@ -1,5 +1,5 @@
 /%
-This test will failed, because to small timeout value.
+This test will fail, because of to small timeout value.
 %/
 POST
     http://httpbin.org/post,
