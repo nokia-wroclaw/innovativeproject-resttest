@@ -152,7 +152,7 @@ class TestInputParser(unittest.TestCase):
                     postalcode "really
                     long.
                     and. #no comment
-                    snarky\"
+                    \\\"snarky
 
                     /% no comment %/
 
@@ -174,7 +174,7 @@ class TestInputParser(unittest.TestCase):
                     """really
                     long.
                     and. #no comment
-                    snarky\"
+                    "snarky
 
                     /% no comment %/
 

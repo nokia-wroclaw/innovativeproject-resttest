@@ -10,7 +10,7 @@ import indor_exceptions
 # TODO - Sławomir Domagała - ja go tu tylko przeniosłem :P
 word = Regex('[a-zA-Z0-9.><=:/$&+;?@|^*()%!-_]*[a-zA-Z0-9><=:/$&+;?@|^*()%!-]')
 expression_in_bracket = originalTextFor(nestedExpr("{", "}"))
-quoted_string = QuotedString("\"", multiline=True, escQuote="\\", unquoteResults=True)
+quoted_string = QuotedString(quoteChar='"', multiline=True, escChar='\\', unquoteResults=True)
 token = expression_in_bracket | quoted_string | word
 
 
