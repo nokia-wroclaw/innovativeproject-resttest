@@ -264,8 +264,8 @@ class TestInputParser(unittest.TestCase):
                     "run1a": {"url": "http://www.wp.pl", "expected_code": 200},
                     "run1b": {"url": "http://ww.wp.pl", "expected_code": 404}
                 }
-                    GET #url#.
-                    ASSERT RESPONSE STATUS #expected_code#.
+                    GET $url$.
+                    ASSERT RESPONSE STATUS $expected_code$.
                 END REPEAT
 
 
@@ -277,8 +277,8 @@ class TestInputParser(unittest.TestCase):
                     "run2a": {"url": "http://www.onet.pl", "expected_code": 200},
                     "run2b": {"url": "http://ww.onet.pl", "expected_code": 404}
                 }
-                    GET #url#.
-                    ASSERT RESPONSE STATUS #expected_code#.
+                    GET $url$.
+                    ASSERT RESPONSE STATUS $expected_code$.
                 END REPEAT
                 """
         actual = parser.parse(to_be_parsed)
@@ -356,8 +356,8 @@ class TestInputParser(unittest.TestCase):
                     "run2": {"url": "http://ww.onet.pl", "expected_code": 404}
                 }
                     SCENARIO "Test 1 with repeats" FLAGS heavy important.
-                        GET #url#.
-                        ASSERT RESPONSE STATUS #expected_code#.
+                        GET $url$.
+                        ASSERT RESPONSE STATUS $expected_code$.
                 END REPEAT
                 """
         actual = parser.parse(to_be_parsed)

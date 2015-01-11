@@ -17,15 +17,17 @@ class Test(Command):
     def parse(self, path):
         argument = path[0]
 
-        if argument == ASSERT_NAME:
-            next_step = Assert(self.result_collector)
-            next_step.parse(path[1:])
-        elif argument in http_request_types or argument[0] in http_request_types:
-            next_step = Connect(self.result_collector)
-            next_step.parse(path[0:])
-        elif argument == SCENARIO_NAME:
+        if argument == SCENARIO_NAME:
             next_step = Scenario(self.result_collector)
             next_step.parse(path[1:])
         elif argument == REPEATED_SCENARIO_NAME:
             next_step = Scenario(self.result_collector)
             next_step.parse(path[2:], path[1])
+        else:
+            if self.result_collector.execute_current_scenario:
+                if argument == ASSERT_NAME:
+                    next_step = Assert(self.result_collector)
+                    next_step.parse(path[1:])
+                elif argument in http_request_types or argument[0] in http_request_types:
+                    next_step = Connect(self.result_collector)
+                    next_step.parse(path[0:])

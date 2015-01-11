@@ -14,13 +14,15 @@ def main():
     arg_parser.add_argument('file', type=str, nargs='?', help='File with definitions of tests')
     arg_parser.add_argument('--xml', dest='xml_output', action='store_true',
                             help='Print the results in xml format')
+    arg_parser.add_argument('--flags', dest='flags', nargs='*', default=[],
+                            help='Only scenarios with given flags will be executed')
 
     args = arg_parser.parse_args()
 
     try:
         file_data = read_from_file(args.file)
         test_data = parser.parse(file_data)
-        runner = test_runner.TestsRunner()
+        runner = test_runner.TestsRunner(args.flags)
         result = runner.run(test_data)
     except ParseException:
         result = [GeneralError(GENERAL_ERROR_PARSE_FAILED + args.file)]
@@ -33,3 +35,5 @@ def main():
 
 def __main__():
     main()
+
+main()

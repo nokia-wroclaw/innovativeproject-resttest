@@ -5,9 +5,10 @@ from result_collector import ResultCollector
 
 
 class TestsRunner:
-    def __init__(self):
+    def __init__(self, flags):
         self.response = None
-        self.result_collector = ResultCollector(self)
+        self.flags = flags
+        self.result_collector = ResultCollector(self, flags)
         self.responseXML = None
         TestsRunner.request = None
 

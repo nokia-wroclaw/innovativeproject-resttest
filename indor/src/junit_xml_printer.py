@@ -2,7 +2,7 @@ import junit_xml
 from general_error import GeneralError
 from result import Passed, Failed, Error, ConnectionError
 
-
+# TODO: Unit tests!!!
 class JunitXMlPrinter:
     def __init__(self, scenarios_results):
         self.scenarios_results = scenarios_results

@@ -64,7 +64,7 @@ def parse_repeat_statement(start, length, tokens):
 
         repetition = scenario.transformString(commands)
         for param_name, param_value in repetition_params.items():
-            param = Literal("#") + Literal(param_name) + Literal("#")
+            param = Literal("$") + Literal(param_name) + Literal("$")
             param.setParseAction(replaceWith(param_value))
             repetition = param.transformString(repetition)
 
