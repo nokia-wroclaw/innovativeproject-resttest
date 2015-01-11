@@ -5,7 +5,7 @@ from result_collector import ResultCollector
 
 
 class TestsRunner:
-    def __init__(self, flags):
+    def __init__(self, flags=[]):
         self.response = None
         self.flags = flags
         self.result_collector = ResultCollector(self, flags)

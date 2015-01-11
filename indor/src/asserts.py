@@ -1,6 +1,6 @@
 # coding=utf-8
 from requests.structures import CaseInsensitiveDict
-from requests.status_codes import codes
+from requests.status_codes import codes, _codes
 
 from command import Command
 from command_factory import CommandFactory
@@ -140,7 +140,7 @@ class AssertResponseStatus(Command):
                 self.result_collector.add_result(Error(self, e))
                 return
         else:
-            if status not in codes:
+            if int(status) not in _codes.keys():
                 self.result_collector.add_result(Error(self, result.ERROR_INVALID_STATUS_CODE))
                 return
 

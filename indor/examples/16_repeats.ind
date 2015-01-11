@@ -1,0 +1,14 @@
+/%
+	You may repeat any set of commands using REPEAT FOR - END REPEAT statements.
+	Simply provide a valid JSON object containing one object for each repetition.
+	Then, you may use these variables using $variable_name$.
+%/
+
+REPEAT FOR
+{
+    "run1a": {"url": "http://www.wp.pl", "expected_code": 200 },
+    "run1b": {"url": "http://ww.wp.pl", "expected_code": 404 }
+}
+    GET $url$.
+    ASSERT RESPONSE STATUS $expected_code$.
+END REPEAT

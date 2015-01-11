@@ -1,0 +1,13 @@
+/%
+	You may define scenarios and provide flags to them.
+	When executing tests, option --flags may be used.
+	In such case only scenarios with given flags will be executed.
+%/
+
+SCENARIO "Test 1" FLAGS aaa bbb.
+    GET http://www.onet.pl.
+    ASSERT RESPONSE STATUS OK.
+
+SCENARIO "Test 2" FLAGS ccc bbb.
+    GET http://www.wp.pl.
+    ASSERT RESPONSE STATUS OK.
