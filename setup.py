@@ -12,7 +12,8 @@ setup(
         'mock',
         'nose',
         'nose-cov',
-        'junit-xml'
+        'junit-xml',
+        'termcolor'
     ],
     package_dir={'indor': 'indor/src'},
     packages=['indor'],

@@ -31,12 +31,12 @@ ASSERT RESPONSE STATUS OK.
 
 
 # Multiline support for clearer input + very big request
-GET 
-	http://api.something.com:3000, 
-PARAMS 
-	name Joe 
-	age 17, 
-HEADERS 
+GET
+	http://api.something.com:3000,
+PARAMS
+	name Joe
+	age 17,
+HEADERS
 	Accept-Language pl,
 AUTH
 	login password,
@@ -80,7 +80,7 @@ ASSERT PATH path/to/resource/ALL/something EXISTS.
 
 ASSERT PATH path/to/resource/ALL/something MATCHES regexp.
 ASSERT PATH path/to/resource/ALL/something TYPE integer.
-ASSERT 
+ASSERT
 	PATH path/to/resource CONTAINS ANY data1
 	OR
 	PATH path/to/resource CONTAINS ANY data2.

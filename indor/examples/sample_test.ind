@@ -1,11 +1,11 @@
 
 # Our first working test
-GET 
-	http://api.geonames.org/postalCodeLookupJSON, 
-PARAMS 
-	postalcode 50316 
+GET
+	http://api.geonames.org/postalCodeLookupJSON,
+PARAMS
+	postalcode 50316
 	username indor.
-	
+
 ASSERT RESPONSE STATUS OK.
 ASSERT RESPONSE TYPE JSON.
 ASSERT RESPONSE EMPTY.
