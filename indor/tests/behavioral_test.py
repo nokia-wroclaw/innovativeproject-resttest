@@ -7,12 +7,13 @@ import test_runner
 import input_parser as parser
 
 
-class TestBehavioral(unittest.TestCase):
-    def run_indor(self, data):
-        test_data = parser.parse(data)
-        runner = test_runner.TestsRunner()
-        return runner.run(test_data)
+def run_indor(data):
+    test_data = parser.parse(data)
+    runner = test_runner.TestsRunner()
+    return runner.run(test_data)
 
+
+class TestBehavioral(unittest.TestCase):
     def assertAllPassed(self, results):
         for result in results:
             self.assertIsInstance(result, Passed)
@@ -34,7 +35,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -50,7 +51,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -72,7 +73,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE LENGTH < 12345.  # Options: "=" , "<" , ">" , "<=" , ">="
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -92,7 +93,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -111,7 +112,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -129,7 +130,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE REDIRECTS COUNT = 2.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -151,7 +152,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -168,7 +169,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -185,7 +186,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS OK.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -202,7 +203,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE TIME > 1.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -217,7 +218,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE TIME < 1.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]
@@ -232,7 +233,7 @@ class TestBehavioral(unittest.TestCase):
             ASSERT RESPONSE STATUS 800.
         """
 
-        result = self.run_indor(test)
+        result = run_indor(test)
         self.assertScenarioCount(1, result)
 
         scenario = result[0]

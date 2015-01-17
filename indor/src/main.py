@@ -1,13 +1,12 @@
 import argparse
 import os
-import datetime
 
 from pyparsing import ParseException
 
 from general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED
 from printer import Printer
 from reading import read_from_file
-from result import Passed, Failed, Error, ConnectionError
+from statistics import Statistics
 import test_runner
 import input_parser as parser
 
@@ -29,47 +28,6 @@ def get_results_from_file(flags, file_path):
     except ParseException:
         results = [GeneralError(GENERAL_ERROR_PARSE_FAILED + file_path)]
     return results
-
-
-class Statistics(object):
-    def __init__(self):
-        self.scenarios_count = 0
-        self.errors_count = 0
-        self.tests_count = 0
-        self.assertions_count = 0
-        self.passed_count = 0
-        self.errors_count = 0
-        self.failed_count = 0
-        self.start_time = None
-        self.end_time = None
-
-    def set_tests_start(self):
-        self.start_time = datetime.datetime.now()
-
-    def set_tests_finished(self):
-        self.end_time = datetime.datetime.now()
-
-    def get_tests_time(self):
-        return self.end_time - self.start_time
-
-    def collect_statistics(self, scenario_results):
-        for scenario_result in scenario_results:
-            self.scenarios_count += 1
-
-            if isinstance(scenario_result, GeneralError):
-                self.errors_count += 1
-                continue
-
-            for test_result in scenario_result.test_results:
-                self.tests_count += 1
-                for result in test_result.results:
-                    self.assertions_count += 1
-                    if isinstance(result, Passed):
-                        self.passed_count += 1
-                    elif isinstance(result, Failed):
-                        self.failed_count += 1
-                    elif isinstance(result, (Error, ConnectionError)):
-                        self.errors_count += 1
 
 
 def main():
@@ -107,7 +65,6 @@ def main():
     statistics.set_tests_finished()
 
     printer.print_statistics(statistics)
-
 
 
 def __main__():

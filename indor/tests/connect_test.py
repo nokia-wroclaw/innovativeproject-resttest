@@ -1,10 +1,10 @@
-import mock
-
 __author__ = "Damian Mirecki"
 
 import unittest
+
 import requests
-from connect import Connect, extract_section_by_name, get_allow_redirects, get_auth
+
+from connect import extract_section_by_name, get_allow_redirects, get_auth
 import input_parser
 
 
