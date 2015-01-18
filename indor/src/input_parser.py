@@ -39,7 +39,9 @@ def parse_constants(input_data):
 
     # Replacing consts values in input text
     constants_replaced = input_data
-    for key, value in constants.items():
+
+    # Replacing with reverse order so that consts declared earlier were more important
+    for key, value in constants.items()[::-1]:
         const = Literal("@") + Literal(key) + Literal("@")
         const.setParseAction(replaceWith(value))
         constants_replaced = const.transformString(constants_replaced)

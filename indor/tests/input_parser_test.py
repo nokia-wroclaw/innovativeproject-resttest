@@ -451,3 +451,27 @@ class TestInputParser(unittest.TestCase):
         ]
 
         self.assertItemsEqual(actual, expected)
+
+
+    def test_nested_defines(self):
+        to_be_parsed = """
+                DEFINE BASE = http://httpbin.org
+                DEFINE URL2 = @BASE@/post
+
+                GET @BASE@.
+                POST @URL2@.
+                """
+
+        actual = parser.parse(to_be_parsed)
+        expected = [
+            [
+                "GET",
+                "http://httpbin.org"
+            ],
+            [
+                "POST",
+                "http://httpbin.org/post"
+            ]
+        ]
+
+        self.assertItemsEqual(actual, expected)
