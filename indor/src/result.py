@@ -2,11 +2,11 @@
 
 ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
 ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
-# TODO - Bartosz Zięba - polskie komunikaty proszę, nie polsko-angielskie
-ERROR_WRONG_CONTENT_TYPE = "Zły typ contentu"
+ERROR_WRONG_CONTENT_TYPE = "Zły typ zawartości"
 ERROR_RESPONSE_NOT_FOUND = "Brak odpowiedzi od testowanego serwera"
 ERROR_CONNECTION_TIMEOUT = "Przekroczono zdefiniowany czas połączenia"
 ERROR_INVALID_STATUS_CODE = "Niepoprawny kod statusu"
+ERROR_TEST_CLASS_DOES_NOT_EXIST = "Klasa tesująca nie istnieje"
 
 
 class Result:

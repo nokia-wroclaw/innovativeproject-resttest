@@ -20,7 +20,6 @@ class AssertPath(Command):
 
     def parse(self, path):
         try:
-            # TODO: Bartosz Zięba - brak konsekwencji - raz wszystko w try, raz tylko 2 linijki
             if len(path) < 2:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
@@ -30,7 +29,7 @@ class AssertPath(Command):
                 path.insert(0, url)
                 next_step.parse(path)
         except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
 
 
 class AssertPathExists(Command):
@@ -51,7 +50,7 @@ class AssertPathExists(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, url):
-        doc = self.result_collector.get_response_ET()
+        doc = self.result_collector.get_response_ElementTree()
         if len(doc.findall(url)) > 0:
             self.result_collector.add_result(Passed(self))
         else:
@@ -68,7 +67,6 @@ class AssertPathContains(Command):
 
     def parse(self, path):
         try:
-            # TODO: Bartosz Zięba - brak konsekwencji - raz wszystko w try, raz tylko 2 linijki
             if len(path) < 2:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
@@ -80,7 +78,7 @@ class AssertPathContains(Command):
                 path.insert(0, url)
                 next_step.parse(path)
         except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
 
 
 class AssertPathContainsAny(Command):
@@ -101,10 +99,9 @@ class AssertPathContainsAny(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        doc = self.result_collector.get_response_ET()
+        doc = self.result_collector.get_response_ElementTree()
         for e in doc.findall(path[0]):
-            # TODO - Bartosz Zięba - PEP-8, magiczne zmienne, duplikacja kodu
-            if e.text != None:
+            if e.text is not None:
                 if type(e.text) is 'unicode':
                     if path[1].decode('utf-8') in e.text.decode('utf-8'):
                         self.result_collector.add_result(Passed(self))
@@ -126,7 +123,7 @@ class AssertPathContainsEach(Command):
 
     def parse(self, path):
         try:
-            if len(path) != 2:
+            if len(path) < 2:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
                 self.execute(path)
@@ -134,12 +131,9 @@ class AssertPathContainsEach(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        doc = self.result_collector.get_response_ET()
+        doc = self.result_collector.get_response_ElementTree()
         for e in doc.findall(path[0]):
-            # TODO: PEP-8 Bartosz Zięba - wszędzie zamienić na e.text is not None (nie porównuje się z None)
-            # TODO: Bartosz Zięba - Magiczne stringi 'utf-8', 'unicode'
-            # TODO: Bartosz Zięba - Nie da się tego uwspólnić (duplikacja kodu w tym wielkim if-elsie)
-            if e.text != None:
+            if e.text is not None:
                 if type(e.text) is 'unicode':
                     if path[1].decode('utf-8') in e.text.decode('utf-8'):
                         continue
@@ -167,8 +161,6 @@ class AssertPathNodes(Command):
         super(AssertPathNodes, self).__init__(result_collector)
 
     def parse(self, path):
-        # TODO: Bartosz Zięba - Brak konsekwencji - raz wszystko w try, raz tylko 2 linijki w try
-        # TODO: Bartosz Zięba - Łapanie Exception jest chyba bardzo ogólne
         try:
             if len(path) < 2:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
@@ -179,7 +171,7 @@ class AssertPathNodes(Command):
                 path.insert(0, url)
                 next_step.parse(path)
         except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
 
 
 class AssertPathNodesCount(Command):
@@ -203,7 +195,7 @@ class AssertPathNodesCount(Command):
         try:
             relational_operator = path[1]
             expected = int(path[2])
-            doc = self.result_collector.get_response_ET()
+            doc = self.result_collector.get_response_ElementTree()
             num = len(doc.findall(path[0]))
             if compare_by_supposed_relational_operator(num, relational_operator, expected):
                 self.result_collector.add_result(Passed(self))
@@ -225,9 +217,7 @@ class AssertPathFinal(Command):
 
     def parse(self, path):
         try:
-            # TODO: Bartosz Zięba - Wprowadzenie użytkownika w błąd
-            # len(path) != 1 nie oznacza, że ERROR_NOT_ENOUGH_ARGUMENTS
-            if len(path) != 1:
+            if len(path) < 1:
                 self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
             else:
                 self.execute(path)
@@ -235,8 +225,7 @@ class AssertPathFinal(Command):
             self.result_collector.add_result(Error(self, e.message))
 
     def execute(self, path):
-        # TODO: Bartosz Zięba - Dlaczego funkcja jest nazwana get_response_ET? Co to jest ET?
-        doc = self.result_collector.get_response_ET()
+        doc = self.result_collector.get_response_ElementTree()
         if len(doc.findall(path[0])) > 0 and len(doc.findall(path[0]+"/*")) == 0:
             self.result_collector.add_result(Passed(self))
         else:

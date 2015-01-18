@@ -40,7 +40,7 @@ class ResultCollector(object):
         # TODO: Why would we need the next line? It doesn't seem to be working
 #        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
 
-    def get_response_ET(self):
+    def get_response_ElementTree(self):
         if self.test_runner.responseXML == None:
             tree = XmlTreeFactory().get_class(self.test_runner.response.headers.get('content-type'))
             self.test_runner.responseXML = tree.parse(self.test_runner.response.content)
