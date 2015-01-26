@@ -1,3 +1,4 @@
+from assign import Assign
 from command import Command
 from assert_ import Assert
 from connect import Connect
@@ -5,6 +6,7 @@ from scenario import Scenario
 
 ASSERT_NAME = 'ASSERT'
 SCENARIO_NAME = 'SCENARIO'
+ASSIGN_NAME = 'ASSIGN'
 REPEATED_SCENARIO_NAME = 'REPEATED_SCENARIO'
 
 http_request_types = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']
@@ -23,6 +25,9 @@ class Test(Command):
         elif argument == REPEATED_SCENARIO_NAME:
             next_step = Scenario(self.result_collector)
             next_step.parse(path[2:], path[1])
+        elif argument == ASSIGN_NAME:
+            next_step = Assign(self.result_collector)
+            next_step.parse(path[1:])
         else:
             if self.result_collector.execute_current_scenario:
                 if argument == ASSERT_NAME:

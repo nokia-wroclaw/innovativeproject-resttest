@@ -157,6 +157,9 @@ class Connect(Command):
         super(Connect, self).__init__(result_collector)
 
     def parse(self, path):
+        for i in range(0, len(path)):
+            path[i] = self.result_collector.use_variables(path[i])
+
         try:
             request_type, url = parse_url(path)
             func = getattr(requests, request_type.lower())

@@ -54,18 +54,13 @@ def main():
     statistics.set_tests_start()
 
     for file_path in file_paths:
-        try:
-            results = get_results_from_file(args.flags, file_path)
-        except Exception as e:
-            results = [GeneralError(str(e.message))]
-        finally:
-            statistics.collect_statistics(results)
-            printer.print_summary(results, file_path)
+        results = get_results_from_file(args.flags, file_path)
+
+        statistics.collect_statistics(results)
+        printer.print_summary(results, file_path)
 
     statistics.set_tests_finished()
 
     printer.print_statistics(statistics)
 
-
-def __main__():
-    main()
+main()

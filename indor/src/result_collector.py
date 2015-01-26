@@ -1,3 +1,4 @@
+import re
 from test_results import TestResults
 from scenario_data import ScenarioData
 from scenario_results import ScenarioResults
@@ -10,6 +11,16 @@ class ResultCollector(object):
         self.flags = set(flags)
         self.scenarios = []
         self.execute_current_scenario = True
+        self.variables = {}
+
+    def add_variable(self, name, value):
+        self.variables[name] = value
+
+    def use_variables(self, string):
+        variables = re.findall(r'\$[a-zA-Z0-9]+\$', string)
+        for var in variables:
+            string = string.replace(var, self.variables[var])
+        return string
 
     def add_default_scenario(self):
         self.scenarios.append(ScenarioResults(ScenarioData("ANONYMOUS", [])))
