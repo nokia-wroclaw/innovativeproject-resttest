@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import os
 import sys
 
 from junit_xml import TestSuite, TestCase
@@ -12,11 +13,23 @@ class Printer(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def print_summary(self, results):
+    def collect_summary(self, results):
         pass
 
     @abstractmethod
     def print_statistics(self, statistics, file_path):
+        pass
+
+    @abstractmethod
+    def print_initial_information(self):
+        pass
+
+    @abstractmethod
+    def tests_started(self):
+        pass
+
+    @abstractmethod
+    def tests_finished(self):
         pass
 
     def factory(xml_output):
@@ -28,12 +41,25 @@ class Printer(object):
         else:
             return ConsolePrinter()
 
-        assert 0, "Bad shape creation: " + type
+        assert 0, "Bad printer creation: " + type
 
     factory = staticmethod(factory)
 
 
 class ConsolePrinter(Printer):
+    def tests_finished(self):
+        pass
+
+    def tests_started(self):
+        pass
+
+    def print_initial_information(self):
+        this_dir, this_filename = os.path.split(__file__)
+        logo_file_path = os.path.join(this_dir, "logo.txt")
+        logo_file = open(logo_file_path)
+        logo = logo_file.read()
+        print(logo)
+
     def print_statistics(self, statistics):
         sys.stdout.write(
             "{} scenarios, {} tests and {} assertions (".format(statistics.scenarios_count, statistics.tests_count,
@@ -44,7 +70,7 @@ class ConsolePrinter(Printer):
         sys.stdout.write(")\n")
         print "within", statistics.get_tests_time()
 
-    def print_summary(self, results, file_path):
+    def collect_summary(self, results, file_path):
         for scenario_result in results:
             self.print_scenario_result(scenario_result, file_path)
             print
@@ -83,36 +109,49 @@ class ConsolePrinter(Printer):
 
 # TODO: Unit tests!!!
 class JunitXMlPrinter(Printer):
+    def __init__(self):
+        self.test_suites = []
+
+    def tests_finished(self):
+        print(TestSuite.to_xml_string(self.test_suites))
+
+    def tests_started(self):
+        pass
+
+    def print_initial_information(self):
+        pass
+
     def print_statistics(self, statistics):
         pass
 
-    def print_summary(self, results, file_path):
-        test_suites = []
+    def collect_summary(self, results, file_path):
         for scenario_result in results:
-            if isinstance(scenario_result, GeneralError):
-                test_suite = TestSuite("", "")
-                test_suites.append(test_suite)
-                test_case = TestCase("", "")
-                test_case.add_error_info(scenario_result.message)
-                test_suite.test_cases.append(test_case)
-                continue
+            test_suite = self._collect_test_suite(scenario_result)
+            self.test_suites.append(test_suite)
 
-            test_suite = TestSuite(scenario_result.name)
-            for test_result in scenario_result.test_results:
-                test_case = TestCase(test_result.name, test_result.name)
-                for result in test_result.results:
-                    if isinstance(result, Failed):
-                        test_case.add_failure_info("ASSERTION {} failed".format(result.pretty_name),
-                                                   "EXPECTED {}\nGOT {}".format(result.expected,
-                                                                                result.actual))
-                    elif isinstance(result, (Error, ConnectionError)):
-                        test_case.add_error_info("ASSERTION {} failed".format(result.pretty_name),
-                                                 "ERROR {}".format(result.error))
-                    elif isinstance(result, Passed):
-                        pass
-                    # TODO: What to do below?
-                    else:
-                        raise Exception("Unknown state")
-                test_suite.test_cases.append(test_case)
-            test_suites.append(test_suite)
-        print(TestSuite.to_xml_string(test_suites))
+    def _collect_test_suite(self, scenario_result):
+        if isinstance(scenario_result, GeneralError):
+            test_case = TestCase("", "")
+            test_case.add_error_info(scenario_result.message)
+            test_suite = TestSuite("", "")
+            test_suite.test_cases.append(test_case)
+            return test_suite
+
+        test_suite = TestSuite(scenario_result.name)
+        for test_result in scenario_result.test_results:
+            test_case = TestCase(test_result.name, test_result.name)
+            for result in test_result.results:
+                if isinstance(result, Failed):
+                    test_case.add_failure_info("ASSERTION {} failed".format(result.pretty_name),
+                                               "EXPECTED {}\nGOT {}".format(result.expected,
+                                                                            result.actual))
+                elif isinstance(result, (Error, ConnectionError)):
+                    test_case.add_error_info("ASSERTION {} failed".format(result.pretty_name),
+                                             "ERROR {}".format(result.error))
+                elif isinstance(result, Passed):
+                    pass
+                # TODO: What to do below?
+                else:
+                    raise Exception("Unknown state")
+            test_suite.test_cases.append(test_case)
+        return test_suite

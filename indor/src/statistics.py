@@ -16,10 +16,10 @@ class Statistics(object):
         self.start_time = None
         self.end_time = None
 
-    def set_tests_start(self):
+    def tests_started(self):
         self.start_time = datetime.datetime.now()
 
-    def set_tests_finished(self):
+    def tests_finished(self):
         if self.start_time is None:
             raise Exception("Start time must be set")
 
