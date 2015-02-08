@@ -15,6 +15,8 @@ ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
 JSON_NAME = "JSON"
 TIMEOUT_NAME = "TIMEOUT"
 
+DEFAULT_TIMEOUT = 10  # seconds
+
 
 def extract_section_by_name(path, section_name):
     """
@@ -141,7 +143,7 @@ def get_timeout(path):
     section = extract_section_by_name(path, TIMEOUT_NAME)
 
     if section is None:
-        return None
+        return DEFAULT_TIMEOUT
 
     return float(section[0]) / 1000.0
 
@@ -174,6 +176,7 @@ class Connect(Command):
             self.result_collector.add_result(ConnectionError(self, e))
         except AttributeError:
             self.result_collector.add_result(
-                ConnectionError(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
+                ConnectionError(self,
+                                indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
         except requests.exceptions.Timeout as e:
             self.result_collector.add_result(ConnectionError(self, result.ERROR_CONNECTION_TIMEOUT))
