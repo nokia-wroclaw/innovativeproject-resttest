@@ -1,3 +1,4 @@
+# coding=utf-8
 import result
 from command import Command
 from command_factory import CommandFactory
