@@ -6,7 +6,7 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator, KeywordNotFound
+from indor_exceptions import InvalidRelationalOperator, KeywordNotFound, IndorSyntaxErrorWrongNumberOfArguments
 import result
 from relational_operators import compare_by_supposed_relational_operator
 
@@ -37,8 +37,8 @@ class AssertResponseRedirectsCount(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
 
@@ -59,7 +59,7 @@ class AssertResponseRedirectsCount(Command):
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error.from_exception(self, e))
 
 
 class AssertResponse(Command):
@@ -72,14 +72,11 @@ class AssertResponse(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
-        if next_step is None:
-            self.result_collector.add_result(Error(self, KeywordNotFound(path[0])))
-            return
-
         next_step.parse(path[1:])
 
 
@@ -93,8 +90,9 @@ class AssertResponseNot(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
@@ -137,11 +135,12 @@ class AssertResponseStatus(Command):
             try:
                 status = self.map_status_code(status)
             except LookupError as e:
-                self.result_collector.add_result(Error(self, e))
+                self.result_collector.add_result(Error.from_exception(self, e))
                 return
         else:
             if int(status) not in _codes.keys():
-                self.result_collector.add_result(Error(self, result.ERROR_INVALID_STATUS_CODE))
+                self.result_collector.add_result(Error(self, result.ERROR_INVALID_STATUS_CODE,
+                                                       "Got " + status + " but only " + _codes.keys().__str__() + " is valid."))
                 return
 
         response = self.result_collector.get_response()
@@ -169,8 +168,9 @@ class AssertResponseType(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
@@ -215,8 +215,8 @@ class AssertResponseLength(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
 
@@ -237,7 +237,7 @@ class AssertResponseLength(Command):
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error.from_exception(self, e))
 
 
 class AssertResponseEmpty(Command):
@@ -301,8 +301,8 @@ class AssertResponseTime(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
 
@@ -323,7 +323,7 @@ class AssertResponseTime(Command):
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error.from_exception(self, e))
 
 
 class AssertCookie(Command):
@@ -336,8 +336,9 @@ class AssertCookie(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
@@ -353,8 +354,7 @@ class AssertCookieSet(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__)
 
         self.execute(path)
 
@@ -385,9 +385,8 @@ class AssertCookieValue(Command):
         super(AssertCookieValue, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+        if len(path) != 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: cookie name and cookie value.')
 
         self.execute(path)
 
@@ -424,8 +423,9 @@ class AssertHeader(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         next_step.parse(path[1:])
@@ -440,9 +440,8 @@ class AssertHeaderSet(Command):
         super(AssertHeaderSet, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+        if len(path) != 1:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'One argument expected: header name.')
 
         self.execute(path)
 
@@ -472,9 +471,8 @@ class AssertHeaderValue(Command):
         super(AssertHeaderValue, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+        if len(path) != 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: header name and header value.')
 
         self.execute(path)
 
@@ -523,8 +521,7 @@ class AssertTextContains(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least one argument expected')
 
         self.execute(path)
 

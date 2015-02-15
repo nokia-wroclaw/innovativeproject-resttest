@@ -32,14 +32,14 @@ class Printer(object):
     def tests_finished(self):
         pass
 
-    def factory(xml_output):
+    def factory(xml_output, verbose):
         """
         :rtype : Printer
         """
         if xml_output:
-            return JunitXMlPrinter()
+            return JunitXMlPrinter(verbose)
         else:
-            return ConsolePrinter()
+            return ConsolePrinter(verbose)
 
         assert 0, "Bad printer creation: " + type
 
@@ -47,6 +47,9 @@ class Printer(object):
 
 
 class ConsolePrinter(Printer):
+    def __init__(self, verbose):
+        self.verbose = verbose
+
     def tests_finished(self):
         pass
 
@@ -102,14 +105,16 @@ class ConsolePrinter(Printer):
             cprint("    FAILED: {}\n      EXPECTED {}\tGOT {}"
                    .format(assertion_result.pretty_name, assertion_result.expected, assertion_result.actual), 'red')
         elif isinstance(assertion_result, (Error, ConnectionError)):
-            cprint("    ERROR: {}\n      {}".format(assertion_result.pretty_name, assertion_result.error), 'red')
+            cprint("    {}      {}".format(assertion_result.pretty_name, assertion_result.error), 'red')
+            if self.verbose:
+                cprint("    {}".format(assertion_result.extended_information), 'red')
         else:
             print("\t\t ASSERTION: {}\n\t\tUNKNOWN RESULT".format(assertion_result.pretty_name))
 
 
 # TODO: Unit tests!!!
 class JunitXMlPrinter(Printer):
-    def __init__(self):
+    def __init__(self, verbose):
         self.test_suites = []
 
     def tests_finished(self):

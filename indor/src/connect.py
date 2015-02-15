@@ -159,8 +159,8 @@ class Connect(Command):
         super(Connect, self).__init__(result_collector)
 
     def parse(self, path):
-        for i in range(0, len(path)):
-            path[i] = self.result_collector.use_variables(path[i])
+        # for i in range(0, len(path)):
+        #     path[i] = self.result_collector.use_variables(path[i]) TODO Sławomir!! to nie działało ni czorta
 
         try:
             request_type, url = parse_url(path)
@@ -180,3 +180,5 @@ class Connect(Command):
                                 indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
         except requests.exceptions.Timeout as e:
             self.result_collector.add_result(ConnectionError(self, result.ERROR_CONNECTION_TIMEOUT))
+        except requests.exceptions.ConnectionError as e:
+            self.result_collector.add_result(ConnectionError(self, e.message))

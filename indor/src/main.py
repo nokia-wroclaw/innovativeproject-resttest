@@ -4,7 +4,8 @@ import os
 
 from pyparsing import ParseException
 
-from general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED
+from general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED, GENERAL_ERROR_FILE_NOT_FOUND, \
+    GENERAL_ERROR_UNKNOWN_ERROR
 from printer import Printer
 from reading import read_from_file
 from statistics import Statistics
@@ -22,6 +23,8 @@ def parse_arguments():
                             help='Only scenarios with given flags will be executed')
     arg_parser.add_argument('--filename', dest='filename_pattern', default='*.ind',
                             help='Only files with name matches given pattern will be executed')
+    arg_parser.add_argument('--verbose', dest='verbose', action='store_true',
+                            help='Print extended information about tests')
     args = arg_parser.parse_args()
 
     return args
@@ -35,7 +38,7 @@ class Indor(object):
         self.tests_dir = args.dir
         self.filename_pattern = args.filename_pattern
 
-        self.printer = Printer.factory(args.xml_output)
+        self.printer = Printer.factory(args.xml_output, args.verbose)
         self.statistics = Statistics()
 
         self.run_tests()
@@ -71,8 +74,12 @@ class Indor(object):
             test_data = parser.parse(file_data)
             runner = test_runner.TestsRunner(self.flags)
             results = runner.run(test_data)
+        except IOError:
+            results = [GeneralError(GENERAL_ERROR_FILE_NOT_FOUND + file_path)]
         except ParseException:
             results = [GeneralError(GENERAL_ERROR_PARSE_FAILED + file_path)]
+        except Exception as e:
+            results = [GeneralError(GENERAL_ERROR_UNKNOWN_ERROR + file_path + e.message)]
         return results
 
     def get_test_files_paths(self):

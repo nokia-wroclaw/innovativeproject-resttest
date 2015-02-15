@@ -1,3 +1,5 @@
+import re
+from indor_exceptions import IndorSyntaxErrorClassNotExists
 from singleton import Singleton
 
 
@@ -12,6 +14,12 @@ class CommandFactory:
 
     def get_class(self, prefix, suffix, result_collector):
         new_class_name = prefix + suffix.title()
+
         if new_class_name not in self.dict:
-            return None
+            raise IndorSyntaxErrorClassNotExists(prefix, suffix, new_class_name)
+
         return self.dict[new_class_name](result_collector)
+
+    def get_class_children(self, class_name):
+        prog = re.compile(class_name + "[A-Za-z]+")
+        return [child_type.pretty_name for child_name, child_type in self.dict.iteritems() if prog.match(child_name)]
