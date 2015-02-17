@@ -10,6 +10,7 @@ class TestsRunner:
         self.flags = flags
         self.result_collector = ResultCollector(self, flags)
         self.responseXML = None
+        self.parser = None
         TestsRunner.request = None
 
     def run(self, test_lines):

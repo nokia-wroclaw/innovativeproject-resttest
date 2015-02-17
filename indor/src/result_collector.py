@@ -52,10 +52,27 @@ class ResultCollector(object):
 #        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
 
     def get_response_ElementTree(self):
-        if self.test_runner.responseXML == None:
-            tree = XmlTreeFactory().get_class(self.test_runner.response.headers.get('content-type'))
+        if self.test_runner.responseXML is None:
+            if self.test_runner.parser is None:
+                contentType = self.test_runner.response.headers.get('content-type')
+                t = contentType[:contentType.index(';')]
+                t = t.split("/")
+                class_name = ""
+                for i in range(0,len(t)):
+                    class_name += t[i].lower().title()
+            else:
+                class_name = self.test_runner.parser
+            tree = XmlTreeFactory().get_class(class_name)
             self.test_runner.responseXML = tree.parse(self.test_runner.response.content)
         return self.test_runner.responseXML
+
+    def set_parser(self, name):
+        if name.lower() == "default":
+            self.test_runner.parser = None
+            self.test_runner.responseXML = None
+        else:
+            self.test_runner.parser = name
+            self.test_runner.responseXML = None
 
     def is_scenario_executed(self, scenario):
         if not self.flags:

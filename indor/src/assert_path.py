@@ -8,6 +8,7 @@ from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator, IndorSyntaxErrorWrongNumberOfArguments
 import result
 from relational_operators import compare_by_supposed_relational_operator
+import select_parser # important import
 
 
 class AssertPath(Command):

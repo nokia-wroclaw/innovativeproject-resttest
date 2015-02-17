@@ -5,11 +5,13 @@ from connect import Connect
 from indor_exceptions import IndorSyntaxErrorClassNotExists, IndorSyntaxErrorWrongNumberOfArguments
 from result import Error
 from scenario import Scenario
+from select_parser import Set
 
 ASSERT_NAME = 'ASSERT'
 SCENARIO_NAME = 'SCENARIO'
 ASSIGN_NAME = 'ASSIGN'
 REPEATED_SCENARIO_NAME = 'REPEATED_SCENARIO'
+SET_NAME = 'SET'
 
 http_request_types = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']
 
@@ -42,5 +44,8 @@ class Test(Command):
                     elif argument in http_request_types or argument[0] in http_request_types:
                         next_step = Connect(self.result_collector)
                         next_step.parse(path[0:])
+                    elif argument == SET_NAME:
+                        next_step = Set(self.result_collector)
+                        next_step.parse(path[1:])
         except (IndorSyntaxErrorClassNotExists, IndorSyntaxErrorWrongNumberOfArguments) as e:
             self.result_collector.add_result(Error.syntax_error(self, path, e.message))
