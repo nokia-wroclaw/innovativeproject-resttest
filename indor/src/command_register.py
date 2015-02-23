@@ -1,6 +1,5 @@
 from indor_exceptions import ClassPropertyNotFound
 
-__author__ = 'slawomir'
 from command import Command
 from command_factory import CommandFactory
 

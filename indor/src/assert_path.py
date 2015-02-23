@@ -128,17 +128,13 @@ class AssertPathContainsEach(Command):
         for e in doc.findall(path[0]):
             if e.text is not None:
                 if type(e.text) is 'unicode':
-                    if path[1].decode('utf-8') in e.text.decode('utf-8'):
-                        continue
-                    else:
-                        self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
-                        return
+                    text = e.text.decode('utf-8')
                 else:
-                    if path[1].decode('utf-8') in e.text:
-                        continue
-                    else:
-                        self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
-                        return
+                    text = e.text
+
+                if path[1].decode('utf-8') not in text:
+                    self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
+                    return
             else:
                 self.result_collector.add_result(Failed(self, "ASSERT PATH CONTAINS EACH", ""))
                 return

@@ -1,6 +1,4 @@
 # coding=utf-8
-__author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
-
 from pyparsing import *
 import json
 
@@ -8,6 +6,7 @@ import indor_exceptions
 
 # TODO - Tomasz Wlisłocki - Uprościć tego regexa
 # TODO - Sławomir Domagała - ja go tu tylko przeniosłem :P
+# TODO - Damian Mirecki, Bartosz Zięba - kto jest autorem? :D
 word = Regex('[a-zA-Z0-9.><=:/$&+;?@|^*()%!-_]*[a-zA-Z0-9><=:/$&+;?@|^*()%!-]')
 expression_in_bracket = originalTextFor(nestedExpr("{", "}"))
 quoted_string = QuotedString(quoteChar='"', multiline=True, escChar='\\', unquoteResults=True)
