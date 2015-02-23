@@ -4,7 +4,7 @@ __author__ = 'Bartosz Zięba'
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
-from indor_exceptions import IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 
 
 class Set(Command):
@@ -17,7 +17,7 @@ class Set(Command):
 
     def parse(self, path):
         if len(path) <= 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                          self.__class__.__name__))
         else:
@@ -36,7 +36,7 @@ class SetParser(Command):
 
     def parse(self, path):
         if len(path) < 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                          self.__class__.__name__))
         else:

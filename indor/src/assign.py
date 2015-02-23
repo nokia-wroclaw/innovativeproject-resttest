@@ -3,7 +3,7 @@ import re
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
-from indor_exceptions import IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from result import Error
 import result
 
@@ -21,7 +21,7 @@ class Assign(Command):
             path[i] = self.result_collector.use_variables(path[i])
 
         if len(path) <= 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -40,7 +40,7 @@ class AssignResponse(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 

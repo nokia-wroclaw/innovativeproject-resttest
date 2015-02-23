@@ -6,7 +6,7 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator, KeywordNotFound, IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import InvalidRelationalOperator, KeywordNotFound, SyntaxErrorWrongNumberOfArguments
 import result
 from relational_operators import compare_by_supposed_relational_operator
 
@@ -37,7 +37,7 @@ class AssertResponseRedirectsCount(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
@@ -72,7 +72,7 @@ class AssertResponse(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -90,7 +90,7 @@ class AssertResponseNot(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -168,7 +168,7 @@ class AssertResponseType(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -215,7 +215,7 @@ class AssertResponseLength(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
@@ -301,7 +301,7 @@ class AssertResponseTime(Command):
 
     def execute(self, args):
         if len(args) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          'At least two arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
@@ -336,7 +336,7 @@ class AssertCookie(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -354,7 +354,7 @@ class AssertCookieSet(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__)
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__)
 
         self.execute(path)
 
@@ -386,7 +386,7 @@ class AssertCookieValue(Command):
 
     def parse(self, path):
         if len(path) != 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: cookie name and cookie value.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: cookie name and cookie value.')
 
         self.execute(path)
 
@@ -423,7 +423,7 @@ class AssertHeader(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -441,7 +441,7 @@ class AssertHeaderSet(Command):
 
     def parse(self, path):
         if len(path) != 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'One argument expected: header name.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'One argument expected: header name.')
 
         self.execute(path)
 
@@ -472,7 +472,7 @@ class AssertHeaderValue(Command):
 
     def parse(self, path):
         if len(path) != 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: header name and header value.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: header name and header value.')
 
         self.execute(path)
 
@@ -521,7 +521,7 @@ class AssertTextContains(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least one argument expected')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least one argument expected')
 
         self.execute(path)
 

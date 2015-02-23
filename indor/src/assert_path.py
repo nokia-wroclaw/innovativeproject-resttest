@@ -5,7 +5,7 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator, IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
 import result
 from relational_operators import compare_by_supposed_relational_operator
 import select_parser # important import
@@ -21,7 +21,7 @@ class AssertPath(Command):
 
     def parse(self, path):
         if len(path) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          'At least 2 arguments expected. ' + self.pretty_name +
                                                          ' is not valid command.', CommandFactory().get_class_children(
                                                              self.__class__.__name__))
@@ -43,7 +43,7 @@ class AssertPathExists(Command):
 
     def parse(self, path):
         if len(path) != 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          'The path to check expected.')
 
         self.execute(path[0])
@@ -66,7 +66,7 @@ class AssertPathContains(Command):
 
     def parse(self, path):
         if len(path) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(self.__class__.__name__))
 
         url = path[0]
@@ -88,7 +88,7 @@ class AssertPathContainsAny(Command):
 
     def parse(self, path):
         if len(path) != 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -119,7 +119,7 @@ class AssertPathContainsEach(Command):
 
     def parse(self, path):
         if len(path) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least 2 arguments expected')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least 2 arguments expected')
 
         self.execute(path)
 
@@ -155,7 +155,7 @@ class AssertPathNodes(Command):
 
     def parse(self, path):
         if len(path) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
@@ -176,7 +176,7 @@ class AssertPathNodesCount(Command):
 
     def parse(self, path):
         if len(path) < 2:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least two arguments expected.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least two arguments expected.')
 
         self.execute(path)
 
@@ -207,7 +207,7 @@ class AssertPathFinal(Command):
 
     def parse(self, path):
         if len(path) < 1:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least on argument expected.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least on argument expected.')
 
         self.execute(path)
 

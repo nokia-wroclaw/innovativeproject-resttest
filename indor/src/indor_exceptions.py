@@ -13,14 +13,14 @@ class IndorSyntaxErrorClassNotExists(Exception):
             " This class not existed. There might by a typo or you have to implement it.")
 
 
-class IndorSyntaxErrorWrongNumberOfArguments(Exception):
+class SyntaxErrorWrongNumberOfArguments(Exception):
     def __init__(self, class_name, condition_description="", hints=None):
         message = "Error detected at " + class_name + ". Wrong number of arguments. " + condition_description
 
         if hints is not None:
             message += " Did you mean " + ", ".join(hints) + '?'
 
-        super(IndorSyntaxErrorWrongNumberOfArguments, self).__init__(message)
+        super(SyntaxErrorWrongNumberOfArguments, self).__init__(message)
 
 
 class TypeRequestNotFound(Exception):

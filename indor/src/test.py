@@ -2,7 +2,7 @@ from assign import Assign
 from command import Command
 from assert_ import Assert
 from connect import Connect
-from indor_exceptions import IndorSyntaxErrorClassNotExists, IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import IndorSyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments
 from result import Error
 from scenario import Scenario
 from select_parser import Set
@@ -47,5 +47,5 @@ class Test(Command):
                     elif argument == SET_NAME:
                         next_step = Set(self.result_collector)
                         next_step.parse(path[1:])
-        except (IndorSyntaxErrorClassNotExists, IndorSyntaxErrorWrongNumberOfArguments) as e:
+        except (IndorSyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments) as e:
             self.result_collector.add_result(Error.syntax_error(self, path, e.message))

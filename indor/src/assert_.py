@@ -1,7 +1,7 @@
 # coding=utf-8
 from assert_path import *
 from asserts import *
-from indor_exceptions import IndorSyntaxErrorWrongNumberOfArguments
+from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 
 
 class Assert(Command):
@@ -17,7 +17,7 @@ class Assert(Command):
             path[i] = self.result_collector.use_variables(path[i])
 
         if len(path) == 0:
-            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
 
