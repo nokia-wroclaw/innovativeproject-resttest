@@ -1,12 +1,13 @@
 # coding=utf-8
 
 ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
-ERROR_NOT_ENOUGH_ARGUMENTS = "Za mało argumentów"
+ERROR_WRONG_NUMBER_OF_ARGUMENTS = "Za mało argumentów"
 ERROR_WRONG_CONTENT_TYPE = "Zły typ zawartości"
 ERROR_RESPONSE_NOT_FOUND = "Brak odpowiedzi od testowanego serwera"
 ERROR_CONNECTION_TIMEOUT = "Przekroczono zdefiniowany czas połączenia"
 ERROR_INVALID_STATUS_CODE = "Niepoprawny kod statusu"
 ERROR_TEST_CLASS_DOES_NOT_EXIST = "Klasa tesująca nie istnieje"
+ERROR_WRONG_SYNTAX_IN = "Syntax error in "
 
 
 class Result:
@@ -27,12 +28,22 @@ class Failed(Result):
 
 
 class Error(Result):
-    def __init__(self, class_instance, error):
+    def __init__(self, class_instance, short_message, extended_information=""):
         Result.__init__(self, class_instance)
-        self.error = error
+        self.error = short_message
+        self.extended_information = extended_information
+
+    @classmethod
+    def from_exception(cls, class_instance, exception):
+        return cls(class_instance, exception.message)
+
+    @classmethod
+    def syntax_error(cls, class_instance, command, message):
+        return cls(class_instance, ERROR_WRONG_SYNTAX_IN + ' '.join(command), message)
 
 
 class ConnectionError(Result):
-    def __init__(self, class_instance, error):
+    def __init__(self, class_instance, short_message, extended_information=""):
         Result.__init__(self, class_instance)
-        self.error = error
+        self.error = short_message
+        self.extended_information = extended_information

@@ -1,6 +1,7 @@
 # coding=utf-8
-from asserts import *
 from assert_path import *
+from asserts import *
+from indor_exceptions import IndorSyntaxErrorWrongNumberOfArguments
 
 
 class Assert(Command):
@@ -16,7 +17,8 @@ class Assert(Command):
             path[i] = self.result_collector.use_variables(path[i])
 
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, "Za mało argumentów"))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector).parse(path[1:])

@@ -1,3 +1,4 @@
+# coding=utf-8
 import result
 from command import Command
 from command_factory import CommandFactory
@@ -14,6 +15,8 @@ AUTH_NAME = "AUTH"
 ALLOW_REDIRECTS_NAME = "ALLOW REDIRECTS"
 JSON_NAME = "JSON"
 TIMEOUT_NAME = "TIMEOUT"
+
+DEFAULT_TIMEOUT = 10  # seconds
 
 
 def extract_section_by_name(path, section_name):
@@ -141,9 +144,18 @@ def get_timeout(path):
     section = extract_section_by_name(path, TIMEOUT_NAME)
 
     if section is None:
-        return None
+        return DEFAULT_TIMEOUT
 
     return float(section[0]) / 1000.0
+
+
+def transform_nested_array(array, transform):
+    for i in range(0, len(array)):
+        if isinstance(array[i], (list, tuple)):
+            array[i] = transform_nested_array(array[i], transform)
+        else:
+            array[i] = transform(array[i])
+    return array
 
 
 class Connect(Command):
@@ -157,6 +169,7 @@ class Connect(Command):
         super(Connect, self).__init__(result_collector)
 
     def parse(self, path):
+        path = transform_nested_array(path, self.result_collector.use_variables)
 
         try:
             request_type, url = parse_url(path)
@@ -172,6 +185,9 @@ class Connect(Command):
             self.result_collector.add_result(ConnectionError(self, e))
         except AttributeError:
             self.result_collector.add_result(
-                ConnectionError(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
+                ConnectionError(self,
+                                indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
         except requests.exceptions.Timeout as e:
             self.result_collector.add_result(ConnectionError(self, result.ERROR_CONNECTION_TIMEOUT))
+        except requests.exceptions.ConnectionError as e:
+            self.result_collector.add_result(ConnectionError(self, e.message))

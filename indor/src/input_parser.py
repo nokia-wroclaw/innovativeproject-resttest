@@ -15,13 +15,7 @@ token = expression_in_bracket | quoted_string | word
 
 
 def flatten_list(x):
-    # TODO - Ja Cię lubię, ale Twój komentarz jest wyjaśniający jest dłuższy niż kod
-    # TODO - Wystarczy tylko :param, :type, :return, :rtype
-    # TODO - TW: Przyłączam się, ja też bardzo lubię Damiana ;)
     """
-    If there is list [["sth, "sth"]] then this method return just ["sth", "sth"].
-    If x = ["sth", "sth"] method return ["sth", "sth"]
-
     :param x:
     :type x: list
     :return:

@@ -27,8 +27,8 @@ def compare_by_supposed_relational_operator(actual, supposed_relational_operator
     }
 
     if supposed_relational_operator not in operators_mapping:
-        raise InvalidRelationalOperator("got '" + supposed_relational_operator + "' but only " +
-                                        operators_mapping.keys().__str__() + " is accepted")
+        raise InvalidRelationalOperator("Got '" + supposed_relational_operator + "' but only " +
+                                        operators_mapping.keys().__str__() + " are valid.")
 
     compare = operators_mapping[supposed_relational_operator]
 

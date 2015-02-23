@@ -1,0 +1,24 @@
+
+GET http://httpbin.org.
+ASSERT RESPONSE STATUS 1000.
+
+GET http://httpbin.org.
+ASSERT RESPONSE BLA BLA.
+
+GET http://httpbin.org.
+BLA BLA.
+
+GET http://httpbin.org.
+ASSERT.
+
+GET http://httpbin.org.
+ASSERT PATH.
+
+GET http://httpbin.org.
+ASSERT PATH EXISTS.
+
+GET http://httpbin.org.
+ASSERT RESPONSE TYPE.
+
+GET http://httpbin.org.
+ASSERT COOKIE.

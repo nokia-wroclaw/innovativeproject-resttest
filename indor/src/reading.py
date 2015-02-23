@@ -1,11 +1,8 @@
 # coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
 
-import os
-
 
 def read_from_file(filename):
-
     f = open(filename, "r")
 
     file_data = f.read()

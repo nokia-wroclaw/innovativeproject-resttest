@@ -1,7 +1,26 @@
+from result import ERROR_WRONG_SYNTAX_IN
+
 
 class KeywordNotFound(Exception):
     def __init__(self, keyword):
         super(KeywordNotFound, self).__init__("Incorrect keyword: " + keyword)
+
+
+class IndorSyntaxErrorClassNotExists(Exception):
+    def __init__(self, prefix, suffix, new_class_name):
+        super(IndorSyntaxErrorClassNotExists, self).__init__(
+            "Class " + prefix + " got " + suffix + " and tried to instance class " + new_class_name + "." +
+            " This class not existed. There might by a typo or you have to implement it.")
+
+
+class IndorSyntaxErrorWrongNumberOfArguments(Exception):
+    def __init__(self, class_name, condition_description="", hints=None):
+        message = "Error detected at " + class_name + ". Wrong number of arguments. " + condition_description
+
+        if hints is not None:
+            message += " Did you mean " + ", ".join(hints) + '?'
+
+        super(IndorSyntaxErrorWrongNumberOfArguments, self).__init__(message)
 
 
 class TypeRequestNotFound(Exception):

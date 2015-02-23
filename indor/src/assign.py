@@ -3,6 +3,7 @@ import re
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
+from indor_exceptions import IndorSyntaxErrorWrongNumberOfArguments
 from result import Error
 import result
 
@@ -20,8 +21,9 @@ class Assign(Command):
             path[i] = self.result_collector.use_variables(path[i])
 
         if len(path) <= 1:
-            self.result_collector.add_result(Error(self, "Za mało argumentów"))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         command = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
         command.parse(path[2:])
@@ -38,8 +40,9 @@ class AssignResponse(Command):
 
     def parse(self, path):
         if len(path) == 0:
-            self.result_collector.add_result(Error(self, "Za mało argumentów"))
-            return
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
 
         self.command = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         self.command.parse(path[1:])

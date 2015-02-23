@@ -5,6 +5,7 @@ from xml_tree import XmlTree
 import xml.etree.ElementTree as ET
 from xml_tree_register import XmlTreeRegister
 import json
+from bs4 import BeautifulSoup
 
 
 class TextXml(XmlTree):
@@ -14,6 +15,15 @@ class TextXml(XmlTree):
 
     def parse(self, xml):
         return ET.fromstring(xml)
+
+
+class TextHtml(XmlTree):
+    __metaclass__ = XmlTreeRegister
+
+    pretty_name = "TEXT HTML"
+
+    def parse(self, xml):
+        return ET.fromstring(BeautifulSoup.prettify(xml))
 
 
 class ApplicationJson(XmlTree):

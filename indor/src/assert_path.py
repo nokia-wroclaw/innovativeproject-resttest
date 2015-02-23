@@ -5,9 +5,10 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator
+from indor_exceptions import InvalidRelationalOperator, IndorSyntaxErrorWrongNumberOfArguments
 import result
 from relational_operators import compare_by_supposed_relational_operator
+import select_parser # important import
 
 
 class AssertPath(Command):
@@ -19,17 +20,17 @@ class AssertPath(Command):
         super(AssertPath, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                url = path[0]
-                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-                path = path[2:]
-                path.insert(0, url)
-                next_step.parse(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
+        if len(path) < 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         'At least 2 arguments expected. ' + self.pretty_name +
+                                                         ' is not valid command.', CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
+
+        url = path[0]
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+        path = path[2:]
+        path.insert(0, url)
+        next_step.parse(path)
 
 
 class AssertPathExists(Command):
@@ -41,13 +42,11 @@ class AssertPathExists(Command):
         super(AssertPathExists, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) != 1:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                self.execute(path[0])
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+        if len(path) != 1:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         'The path to check expected.')
+
+        self.execute(path[0])
 
     def execute(self, url):
         doc = self.result_collector.get_response_ElementTree()
@@ -66,19 +65,17 @@ class AssertPathContains(Command):
         super(AssertPathContains, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                url = path[0]
-                from command_factory import CommandFactory
+        if len(path) < 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(self.__class__.__name__))
 
-                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-                path = path[2:]
-                path.insert(0, url)
-                next_step.parse(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
+        url = path[0]
+        from command_factory import CommandFactory
+
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+        path = path[2:]
+        path.insert(0, url)
+        next_step.parse(path)
 
 
 class AssertPathContainsAny(Command):
@@ -90,13 +87,12 @@ class AssertPathContainsAny(Command):
         super(AssertPathContainsAny, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) != 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                self.execute(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+        if len(path) != 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
+
+        self.execute(path)
 
     def execute(self, path):
         doc = self.result_collector.get_response_ElementTree()
@@ -122,13 +118,10 @@ class AssertPathContainsEach(Command):
         super(AssertPathContainsEach, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                self.execute(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+        if len(path) < 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least 2 arguments expected')
+
+        self.execute(path)
 
     def execute(self, path):
         doc = self.result_collector.get_response_ElementTree()
@@ -161,17 +154,16 @@ class AssertPathNodes(Command):
         super(AssertPathNodes, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                url = path[0]
-                next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-                path = path[2:]
-                path.insert(0, url)
-                next_step.parse(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, result.ERROR_TEST_CLASS_DOES_NOT_EXIST))
+        if len(path) < 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                         hints=CommandFactory().get_class_children(
+                                                             self.__class__.__name__))
+
+        url = path[0]
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+        path = path[2:]
+        path.insert(0, url)
+        next_step.parse(path)
 
 
 class AssertPathNodesCount(Command):
@@ -183,13 +175,10 @@ class AssertPathNodesCount(Command):
         super(AssertPathNodesCount, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 2:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                self.execute(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+        if len(path) < 2:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least two arguments expected.')
+
+        self.execute(path)
 
     def execute(self, path):
         try:
@@ -205,7 +194,8 @@ class AssertPathNodesCount(Command):
         except ValueError:
             self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error(self, e.message))
+            self.result_collector.add_result(Error.from_exception(self, e))
+
 
 class AssertPathFinal(Command):
     __metaclass__ = CommandRegister
@@ -216,13 +206,10 @@ class AssertPathFinal(Command):
         super(AssertPathFinal, self).__init__(result_collector)
 
     def parse(self, path):
-        try:
-            if len(path) < 1:
-                self.result_collector.add_result(Error(self, result.ERROR_NOT_ENOUGH_ARGUMENTS))
-            else:
-                self.execute(path)
-        except Exception as e:
-            self.result_collector.add_result(Error(self, e.message))
+        if len(path) < 1:
+            raise IndorSyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least on argument expected.')
+
+        self.execute(path)
 
     def execute(self, path):
         doc = self.result_collector.get_response_ElementTree()

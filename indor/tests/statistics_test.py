@@ -8,7 +8,7 @@ from statistics import Statistics
 class StatisticsTest(unittest.TestCase):
     def test_simple_query(self):
         statistics = Statistics()
-        statistics.set_tests_start()
+        statistics.tests_started()
 
         test = """
             GET
@@ -21,7 +21,7 @@ class StatisticsTest(unittest.TestCase):
         """
         result = run_indor(test)
 
-        statistics.set_tests_finished()
+        statistics.tests_finished()
         statistics.collect_statistics(result)
 
         self.assertEqual(statistics.scenarios_count, 1)
@@ -35,5 +35,5 @@ class StatisticsTest(unittest.TestCase):
     def test_exceptions(self):
         statistics = Statistics()
 
-        self.assertRaises(Exception, statistics.set_tests_finished)
+        self.assertRaises(Exception, statistics.tests_finished)
         self.assertRaises(Exception, statistics.get_tests_time)
