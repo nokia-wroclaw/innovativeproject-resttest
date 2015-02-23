@@ -1,7 +1,7 @@
 # coding=utf-8
 from setuptools import setup
 
-VERSION = '0.1'
+VERSION = '0.2'
 
 setup(
     name='indor',
@@ -25,7 +25,7 @@ setup(
     description='Tool for running rest-api tests written in plain language.',
     entry_points={
         'console_scripts': [
-            'indor = indor.main:main',
+            'indor = indor.__main__:main',
         ]
     }
 )
