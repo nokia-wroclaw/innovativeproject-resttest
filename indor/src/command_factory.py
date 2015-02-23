@@ -1,5 +1,5 @@
 import re
-from indor_exceptions import IndorSyntaxErrorClassNotExists
+from indor_exceptions import SyntaxErrorClassNotExists
 from singleton import Singleton
 
 
@@ -16,7 +16,7 @@ class CommandFactory:
         new_class_name = prefix + suffix.title()
 
         if new_class_name not in self.dict:
-            raise IndorSyntaxErrorClassNotExists(prefix, suffix, new_class_name)
+            raise SyntaxErrorClassNotExists(prefix, suffix, new_class_name)
 
         return self.dict[new_class_name](result_collector)
 

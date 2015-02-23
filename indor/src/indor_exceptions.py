@@ -6,9 +6,9 @@ class KeywordNotFound(Exception):
         super(KeywordNotFound, self).__init__("Incorrect keyword: " + keyword)
 
 
-class IndorSyntaxErrorClassNotExists(Exception):
+class SyntaxErrorClassNotExists(Exception):
     def __init__(self, prefix, suffix, new_class_name):
-        super(IndorSyntaxErrorClassNotExists, self).__init__(
+        super(SyntaxErrorClassNotExists, self).__init__(
             "Class " + prefix + " got " + suffix + " and tried to instance class " + new_class_name + "." +
             " This class not existed. There might by a typo or you have to implement it.")
 
