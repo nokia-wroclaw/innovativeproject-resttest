@@ -75,11 +75,11 @@ class Indor(object):
             runner = test_runner.TestsRunner(self.flags)
             results = runner.run(test_data)
         except IOError:
-            results = [GeneralError(GENERAL_ERROR_FILE_NOT_FOUND + file_path)]
+            results = [GeneralError("{} {}".format(GENERAL_ERROR_FILE_NOT_FOUND, file_path))]
         except ParseException:
-            results = [GeneralError(GENERAL_ERROR_PARSE_FAILED + file_path)]
+            results = [GeneralError("{} {}".format(GENERAL_ERROR_PARSE_FAILED, file_path))]
         except Exception as e:
-            results = [GeneralError(GENERAL_ERROR_UNKNOWN_ERROR + file_path + e.message)]
+            results = [GeneralError("{}({}) {} {}".format(GENERAL_ERROR_UNKNOWN_ERROR, e.__class__.__name__, file_path, e.message))]
         return results
 
     def get_test_files_paths(self):
