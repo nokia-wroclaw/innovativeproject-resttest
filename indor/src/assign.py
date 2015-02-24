@@ -4,6 +4,7 @@ from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
 from indor_exceptions import SyntaxErrorWrongNumberOfArguments
+from parsing_exception import ParsingException
 from result import Error
 import result
 
@@ -24,14 +25,18 @@ class Assign(Command):
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                           self.__class__.__name__))
-        if path[1].lower() == "text" or path[1].lower() == "cookie":
-            command = CommandFactory().get_class("Command", path[1], self.result_collector)
-            computed, parsed = command.parse(path[2:])
-            self.result_collector.add_variable(path[0], computed)
-        else:
-            command = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-            command.parse(path[2:])
-            self.result_collector.add_variable(path[0], command.execute())
+
+        try:
+            if path[1].lower() == "text" or path[1].lower() == "cookie":
+                command = CommandFactory().get_class("Command", path[1], self.result_collector)
+                computed, parsed = command.parse(path[2:])
+                self.result_collector.add_variable(path[0], computed)
+            else:
+                command = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+                command.parse(path[2:])
+                self.result_collector.add_variable(path[0], command.execute())
+        except ParsingException as e:
+            self.result_collector.add_result(Error(e.parsing_object, e.message))
 
 
 class AssignResponse(Command):

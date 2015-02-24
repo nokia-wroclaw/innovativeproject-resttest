@@ -393,13 +393,14 @@ class CommandCookieValue(Command):
             raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         cookie_name = path[0]
+
+        if cookie_name not in response.cookies:
+            raise ParsingException(self, "cookie '" + cookie_name + "' not found")
+
         if len(path) == 1:
             return response.cookies[cookie_name], ParsedValue(self, None, "")
 
         expected_cookie_value = path[1]
-
-        if cookie_name not in response.cookies:
-            raise ParsingException(self, "cookie '" + cookie_name + "' not found")
 
         return response.cookies[cookie_name], ParsedValue(self, expected_cookie_value, "")
 

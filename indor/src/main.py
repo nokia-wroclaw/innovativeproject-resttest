@@ -78,8 +78,8 @@ class Indor(object):
             results = [GeneralError("{} {}".format(GENERAL_ERROR_FILE_NOT_FOUND, file_path))]
         except ParseException:
             results = [GeneralError("{} {}".format(GENERAL_ERROR_PARSE_FAILED, file_path))]
-        #except Exception as e:
-        #    results = [GeneralError("{}({}) {} {}".format(GENERAL_ERROR_UNKNOWN_ERROR, e.__class__.__name__, file_path, e.message))]
+        except Exception as e:
+            results = [GeneralError("{}({}) {} {}".format(GENERAL_ERROR_UNKNOWN_ERROR, e.__class__.__name__, file_path, e.message))]
         return results
 
     def get_test_files_paths(self):
