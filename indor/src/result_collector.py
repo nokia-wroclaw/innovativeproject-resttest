@@ -15,6 +15,7 @@ class ResultCollector(object):
 
     def add_variable(self, name, value):
         self.variables[name] = value
+        print self.variables
 
     def use_variables(self, string):
         variables = re.findall(r'\$[a-zA-Z0-9]+\$', string)

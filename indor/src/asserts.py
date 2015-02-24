@@ -5,6 +5,8 @@ from requests.status_codes import codes, _codes
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
+from parsed_value import ParsedValue
+from parsing_exception import ParsingException
 from result import Error, Passed, Failed
 from indor_exceptions import InvalidRelationalOperator, KeywordNotFound, SyntaxErrorWrongNumberOfArguments
 import result
@@ -326,13 +328,13 @@ class AssertResponseTime(Command):
             self.result_collector.add_result(Error.from_exception(self, e))
 
 
-class AssertCookie(Command):
+class CommandCookie(Command):
     __metaclass__ = CommandRegister
 
     pretty_name = "ASSERT COOKIE"
 
     def __init__(self, result_collector):
-        super(AssertCookie, self).__init__(result_collector)
+        super(CommandCookie, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) == 0:
@@ -341,76 +343,62 @@ class AssertCookie(Command):
                                                              self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
-        next_step.parse(path[1:])
+        return next_step.parse(path[1:])
 
 
-class AssertCookieSet(Command):
+class CommandCookieSet(Command):
     __metaclass__ = CommandRegister
 
     pretty_name = "COOKIE SET"
 
     def __init__(self, result_collector):
-        super(AssertCookieSet, self).__init__(result_collector)
+        super(CommandCookieSet, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) == 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__)
 
-        self.execute(path)
+        return self.execute(path)
 
     def execute(self, path):
         cookie_name = path[0]
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
-        if cookie_name not in response.cookies:
-            self.result_collector.add_result(Failed(self, "'" + cookie_name + "' cookie set",
-                                                    [cookie.name for cookie in
-                                                     response.cookies].__str__()))
-            return
-
-        self.result_collector.add_result(Passed(self))
+        computed = cookie_name in response.cookies
+        parsed = ParsedValue(self, True, "'" + cookie_name + "' cookie in " + [cookie.name for cookie in
+                                                                               response.cookies].__str__())
+        return computed, parsed
 
 
-class AssertCookieValue(Command):
+class CommandCookieValue(Command):
     __metaclass__ = CommandRegister
 
     pretty_name = "COOKIE VALUE"
 
     def __init__(self, result_collector):
-        super(AssertCookieValue, self).__init__(result_collector)
+        super(CommandCookieValue, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) != 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: cookie name and cookie value.')
 
-        self.execute(path)
+        return self.execute(path)
 
     def execute(self, path):
         cookie_name = path[0]
         expected_cookie_value = path[1]
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         if cookie_name not in response.cookies:
-            self.result_collector.add_result(Error(self, "cookie '" + cookie_name + "' not found"))
-            return
+            raise ParsingException(self, "cookie '" + cookie_name + "' not found")
 
-        actual_cookie_value = response.cookies[cookie_name]
-
-        if expected_cookie_value != actual_cookie_value:
-            self.result_collector.add_result(Failed(self, expected_cookie_value, actual_cookie_value))
-            return
-
-        self.result_collector.add_result(Passed(self))
+        return response.cookies[cookie_name], ParsedValue(self, expected_cookie_value, "")
 
 
 class AssertHeader(Command):
@@ -498,44 +486,48 @@ class AssertHeaderValue(Command):
             self.result_collector.add_result(Failed(self, expected_header_value, actual_header_value))
 
 
-class AssertText(Command):
+class CommandText(Command):
     __metaclass__ = CommandRegister
 
-    pretty_name = "ASSERT TEXT"
+    pretty_name = "TEXT"
 
     def __init__(self, result_collector):
-        super(AssertText, self).__init__(result_collector)
+        super(CommandText, self).__init__(result_collector)
 
     def parse(self, path):
+        if len(path) == 0:
+            response = self.result_collector.get_response()
+            if response is None:
+                raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
+            return response.text, ParsedValue(self, None, "")
+
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
-        next_step.parse(path[1:])
+        return next_step.parse(path[1:])
 
 
-class AssertTextContains(Command):
+class CommandTextContains(Command):
     __metaclass__ = CommandRegister
 
     pretty_name = "ASSERT TEXT CONTAINS"
 
     def __init__(self, result_collector):
-        super(AssertTextContains, self).__init__(result_collector)
+        super(CommandTextContains, self).__init__(result_collector)
 
     def parse(self, path):
         if len(path) == 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least one argument expected')
 
-        self.execute(path)
+        return self.execute(path)
 
     def execute(self, path):
         response = self.result_collector.get_response()
 
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         needle = ' '.join(path)
         haystack = response.text
 
-        if needle in haystack:
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, needle + " not found", ""))
+        computed = needle in haystack
+        parsed = ParsedValue(self, True, needle + " IS CONTAINED")
+        return computed, parsed

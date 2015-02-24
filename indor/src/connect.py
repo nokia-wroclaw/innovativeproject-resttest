@@ -8,6 +8,7 @@ import indor_exceptions
 import requests
 import ast
 from pyparsing import *
+from transform_nested_array import transform_nested_array
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
@@ -147,15 +148,6 @@ def get_timeout(path):
         return DEFAULT_TIMEOUT
 
     return float(section[0]) / 1000.0
-
-
-def transform_nested_array(array, transform):
-    for i in range(0, len(array)):
-        if isinstance(array[i], (list, tuple)):
-            array[i] = transform_nested_array(array[i], transform)
-        else:
-            array[i] = transform(array[i])
-    return array
 
 
 class Connect(Command):

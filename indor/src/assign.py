@@ -23,11 +23,15 @@ class Assign(Command):
         if len(path) <= 1:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
-
-        command = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
-        command.parse(path[2:])
-        self.result_collector.add_variable(path[0], command.execute())
+                                                          self.__class__.__name__))
+        if path[1].lower() == "text" or path[1].lower() == "cookie":
+            command = CommandFactory().get_class("Command", path[1], self.result_collector)
+            computed, parsed = command.parse(path[2:])
+            self.result_collector.add_variable(path[0], computed)
+        else:
+            command = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+            command.parse(path[2:])
+            self.result_collector.add_variable(path[0], command.execute())
 
 
 class AssignResponse(Command):
