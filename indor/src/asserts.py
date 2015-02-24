@@ -382,18 +382,21 @@ class CommandCookieValue(Command):
         super(CommandCookieValue, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
-            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: cookie name and cookie value.')
-
         return self.execute(path)
 
     def execute(self, path):
-        cookie_name = path[0]
-        expected_cookie_value = path[1]
+        if len(path) == 0:
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Too few arguments expected: cookie name and cookie value.')
 
         response = self.result_collector.get_response()
         if response is None:
             raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
+
+        cookie_name = path[0]
+        if len(path) == 1:
+            return response.cookies[cookie_name], ParsedValue(self, None, "")
+
+        expected_cookie_value = path[1]
 
         if cookie_name not in response.cookies:
             raise ParsingException(self, "cookie '" + cookie_name + "' not found")
