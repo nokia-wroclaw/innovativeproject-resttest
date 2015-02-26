@@ -10,8 +10,6 @@ from relational_operators import compare_by_supposed_relational_operator
 from result import Error, Passed, Failed
 import result
 
-__author__ = 'Sławomir Domagała'
-
 
 class CommandResponseRedirects(Command):
     __metaclass__ = CommandRegister
@@ -35,33 +33,30 @@ class CommandResponseRedirectsCount(Command):
         super(CommandResponseRedirectsCount, self).__init__(result_collector)
 
     def parse(self, path):
-        self.execute(path)
-
-    def execute(self, args):
-        if len(args) < 2:
+        if len(path) != 2 and len(path) != 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         'At least two arguments expected: relational operator and number. Example: < 2')
+                                                         'Two or zero arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         try:
-            relational_operator = args[0]
-            expected = int(args[1])
-
             actual = len(response.history)
 
-            if compare_by_supposed_relational_operator(actual, relational_operator, expected):
-                self.result_collector.add_result(Passed(self))
-            else:
-                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], str(actual)))
+            if len(path) == 0:
+                actual, ParsedValue(self, None, "")
+
+            relational_operator = path[0]
+            expected = int(path[1])
+
+            parsed = ParsedValue(self, True, relational_operator + " " + path[1])
+            computed = compare_by_supposed_relational_operator(actual, relational_operator, expected)
+            return computed, parsed
         except ValueError:
-            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+            raise ParsingException(self, result.ERROR_NUMBER_EXPECTED)
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error.from_exception(self, e))
+            raise ParsingException(self, Error.from_exception(self, e))
 
 
 class CommandResponse(Command):
@@ -128,36 +123,28 @@ class CommandResponseStatus(Command):
         return self.mapping[status]
 
     def parse(self, path):
-        self.execute(path)
+        response = self.result_collector.get_response()
+        if response is None:
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
-    def execute(self, args):
-        status = args[0]
+        actual = response.status_code
+
+        if len(path) == 0:
+            return actual, ParsedValue(self, None, "")
+
+        status = path[0]
 
         if not status.isdigit():
             try:
                 status = self.map_status_code(status)
             except LookupError as e:
-                self.result_collector.add_result(Error.from_exception(self, e))
-                return
+                raise ParsingException(self, Error.from_exception(self, e))
         else:
             if int(status) not in _codes.keys():
-                self.result_collector.add_result(Error(self, result.ERROR_INVALID_STATUS_CODE,
-                                                       "Got " + status + " but only " + _codes.keys().__str__() + " is valid."))
-                return
+                raise ParsingException(self, result.ERROR_INVALID_STATUS_CODE)
 
-        response = self.result_collector.get_response()
-
-        if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
-
-        actual = response.status_code
         expected = int(status)
-
-        if actual == expected:
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, expected, actual))
+        return actual, ParsedValue(self, expected, "")
 
 
 class CommandResponseType(Command):
@@ -187,21 +174,16 @@ class CommandResponseTypeJson(Command):
         super(CommandResponseTypeJson, self).__init__(result_collector)
 
     def parse(self, path):
-        self.execute()
-
-    def execute(self):
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         try:
             response.json()
         except ValueError:
-            self.result_collector.add_result(Failed(self, "json", "not json"))
+            return False, ParsedValue(self, True, "not json")
         else:
-            self.result_collector.add_result(Passed(self))
+            return True, ParsedValue(self, True, "not json")
 
 
 class CommandResponseLength(Command):
@@ -213,33 +195,30 @@ class CommandResponseLength(Command):
         super(CommandResponseLength, self).__init__(result_collector)
 
     def parse(self, path):
-        self.execute(path)
-
-    def execute(self, args):
-        if len(args) < 2:
+        if len(path) != 2 and len(path) != 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         'At least two arguments expected: relational operator and number. Example: < 2')
+                                                         'Two or zero arguments expected: relational operator and number. Example: < 2')
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         try:
-            relational_operator = args[0]
-            expected = int(args[1])
-
             content_length = len(response.content)
 
-            if compare_by_supposed_relational_operator(content_length, relational_operator, expected):
-                self.result_collector.add_result(Passed(self))
-            else:
-                self.result_collector.add_result(Failed(self, relational_operator + " " + args[1], content_length))
+            if len(path) == 0:
+                return content_length, ParsedValue(self, None, "")
+
+            relational_operator = path[0]
+            expected = int(path[1])
+
+            parsed = ParsedValue(self, True, relational_operator + " " + path[1])
+            computed = compare_by_supposed_relational_operator(content_length, relational_operator, expected)
+            return computed, parsed
         except ValueError:
-            self.result_collector.add_result(Error(self, result.ERROR_NUMBER_EXPECTED))
+            raise ParsingException(self, result.ERROR_NUMBER_EXPECTED)
         except InvalidRelationalOperator as e:
-            self.result_collector.add_result(Error.from_exception(self, e))
+            raise ParsingException(self, Error.from_exception(self, e))
 
 
 class CommandResponseEmpty(Command):
@@ -251,19 +230,13 @@ class CommandResponseEmpty(Command):
         super(CommandResponseEmpty, self).__init__(result_collector)
 
     def parse(self, path):
-        self.execute()
-
-    def execute(self):
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
-        if len(response.content) != 0:
-            self.result_collector.add_result(Failed(self, "`EMPTY`", "`NOT EMPTY`"))
-        else:
-            self.result_collector.add_result(Passed(self))
+        computed = len(response.content) == 0
+        parsed = ParsedValue(self, True, "EMPTY")
+        return computed, parsed
 
 
 class CommandResponseNotEmpty(Command):
@@ -274,21 +247,14 @@ class CommandResponseNotEmpty(Command):
     def __init__(self, result_collector):
         super(CommandResponseNotEmpty, self).__init__(result_collector)
 
-    def parse(self, path):
-        self.execute()
-
-    def execute(self):
+    def parse(self, args):
         response = self.result_collector.get_response()
         if response is None:
             raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
-        parsed = ParsedValue(self, True, relational_operator + " " + args[1])
-            computed = compare_by_supposed_relational_operator(response_time, relational_operator, expected)
-            return computed, parsed
-        if len(response.content) == 0:
-            self.result_collector.add_result(Failed(self, "`NOT EMPTY`", "`EMPTY`"))
-        else:
-            self.result_collector.add_result(Passed(self))
+        computed = len(response.content) != 0
+        parsed = ParsedValue(self, True, "NOT EMPTY")
+        return computed, parsed
 
 
 class CommandResponseTime(Command):
@@ -302,22 +268,19 @@ class CommandResponseTime(Command):
         super(CommandResponseTime, self).__init__(result_collector)
 
     def parse(self, path):
-        self.execute()
-
-    def execute(self, args):
         response = self.result_collector.get_response()
         if response is None:
             raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         response_time = response.elapsed.total_seconds() * 1000
 
-        if len(args) < 2:
+        if len(path) < 2:
             return response_time, ParsedValue(self, None, "")
 
         try:
-            relational_operator = args[0]
-            expected = int(args[1])
-            parsed = ParsedValue(self, True, relational_operator + " " + args[1])
+            relational_operator = path[0]
+            expected = int(path[1])
+            parsed = ParsedValue(self, True, relational_operator + " " + path[1])
             computed = compare_by_supposed_relational_operator(response_time, relational_operator, expected)
             return computed, parsed
         except ValueError:

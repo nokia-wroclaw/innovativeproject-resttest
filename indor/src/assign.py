@@ -1,5 +1,7 @@
 # coding=utf-8
 import re
+from asserts import *
+from command_response import *
 from command import Command
 from command_factory import CommandFactory
 from command_register import CommandRegister
