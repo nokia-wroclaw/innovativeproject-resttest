@@ -21,7 +21,7 @@ class Assert(Command):
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                          hints=CommandFactory().get_class_children(
                                                              self.__class__.__name__))
-        if path[0].lower() == "text" or path[0].lower() == "cookie" or path[0].lower == "response":
+        if path[0].lower() == "text" or path[0].lower() == "cookie" or path[0].lower() == "header" or path[0].lower() == "response":
             command = CommandFactory().get_class("Command", path[0], self.result_collector)
             try:
                 computed, parsed = command.parse(path[1:])

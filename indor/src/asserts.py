@@ -102,7 +102,7 @@ class CommandHeader(Command):
                                                              self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
-        next_step.parse(path[1:])
+        return next_step.parse(path[1:])
 
 
 class CommandHeaderSet(Command):
@@ -123,17 +123,14 @@ class CommandHeaderSet(Command):
         header_name = path[0]
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         headers = response.headers
 
-        if headers.get(header_name):
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, "'" + header_name + "' header set", headers.keys().__str__()))
+        computed = header_name in headers
+        parsed = ParsedValue(self, True, "'" + header_name + "' header in " + headers.keys().__str__())
+        return computed, parsed
 
 
 class CommandHeaderValue(Command):
@@ -145,31 +142,29 @@ class CommandHeaderValue(Command):
         super(CommandHeaderValue, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) != 2:
+        if len(path) < 1 or len(path) > 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: header name and header value.')
 
-        self.execute(path)
+        return self.execute(path)
 
     def execute(self, path):
         header_name = path[0]
-        expected_header_value = path[1]
 
         response = self.result_collector.get_response()
-
         if response is None:
-            self.result_collector.add_result(Error(self, result.ERROR_RESPONSE_NOT_FOUND))
-            return
+            raise ParsingException(self, result.ERROR_RESPONSE_NOT_FOUND)
 
         actual_header_value = response.headers.get(header_name)
 
         if actual_header_value is None:
-            self.result_collector.add_result(Error(self, "header '" + header_name + "' not found"))
-            return
+            raise ParsingException(self, "header '" + header_name + "' not found")
 
-        if expected_header_value == actual_header_value:
-            self.result_collector.add_result(Passed(self))
-        else:
-            self.result_collector.add_result(Failed(self, expected_header_value, actual_header_value))
+        if len(path) == 1:
+            return actual_header_value, ParsedValue(self, None, "")
+
+        expected_header_value = path[1]
+
+        return actual_header_value, ParsedValue(self, expected_header_value, "")
 
 
 class CommandText(Command):

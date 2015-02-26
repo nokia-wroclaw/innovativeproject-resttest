@@ -27,7 +27,7 @@ class Assign(Command):
                                                           self.__class__.__name__))
 
         try:
-            if path[1].lower() == "text" or path[1].lower() == "cookie":
+            if path[1].lower() == "text" or path[1].lower() == "cookie" or path[1].lower() == "header" or path[1].lower() == "response":
                 command = CommandFactory().get_class("Command", path[1], self.result_collector)
                 computed, parsed = command.parse(path[2:])
                 self.result_collector.add_variable(path[0], computed)
