@@ -1,5 +1,5 @@
 # coding=utf-8
-from assert_path import *
+from command_path import *
 from commands import *
 from command_response import *
 from indor_exceptions import SyntaxErrorWrongNumberOfArguments
