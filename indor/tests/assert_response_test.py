@@ -4,10 +4,6 @@ import indor_exceptions
 
 import mock
 
-import src.asserts
-import src.result_collector
-import src.result
-
 
 class AssertResponseTest(unittest.TestCase):
 
