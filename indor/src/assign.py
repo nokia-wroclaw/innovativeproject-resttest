@@ -1,6 +1,6 @@
 # coding=utf-8
 import re
-from asserts import *
+from commands import *
 from command_response import *
 from command import Command
 from command_factory import CommandFactory
