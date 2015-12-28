@@ -11,9 +11,7 @@ from result import Error, Passed, Failed
 import result
 
 
-class CommandResponseRedirects(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseRedirects(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE REDIRECTS"
 
     def __init__(self, result_collector):
@@ -24,9 +22,7 @@ class CommandResponseRedirects(Command):
         return next_step.parse(path[1:])
 
 
-class CommandResponseRedirectsCount(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseRedirectsCount(Command, metaclass=CommandRegister):
     pretty_name = "RESPONSE REDIRECTS COUNT"
 
     def __init__(self, result_collector):
@@ -59,9 +55,7 @@ class CommandResponseRedirectsCount(Command):
             raise ParsingException(self, Error.from_exception(self, e))
 
 
-class CommandResponse(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponse(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE"
 
     def __init__(self, result_collector):
@@ -77,9 +71,7 @@ class CommandResponse(Command):
         return next_step.parse(path[1:])
 
 
-class CommandResponseNot(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseNot(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE NOT"
 
     def __init__(self, result_collector):
@@ -95,9 +87,7 @@ class CommandResponseNot(Command):
         return next_step.parse(path[1:])
 
 
-class CommandResponseStatus(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseStatus(Command, metaclass=CommandRegister):
     pretty_name = "RESPONSE STATUS"
 
     def __init__(self, result_collector):
@@ -147,9 +137,7 @@ class CommandResponseStatus(Command):
         return actual, ParsedValue(self, expected, "")
 
 
-class CommandResponseType(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseType(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE TYPE"
 
     def __init__(self, result_collector):
@@ -165,9 +153,7 @@ class CommandResponseType(Command):
         return next_step.parse(path[1:])
 
 
-class CommandResponseTypeJson(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseTypeJson(Command, metaclass=CommandRegister):
     pretty_name = "RESPONSE CONTENT TYPE IS JSON"
 
     def __init__(self, result_collector):
@@ -186,9 +172,7 @@ class CommandResponseTypeJson(Command):
             return True, ParsedValue(self, True, "not json")
 
 
-class CommandResponseLength(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseLength(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE LENGTH"
 
     def __init__(self, result_collector):
@@ -221,7 +205,7 @@ class CommandResponseLength(Command):
             raise ParsingException(self, Error.from_exception(self, e))
 
 
-class CommandResponseEmpty(Command):
+class CommandResponseEmpty(Command, metaclass=CommandRegister):
     __metaclass__ = CommandRegister
 
     pretty_name = "RESPONSE EMPTY"
@@ -239,9 +223,7 @@ class CommandResponseEmpty(Command):
         return computed, parsed
 
 
-class CommandResponseNotEmpty(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseNotEmpty(Command, metaclass=CommandRegister):
     pretty_name = "RESPONSE NOT EMPTY"
 
     def __init__(self, result_collector):
@@ -257,9 +239,7 @@ class CommandResponseNotEmpty(Command):
         return computed, parsed
 
 
-class CommandResponseTime(Command):
-    __metaclass__ = CommandRegister
-
+class CommandResponseTime(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT RESPONSE TIME"
 
     missed_arguments = 'At least two arguments expected: relational operator and number. Example: < 2'

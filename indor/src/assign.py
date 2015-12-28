@@ -11,9 +11,7 @@ from result import Error
 import result
 
 
-class Assign(Command):
-    __metaclass__ = CommandRegister
-
+class Assign(Command, metaclass=CommandRegister):
     pretty_name = "ASSIGN"
 
     def __init__(self, result_collector):

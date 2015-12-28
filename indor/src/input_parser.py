@@ -29,12 +29,13 @@ def parse_constants(input_data):
     # Getting all defined macros
     const_definition = Suppress("DEFINE") + word + Suppress("=") + empty + restOfLine
     constants = dict(list(const_definition.searchString(input_data)))
+    print(constants)
 
     # Replacing consts values in input text
     constants_replaced = input_data
 
     # Replacing with reverse order so that consts declared earlier were more important
-    for key, value in constants.items()[::-1]:
+    for key, value in list(constants.items())[::-1]:
         const = Literal("@") + Literal(key) + Literal("@")
         const.setParseAction(replaceWith(value))
         constants_replaced = const.transformString(constants_replaced)

@@ -3,9 +3,7 @@ from indor_exceptions import SyntaxErrorClassNotExists
 from singleton import Singleton
 
 
-class CommandFactory:
-    __metaclass__ = Singleton
-
+class CommandFactory(object, metaclass=Singleton):
     def __init__(self):
         self.dict = {}
 

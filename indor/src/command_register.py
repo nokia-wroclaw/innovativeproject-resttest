@@ -4,7 +4,7 @@ from command import Command
 from command_factory import CommandFactory
 
 
-class CommandRegister(Command.__metaclass__):
+class CommandRegister(type(Command)):
     def __init__(cls, name, bases, dic):
         cls.property_name_for_printer = 'pretty_name'
         if cls.property_name_for_printer not in dic:

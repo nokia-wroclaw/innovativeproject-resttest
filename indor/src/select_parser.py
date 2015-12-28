@@ -7,9 +7,7 @@ from command_register import CommandRegister
 from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 
 
-class Set(Command):
-    __metaclass__ = CommandRegister
-
+class Set(Command, metaclass=CommandRegister):
     pretty_name = "SET"
 
     def __init__(self, result_collector):
@@ -25,10 +23,7 @@ class Set(Command):
             next_step.parse(path[1:])
 
 
-
-class SetParser(Command):
-    __metaclass__ = CommandRegister
-
+class SetParser(Command, metaclass=CommandRegister):
     pretty_name = "SET PARSER"
 
     def __init__(self, result_collector):

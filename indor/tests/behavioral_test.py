@@ -1,16 +1,10 @@
+from indor.tests.common import run_indor
+
 __author__ = 'Damian Mirecki'
 
 import unittest
 from scenario_results import ScenarioResults
 from result import Passed, Error, Failed, ConnectionError
-import test_runner
-import input_parser as parser
-
-
-def run_indor(data):
-    test_data = parser.parse(data)
-    runner = test_runner.TestsRunner()
-    return runner.run(test_data)
 
 
 class TestBehavioral(unittest.TestCase):

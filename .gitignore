@@ -1,4 +1,6 @@
 # Created by .gitignore support plugin (hsz.mobi)
 .idea
 .eggs
+.coverage
+*.pyc
 resttest.egg-info

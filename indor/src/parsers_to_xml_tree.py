@@ -8,27 +8,21 @@ import json
 from bs4 import BeautifulSoup
 
 
-class TextXml(XmlTree):
-    __metaclass__ = XmlTreeRegister
-
+class TextXml(XmlTree, metaclass=XmlTreeRegister):
     pretty_name = "TEXT XML"
 
     def parse(self, xml):
         return ET.fromstring(xml)
 
 
-class TextHtml(XmlTree):
-    __metaclass__ = XmlTreeRegister
-
+class TextHtml(XmlTree, metaclass=XmlTreeRegister):
     pretty_name = "TEXT HTML"
 
     def parse(self, xml):
         return ET.fromstring(BeautifulSoup.prettify(xml))
 
 
-class ApplicationJson(XmlTree):
-    __metaclass__ = XmlTreeRegister
-
+class ApplicationJson(XmlTree, metaclass=XmlTreeRegister):
     pretty_name = "APPLICATION JSON"
 
     def parse(self, xml):

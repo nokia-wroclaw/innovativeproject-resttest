@@ -7,9 +7,7 @@ from parsing_exception import ParsingException
 from transform_nested_array import transform_nested_array
 
 
-class Assert(Command):
-    __metaclass__ = CommandRegister
-
+class Assert(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT"
 
     def __init__(self, result_collector):

@@ -10,9 +10,7 @@ from relational_operators import compare_by_supposed_relational_operator
 import select_parser # important import
 
 
-class CommandPath(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPath(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH"
 
     def __init__(self, result_collector):
@@ -32,9 +30,7 @@ class CommandPath(Command):
         return next_step.parse(path)
 
 
-class CommandPathExists(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathExists(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH EXISTS"
 
     def __init__(self, result_collector):
@@ -53,9 +49,7 @@ class CommandPathExists(Command):
         return computed, parsed
 
 
-class CommandPathContains(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathContains(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH CONTAINS"
 
     def __init__(self, result_collector):
@@ -75,9 +69,7 @@ class CommandPathContains(Command):
         return next_step.parse(path)
 
 
-class CommandPathContainsAny(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathContainsAny(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH CONTAINS ANY"
 
     def __init__(self, result_collector):
@@ -105,9 +97,7 @@ class CommandPathContainsAny(Command):
         return computed, parsed
 
 
-class CommandPathContainsEach(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathContainsEach(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH CONTAINS EACH"
 
     def __init__(self, result_collector):
@@ -137,9 +127,7 @@ class CommandPathContainsEach(Command):
         return computed, parsed
 
 
-class CommandPathNodes(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathNodes(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH NODES"
 
     def __init__(self, result_collector):
@@ -158,9 +146,7 @@ class CommandPathNodes(Command):
         return next_step.parse(path)
 
 
-class CommandPathNodesCount(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathNodesCount(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH NODES COUNT"
 
     def __init__(self, result_collector):
@@ -189,9 +175,7 @@ class CommandPathNodesCount(Command):
             raise ParsingException(self, e)
 
 
-class CommandPathFinal(Command):
-    __metaclass__ = CommandRegister
-
+class CommandPathFinal(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT PATH FINAL"
 
     def __init__(self, result_collector):

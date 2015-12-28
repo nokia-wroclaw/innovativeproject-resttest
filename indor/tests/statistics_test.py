@@ -1,7 +1,7 @@
 import unittest
 import datetime
 
-from behavioral_test import run_indor
+from indor.tests.common import run_indor
 from statistics import Statistics
 
 

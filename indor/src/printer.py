@@ -9,9 +9,7 @@ from general_error import GeneralError
 from result import Passed, Failed, Error, ConnectionError
 
 
-class Printer(object):
-    __metaclass__ = ABCMeta
-
+class Printer(object, metaclass=ABCMeta):
     @abstractmethod
     def collect_summary(self, results):
         pass
@@ -71,7 +69,7 @@ class ConsolePrinter(Printer):
         sys.stdout.write(", ")
         sys.stdout.write(colored("{} passed".format(statistics.passed_count), 'green'))
         sys.stdout.write(")\n")
-        print "within", statistics.get_tests_time()
+        print("within", statistics.get_tests_time())
 
     def collect_summary(self, results, file_path):
         for scenario_result in results:

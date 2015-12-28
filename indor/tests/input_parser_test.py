@@ -48,7 +48,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(parsed, expected)
+        self.assertCountEqual(parsed, expected)
 
     def test_comments(self):
         to_be_parsed = """
@@ -104,7 +104,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
     def test_escaped_strings(self):
         to_be_parsed = """
@@ -142,7 +142,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(parsed, expected)
+        self.assertCountEqual(parsed, expected)
 
     def test_quoted_expression_as_one(self):
         to_be_parsed = """
@@ -186,7 +186,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
     def test_expression_in_braces_as_one(self):
         to_be_parsed = """
@@ -224,7 +224,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
     def test_expression_in_quoted_braces(self):
         to_be_parsed = """
@@ -250,7 +250,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
     def test_repeats(self):
         to_be_parsed = """
@@ -346,7 +346,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
     def test_repeated_scenarios(self):
         to_be_parsed = """
@@ -401,7 +401,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
 
     def test_defines(self):
@@ -450,7 +450,7 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)
 
 
     def test_nested_defines(self):
@@ -474,4 +474,4 @@ class TestInputParser(unittest.TestCase):
             ]
         ]
 
-        self.assertItemsEqual(actual, expected)
+        self.assertCountEqual(actual, expected)

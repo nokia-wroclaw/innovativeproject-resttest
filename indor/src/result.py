@@ -35,7 +35,7 @@ class Error(Result):
 
     @classmethod
     def from_exception(cls, class_instance, exception):
-        return cls(class_instance, exception.message)
+        return cls(class_instance, str(exception))
 
     @classmethod
     def syntax_error(cls, class_instance, command, message):

@@ -10,9 +10,7 @@ from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 import result
 
 
-class CommandCookie(Command):
-    __metaclass__ = CommandRegister
-
+class CommandCookie(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT COOKIE"
 
     def __init__(self, result_collector):
@@ -28,9 +26,7 @@ class CommandCookie(Command):
         return next_step.parse(path[1:])
 
 
-class CommandCookieSet(Command):
-    __metaclass__ = CommandRegister
-
+class CommandCookieSet(Command, metaclass=CommandRegister):
     pretty_name = "COOKIE SET"
 
     def __init__(self, result_collector):
@@ -55,9 +51,7 @@ class CommandCookieSet(Command):
         return computed, parsed
 
 
-class CommandCookieValue(Command):
-    __metaclass__ = CommandRegister
-
+class CommandCookieValue(Command, metaclass=CommandRegister):
     pretty_name = "COOKIE VALUE"
 
     def __init__(self, result_collector):
@@ -87,9 +81,7 @@ class CommandCookieValue(Command):
         return response.cookies[cookie_name], ParsedValue(self, expected_cookie_value, "")
 
 
-class CommandHeader(Command):
-    __metaclass__ = CommandRegister
-
+class CommandHeader(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT HEADER"
 
     def __init__(self, result_collector):
@@ -105,9 +97,7 @@ class CommandHeader(Command):
         return next_step.parse(path[1:])
 
 
-class CommandHeaderSet(Command):
-    __metaclass__ = CommandRegister
-
+class CommandHeaderSet(Command, metaclass=CommandRegister):
     pretty_name = "HEADER SET"
 
     def __init__(self, result_collector):
@@ -133,9 +123,7 @@ class CommandHeaderSet(Command):
         return computed, parsed
 
 
-class CommandHeaderValue(Command):
-    __metaclass__ = CommandRegister
-
+class CommandHeaderValue(Command, metaclass=CommandRegister):
     pretty_name = "HEADER VALUE"
 
     def __init__(self, result_collector):
@@ -167,9 +155,7 @@ class CommandHeaderValue(Command):
         return actual_header_value, ParsedValue(self, expected_header_value, "")
 
 
-class CommandText(Command):
-    __metaclass__ = CommandRegister
-
+class CommandText(Command, metaclass=CommandRegister):
     pretty_name = "TEXT"
 
     def __init__(self, result_collector):
@@ -186,9 +172,7 @@ class CommandText(Command):
         return next_step.parse(path[1:])
 
 
-class CommandTextContains(Command):
-    __metaclass__ = CommandRegister
-
+class CommandTextContains(Command, metaclass=CommandRegister):
     pretty_name = "ASSERT TEXT CONTAINS"
 
     def __init__(self, result_collector):

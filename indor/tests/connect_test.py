@@ -1,3 +1,5 @@
+API_SAMPLE_URL = "http://api.sample.pl"
+METHOD = "GET"
 __author__ = "Damian Mirecki"
 
 import unittest
@@ -10,25 +12,25 @@ import input_parser
 
 class TestConnect(unittest.TestCase):
     def test_basic_auth(self):
-        parsed_input = input_parser.parse("GET http://api.sample.pl, AUTH sampleUsername samplePassword.")[0]
+        parsed_input = next(input_parser.parse("%s %s, AUTH sampleUsername samplePassword." % (METHOD, API_SAMPLE_URL)))
         auth = get_auth(parsed_input)
 
         self.assertIsInstance(auth, requests.auth.HTTPBasicAuth)
 
     def test_basic_auth2(self):
-        parsed_input = input_parser.parse("GET http://api.sample.pl, AUTH BASIC sampleUsername samplePassword.")[0]
+        parsed_input = next(input_parser.parse("GET http://api.sample.pl, AUTH BASIC sampleUsername samplePassword."))
         auth = get_auth(parsed_input)
 
         self.assertIsInstance(auth, requests.auth.HTTPBasicAuth)
 
     def test_digest_auth(self):
-        parsed_input = input_parser.parse("GET http://api.sample.pl, AUTH DIGEST sampleUsername samplePassword.")[0]
+        parsed_input = next(input_parser.parse("GET http://api.sample.pl, AUTH DIGEST sampleUsername samplePassword."))
         auth = get_auth(parsed_input)
 
         self.assertIsInstance(auth, requests.auth.HTTPDigestAuth)
 
     def test_none_auth(self):
-        parsed_input = input_parser.parse("GET http://api.sample.pl.")[0]
+        parsed_input = next(input_parser.parse("GET http://api.sample.pl."))
         auth = get_auth(parsed_input)
 
         self.assertEqual(auth, None)

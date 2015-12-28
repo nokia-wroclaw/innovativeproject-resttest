@@ -3,9 +3,7 @@ __author__ = 'Bartek'
 from singleton import Singleton
 
 
-class XmlTreeFactory:
-    __metaclass__ = Singleton
-
+class XmlTreeFactory(object, metaclass=Singleton):
     def __init__(self):
         self.dict = {}
 

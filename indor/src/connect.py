@@ -150,10 +150,8 @@ def get_timeout(path):
     return float(section[0]) / 1000.0
 
 
-class Connect(Command):
+class Connect(Command, metaclass=CommandRegister):
     """Make request"""
-
-    __metaclass__ = CommandRegister
 
     pretty_name = "MAKING REQUEST"
 
