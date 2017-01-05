@@ -1,6 +1,3 @@
-# coding=utf-8
-
-
 class TestResults:
     def __init__(self, name):
         self.name = name

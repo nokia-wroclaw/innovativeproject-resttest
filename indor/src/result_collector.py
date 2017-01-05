@@ -1,8 +1,8 @@
 import re
-from test_results import TestResults
-from scenario_data import ScenarioData
-from scenario_results import ScenarioResults
-from xml_tree_factory import XmlTreeFactory
+from .test_results import TestResults
+from .scenario_data import ScenarioData
+from .scenario_results import ScenarioResults
+from .xml_tree_factory import XmlTreeFactory
 
 
 class ResultCollector(object):

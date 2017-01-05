@@ -1,13 +1,13 @@
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from parsed_value import ParsedValue
-from parsing_exception import ParsingException
-from result import Error, Passed, Failed
-from indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
-import result
-from relational_operators import compare_by_supposed_relational_operator
-import select_parser # important import
+from .command import Command
+from .command_factory import CommandFactory
+from .command_register import CommandRegister
+from .parsed_value import ParsedValue
+from .parsing_exception import ParsingException
+from .result import Error, Passed, Failed
+from .indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
+from . import result
+from .relational_operators import compare_by_supposed_relational_operator
+from . import select_parser # important import
 
 
 class CommandPath(Command, metaclass=CommandRegister):

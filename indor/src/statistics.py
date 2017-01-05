@@ -1,7 +1,7 @@
 import datetime
 
-from general_error import GeneralError
-from result import Passed, Failed, Error, ConnectionError
+from .general_error import GeneralError
+from .result import Passed, Failed, Error, ConnectionError
 
 
 class Statistics(object):

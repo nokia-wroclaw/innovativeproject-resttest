@@ -1,9 +1,8 @@
-#-*- coding: utf-8 -*-
 __author__ = 'Bartek'
 
-from xml_tree import XmlTree
+from .xml_tree import XmlTree
 import xml.etree.ElementTree as ET
-from xml_tree_register import XmlTreeRegister
+from .xml_tree_register import XmlTreeRegister
 import json
 from bs4 import BeautifulSoup
 

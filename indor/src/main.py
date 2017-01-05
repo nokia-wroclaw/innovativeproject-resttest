@@ -4,13 +4,12 @@ import os
 
 from pyparsing import ParseException
 
-from general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED, GENERAL_ERROR_FILE_NOT_FOUND, \
-    GENERAL_ERROR_UNKNOWN_ERROR
-from printer import Printer
-from reading import read_from_file
-from statistics import Statistics
-import test_runner
-import input_parser as parser
+from .general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED, GENERAL_ERROR_FILE_NOT_FOUND
+from .printer import Printer
+from .reading import read_from_file
+from .statistics import Statistics
+from . import test_runner
+from . import input_parser as parser
 
 
 def parse_arguments():

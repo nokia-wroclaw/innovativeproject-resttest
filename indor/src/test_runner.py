@@ -1,7 +1,6 @@
-# coding=utf-8
 __author__ = 'Bartosz Zięba, Tomasz M. Wlisłocki, Damian Mirecki, Sławomir Domagała'
-from test import Test
-from result_collector import ResultCollector
+from .test import Test
+from .result_collector import ResultCollector
 
 
 class TestsRunner:

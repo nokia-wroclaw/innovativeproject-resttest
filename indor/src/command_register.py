@@ -1,7 +1,7 @@
-from indor_exceptions import ClassPropertyNotFound
+from .indor_exceptions import ClassPropertyNotFound
 
-from command import Command
-from command_factory import CommandFactory
+from .command import Command
+from .command_factory import CommandFactory
 
 
 class CommandRegister(type(Command)):

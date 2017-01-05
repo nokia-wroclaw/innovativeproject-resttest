@@ -1,5 +1,3 @@
-# coding=utf-8
-
 ERROR_NUMBER_EXPECTED = "Oczekiwano liczby"
 ERROR_WRONG_NUMBER_OF_ARGUMENTS = "Za mało argumentów"
 ERROR_WRONG_CONTENT_TYPE = "Zły typ zawartości"

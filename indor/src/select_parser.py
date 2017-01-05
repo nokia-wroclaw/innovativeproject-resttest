@@ -1,10 +1,9 @@
-# coding=utf-8
 __author__ = 'Bartosz Zięba'
 
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from indor_exceptions import SyntaxErrorWrongNumberOfArguments
+from .command import Command
+from .command_factory import CommandFactory
+from .command_register import CommandRegister
+from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
 
 
 class Set(Command, metaclass=CommandRegister):

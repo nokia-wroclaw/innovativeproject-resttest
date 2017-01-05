@@ -1,14 +1,13 @@
-# coding=utf-8
 import re
-from commands import *
-from command_response import *
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from indor_exceptions import SyntaxErrorWrongNumberOfArguments
-from parsing_exception import ParsingException
-from result import Error
-import result
+from .commands import *
+from .command_response import *
+from .command import Command
+from .command_factory import CommandFactory
+from .command_register import CommandRegister
+from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
+from .parsing_exception import ParsingException
+from .result import Error
+from . import result
 
 
 class Assign(Command, metaclass=CommandRegister):

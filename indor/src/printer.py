@@ -5,8 +5,8 @@ import sys
 from junit_xml import TestSuite, TestCase
 from termcolor import cprint, colored
 
-from general_error import GeneralError
-from result import Passed, Failed, Error, ConnectionError
+from .general_error import GeneralError
+from .result import Passed, Failed, Error, ConnectionError
 
 
 class Printer(object, metaclass=ABCMeta):

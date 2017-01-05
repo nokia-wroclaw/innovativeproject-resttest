@@ -1,6 +1,3 @@
-from result import ERROR_WRONG_SYNTAX_IN
-
-
 class KeywordNotFound(Exception):
     def __init__(self, keyword):
         super(KeywordNotFound, self).__init__("Incorrect keyword: " + keyword)

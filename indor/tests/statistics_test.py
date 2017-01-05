@@ -2,7 +2,7 @@ import unittest
 import datetime
 
 from indor.tests.common import run_indor
-from statistics import Statistics
+from indor.src.statistics import Statistics
 
 
 class StatisticsTest(unittest.TestCase):

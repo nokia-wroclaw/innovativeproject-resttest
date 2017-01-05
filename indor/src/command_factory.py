@@ -1,6 +1,6 @@
 import re
-from indor_exceptions import SyntaxErrorClassNotExists
-from singleton import Singleton
+from .indor_exceptions import SyntaxErrorClassNotExists
+from .singleton import Singleton
 
 
 class CommandFactory(object, metaclass=Singleton):

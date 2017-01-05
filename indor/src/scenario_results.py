@@ -1,7 +1,3 @@
-# coding=utf-8
-from test_results import TestResults
-
-
 class ScenarioResults:
     def __init__(self, scenario_data):
         self.name = scenario_data.name

@@ -6,8 +6,8 @@ import unittest
 
 import requests
 
-from connect import extract_section_by_name, get_allow_redirects, get_auth
-import input_parser
+from indor.src.connect import extract_section_by_name, get_allow_redirects, get_auth
+import indor.src.input_parser as input_parser
 
 
 class TestConnect(unittest.TestCase):

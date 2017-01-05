@@ -1,6 +1,5 @@
-# coding=utf-8
-from command import Command
-from scenario_data import ScenarioData
+from .command import Command
+from .scenario_data import ScenarioData
 
 
 class Scenario(Command):

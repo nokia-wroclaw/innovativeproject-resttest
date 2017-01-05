@@ -1,6 +1,6 @@
 __author__ = 'Bartek'
 
-from singleton import Singleton
+from .singleton import Singleton
 
 
 class XmlTreeFactory(object, metaclass=Singleton):
@@ -20,6 +20,6 @@ class XmlTreeFactory(object, metaclass=Singleton):
         return self.dict[class_name]()
 
 # !!! Do not touch !!!
-import xml_tree_register
-import parsers_to_xml_tree
+from . import xml_tree_register
+from . import parsers_to_xml_tree
 # !!! Do not touch !!!

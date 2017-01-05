@@ -1,7 +1,3 @@
-# coding=utf-8
-__author__ = 'Sławomir Domagała'
-
-
 def transform_nested_array(array, transform):
     for i in range(0, len(array)):
         if isinstance(array[i], (list, tuple)):

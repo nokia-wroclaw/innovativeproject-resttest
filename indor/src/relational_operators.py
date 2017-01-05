@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import operator
-from indor_exceptions import InvalidRelationalOperator
+from .indor_exceptions import InvalidRelationalOperator
 
 
 def compare_by_supposed_relational_operator(actual, supposed_relational_operator, expected):

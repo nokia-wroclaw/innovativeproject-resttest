@@ -3,8 +3,8 @@ from indor.tests.common import run_indor
 __author__ = 'Damian Mirecki'
 
 import unittest
-from scenario_results import ScenarioResults
-from result import Passed, Error, Failed, ConnectionError
+from indor.src.scenario_results import ScenarioResults
+from indor.src.result import Passed, Error, Failed, ConnectionError
 
 
 class TestBehavioral(unittest.TestCase):

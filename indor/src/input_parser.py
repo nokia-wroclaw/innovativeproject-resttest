@@ -1,8 +1,7 @@
-# coding=utf-8
 from pyparsing import *
 import json
 
-import indor_exceptions
+from . import indor_exceptions
 
 # TODO - Tomasz Wlisłocki - Uprościć tego regexa
 # TODO - Sławomir Domagała - ja go tu tylko przeniosłem :P

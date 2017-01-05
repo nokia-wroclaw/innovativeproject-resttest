@@ -1,14 +1,14 @@
 from requests.status_codes import _codes
 from requests.structures import CaseInsensitiveDict
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator
-from parsed_value import ParsedValue
-from parsing_exception import ParsingException
-from relational_operators import compare_by_supposed_relational_operator
-from result import Error, Passed, Failed
-import result
+from .command import Command
+from .command_factory import CommandFactory
+from .command_register import CommandRegister
+from .indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator
+from .parsed_value import ParsedValue
+from .parsing_exception import ParsingException
+from .relational_operators import compare_by_supposed_relational_operator
+from .result import Error, Passed, Failed
+from . import result
 
 
 class CommandResponseRedirects(Command, metaclass=CommandRegister):

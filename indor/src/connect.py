@@ -1,14 +1,13 @@
-# coding=utf-8
-import result
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from result import Error, ConnectionError
-import indor_exceptions
+from . import result
+from .command import Command
+from .command_factory import CommandFactory
+from .command_register import CommandRegister
+from .result import Error, ConnectionError
+from . import indor_exceptions
 import requests
 import ast
 from pyparsing import *
-from transform_nested_array import transform_nested_array
+from .transform_nested_array import transform_nested_array
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
