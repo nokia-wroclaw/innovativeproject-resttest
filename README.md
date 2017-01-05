@@ -49,7 +49,7 @@ Indor is an open source API testing framework, providing a simple and user-frien
 
 ## How install?
 
-All you need is [Python](https://www.python.org/downloads/) installed (Python >= 2.7.8 supported).
+All you need is [Python](https://www.python.org/downloads/) installed (Python >= 3 supported).
 
 Simple instalation is available via [pip](https://pip.readthedocs.org/en/latest/installing.html)
 
