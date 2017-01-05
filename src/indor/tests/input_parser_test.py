@@ -1,8 +1,7 @@
-# coding=utf-8
 __author__ = "Tomasz M. Wlisłocki"
 
 import unittest
-import indor.src.input_parser as parser
+import indor.input_parser as parser
 
 
 class TestInputParser(unittest.TestCase):

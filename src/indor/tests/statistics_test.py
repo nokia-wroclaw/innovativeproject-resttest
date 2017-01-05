@@ -1,8 +1,8 @@
 import unittest
 import datetime
 
-from indor.tests.common import run_indor
-from indor.src.statistics import Statistics
+from .common import run_indor
+from indor.statistics import Statistics
 
 
 class StatisticsTest(unittest.TestCase):

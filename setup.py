@@ -1,4 +1,3 @@
-# coding=utf-8
 from setuptools import setup
 
 VERSION = '0.3'
@@ -12,7 +11,7 @@ setup(
         'junit-xml',
         'termcolor'
     ],
-    package_dir={'indor': 'indor/src'},
+    package_dir={'indor': 'src/indor'},
     packages=['indor'],
     package_data={'indor': ['logo.txt']},
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',

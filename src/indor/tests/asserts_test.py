@@ -1,8 +1,8 @@
 __author__ = 'Damian Mirecki'
 import unittest
 
-from indor.src import relational_operators
-from indor.src.indor_exceptions import InvalidRelationalOperator
+from indor import relational_operators
+from indor.indor_exceptions import InvalidRelationalOperator
 
 
 class TestExtractRelationalOperator(unittest.TestCase):
