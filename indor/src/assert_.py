@@ -1,4 +1,3 @@
-# coding=utf-8
 from command_path import *
 from commands import *
 from command_response import *

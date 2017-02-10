@@ -12,6 +12,7 @@ SCENARIO_NAME = 'SCENARIO'
 ASSIGN_NAME = 'ASSIGN'
 REPEATED_SCENARIO_NAME = 'REPEATED_SCENARIO'
 SET_NAME = 'SET'
+HANDLE_NAME = 'HANDLE'
 
 http_request_types = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD']
 
@@ -47,5 +48,8 @@ class Test(Command):
                     elif argument == SET_NAME:
                         next_step = Set(self.result_collector)
                         next_step.parse(path[1:])
+                    elif argument == HANDLE_NAME:
+                        next_step = Handle(self.result_collector)
+                        next_step.parse(path[:1])
         except (SyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments) as e:
             self.result_collector.add_result(Error.syntax_error(self, path, e.message))
