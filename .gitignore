@@ -4,3 +4,6 @@
 .coverage
 *.pyc
 resttest.egg-info
+build/
+dist/
+*.egg-info/
