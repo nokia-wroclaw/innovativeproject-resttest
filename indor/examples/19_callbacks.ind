@@ -1,6 +1,6 @@
 HANDLE REQUEST
 	http://localhost:5000/user/add,
-TIMEOUT
+WAITTIME
 	100ms,
 STATUS
 	200,

@@ -6,7 +6,8 @@ import unittest
 
 import requests
 
-from connect import extract_section_by_name, get_allow_redirects, get_auth
+from command_classes.connect import get_allow_redirects, get_auth
+from tools import extract_section_by_name
 import input_parser
 
 

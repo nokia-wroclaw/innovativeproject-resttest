@@ -1,14 +1,15 @@
 # coding=utf-8
+import ast
+
+import requests
+from pyparsing import *
+
+import indor_exceptions
 import result
 from command import Command
-from command_factory import CommandFactory
 from command_register import CommandRegister
-from result import Error, ConnectionError
-import indor_exceptions
-import requests
-import ast
-from pyparsing import *
-from transform_nested_array import transform_nested_array
+from result import ConnectionError
+from tools import transform_nested_array, extract_section_by_name, parse_url_with_type
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
@@ -18,27 +19,6 @@ JSON_NAME = "JSON"
 TIMEOUT_NAME = "TIMEOUT"
 
 DEFAULT_TIMEOUT = 10  # seconds
-
-
-def extract_section_by_name(path, section_name):
-    """
-
-    :param path:
-    :type path: list
-    :param section_name:
-    :type section_name: str
-    :return:
-    :rtype: list|None
-    """
-
-    section = section_name.split(" ")
-
-    predicate = lambda x, section: section == x[:len(section)]
-
-    try:
-        return next(x[len(section):] for x in path if predicate(x, section))
-    except StopIteration:
-        return None
 
 
 def get_digest_auth(tokens):
@@ -111,18 +91,6 @@ def get_json(path):
     return ast.literal_eval(json[0])
 
 
-def parse_url(path):
-    if isinstance(path[0], list):
-        if len(path[0]) < 2:
-            raise indor_exceptions.URLNotFound("Nie podano adres URL")
-        return path[0][0], path[0][1]
-
-    if len(path) < 2:
-        raise indor_exceptions.URLNotFound("Nie podano adres URL")
-
-    return path[0], path[1]
-
-
 def get_headers(path):
     section = extract_section_by_name(path, HEADERS_NAME)
 
@@ -162,7 +130,7 @@ class Connect(Command, metaclass=CommandRegister):
         path = transform_nested_array(path, self.result_collector.use_variables)
 
         try:
-            request_type, url = parse_url(path)
+            request_type, url = parse_url_with_type(path)
             func = getattr(requests, request_type.lower())
             self.result_collector.add_test(url)
             self.result_collector.set_response(func(url=url, data=get_params(path), auth=get_auth(path),

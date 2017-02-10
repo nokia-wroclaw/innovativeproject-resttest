@@ -1,9 +1,7 @@
-from command_path import *
-from commands import *
 from command_response import *
 from indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from parsing_exception import ParsingException
-from transform_nested_array import transform_nested_array
+from tools import transform_nested_array
 
 
 class Assert(Command, metaclass=CommandRegister):
