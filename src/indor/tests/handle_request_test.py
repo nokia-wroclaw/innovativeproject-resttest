@@ -29,8 +29,6 @@ class TestHandleRequest(unittest.TestCase):
                     "indor"
                 ]
             ])
-        # result_collector_mock.add_request.assert_called_with(CallbackResponse(
-        #     url="http://localhost:5000/user/add",
-        #     waittime=1000,
-        #     status=200,
-        #     data={"postalcode": "50316", "username": "indor"}))
+
+        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=10, status="200", data={"postalcode": "50316", "username": "indor"})
+        self.assertEqual(expected, tests_runner.result_collector.requests[0])

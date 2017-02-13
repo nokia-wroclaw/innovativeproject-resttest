@@ -1,8 +1,10 @@
+import json
+
 from ..command import Command
 from ..command_register import CommandRegister
 from ..tools import extract_section_by_name, parse_url
 
-DATA_NAME = "PARAMS"
+DATA_NAME = "DATA"
 WAITTIME_NAME = "TIMEOUT"
 STATUS_NAME = "STATUS"
 
@@ -39,10 +41,28 @@ def get_status(path):
 
 class CallbackResponse(object):
     def __init__(self, url, status, waittime, data):
-        self.url = url,
-        self.status = status,
-        self.waittime = waittime,
-        self.data = data,
+        self.url = url
+        self.status = status
+        self.waittime = waittime
+        self.data = data
+
+    def __eq__(self, other):
+        """Override the default Equals behavior"""
+        if isinstance(other, self.__class__):
+            if self.url != other.url:
+                return False
+            if self.status != other.status:
+                return False
+            if self.waittime != other.waittime:
+                return False
+            return json.dumps(self.data) == json.dumps(other.data)
+        return NotImplemented
+
+    def __ne__(self, other):
+        """Define a non-equality test"""
+        if isinstance(other, self.__class__):
+            return not self.__eq__(other)
+        return NotImplemented
 
 
 class HandleRequest(Command, metaclass=CommandRegister):
