@@ -1,6 +1,11 @@
 from . import indor_exceptions
 
 
+def get_parent_module_name(module_name):
+    parent_name, _, child_name = module_name.rpartition('.')
+    return parent_name
+
+
 def transform_nested_array(array, transform):
     return [transform_nested_array(x, transform) if isinstance(x, (list, tuple)) else transform(x) for x in array]
 

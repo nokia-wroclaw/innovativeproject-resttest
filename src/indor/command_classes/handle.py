@@ -1,11 +1,12 @@
-from command import Command
-from command_factory import CommandFactory
-from command_register import CommandRegister
-from indor_exceptions import SyntaxErrorWrongNumberOfArguments
-from tools import transform_nested_array
+from ..command import Command
+from ..command_factory import CommandFactory
+from ..command_register import CommandRegister
+from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
+from ..tools import transform_nested_array, get_parent_module_name
+import importlib
 
 
-__import__(".handle_request")
+importlib.import_module(".handle_request", package=get_parent_module_name(__name__))
 
 
 class Handle(Command, metaclass=CommandRegister):
@@ -21,5 +22,5 @@ class Handle(Command, metaclass=CommandRegister):
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                     hints=CommandFactory().get_class_children(
                                                         self.__class__.__name__))
-        command = CommandFactory().get_class("Command", path[0], self.result_collector)
+        command = CommandFactory().get_class("Handle", path[0], self.result_collector)
         command.parse(path[1:])

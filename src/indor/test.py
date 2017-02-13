@@ -1,3 +1,4 @@
+from .command_classes.handle import Handle
 from .command_classes.assign import Assign
 from .command import Command
 from .command_classes.assert_ import Assert

@@ -10,6 +10,7 @@ class ResultCollector(object):
         self.test_runner = test_runner
         self.flags = set(flags)
         self.scenarios = []
+        self.requests = []
         self.execute_current_scenario = True
         self.variables = {}
 
@@ -27,6 +28,9 @@ class ResultCollector(object):
 
     def set_response(self, response):
         self.test_runner.response = response
+
+    def add_request(self, request):
+        self.requests.append(request)
 
     def add_test(self, test_name):
         if len(self.scenarios) == 0:

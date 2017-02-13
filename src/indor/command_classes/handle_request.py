@@ -1,6 +1,6 @@
-from command import Command
-from command_register import CommandRegister
-from tools import extract_section_by_name, parse_url
+from ..command import Command
+from ..command_register import CommandRegister
+from ..tools import extract_section_by_name, parse_url
 
 DATA_NAME = "PARAMS"
 WAITTIME_NAME = "TIMEOUT"
@@ -52,7 +52,7 @@ class HandleRequest(Command, metaclass=CommandRegister):
         super(HandleRequest, self).__init__(result_collector)
 
     def parse(self, path):
-        request_type, url = parse_url(path)
+        url = parse_url(path)
 
         self.result_collector.add_test(url)
         self.result_collector.add_request(CallbackResponse(url=url, status=get_status(path),
