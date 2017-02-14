@@ -2,7 +2,7 @@ language: python
 python:
 - '3.5'
 install: pip install -r requirements.txt
-script: nosetests indor -v --with-coverage --cover-test --cover-package=indor --cover-min-percentage=75
+script: ./scripts/test.sh
 deploy:
   provider: pypi
   user: DeeM
