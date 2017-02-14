@@ -4,7 +4,6 @@ set -e
 
 function cleanup {
     echo "Recent exit code: "$?
-    rm -rf ./venv
 }
 
 trap cleanup EXIT

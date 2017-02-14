@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 VERSION = '0.3'
 
@@ -11,9 +11,10 @@ setup(
         'junit-xml',
         'termcolor'
     ],
-    package_dir={'indor': 'src/indor'},
-    packages=['indor'],
+    packages=find_packages('./src'),
+    include_package_data=True,
     package_data={'indor': ['logo.txt']},
+    package_dir = {'': './src'},
     url='https://github.com/nokia-wroclaw/innovativeproject-resttest',
     license='',
     author='Sławomir Domagała, Damian Mirecki, Tomasz Wlisłocki, Bartosz Zięba',
