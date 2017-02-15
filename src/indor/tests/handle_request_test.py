@@ -1,10 +1,35 @@
 import unittest
+
+from indor import indor_exceptions
 from indor.command_classes.handle import Handle
 from indor.command_classes.handle_request import CallbackResponse
 from indor.test_runner import TestsRunner
 
 
 class TestHandleRequest(unittest.TestCase):
+    def test_adding_request_with_missing_url(self):
+        tests_runner = TestsRunner()
+        with self.assertRaises(indor_exceptions.URLNotFound):
+            Handle(tests_runner.result_collector).parse(
+                [
+                    "REQUEST",
+                    [
+                        "WAITTIME",
+                        "2000"
+                    ],
+                    [
+                        "STATUS",
+                        "200"
+                    ],
+                    [
+                        "DATA",
+                        "postalcode",
+                        "50316",
+                        "username",
+                        "indor"
+                    ]
+                ])
+
     def test_adding_empty_request(self):
         tests_runner = TestsRunner()
         Handle(tests_runner.result_collector).parse(
