@@ -5,11 +5,11 @@ from ..command_register import CommandRegister
 from ..tools import extract_section_by_name, parse_url
 
 DATA_NAME = "DATA"
-WAITTIME_NAME = "TIMEOUT"
+WAITTIME_NAME = "WAITTIME"
 STATUS_NAME = "STATUS"
 
-DEFAULT_WAITTIME = 10   # seconds
-DEFAULT_STATUS = 200    # OK
+DEFAULT_WAITTIME = 10.0   # seconds
+DEFAULT_STATUS = "200"    # OK
 
 
 def get_data(path):
@@ -46,16 +46,14 @@ class CallbackResponse(object):
         self.waittime = waittime
         self.data = data
 
+    def __repr__(self):
+        representation = {'url': self.url, 'status': self.status, 'waittime': self.waittime, 'data': self.data}
+        return json.dumps(representation)
+
     def __eq__(self, other):
         """Override the default Equals behavior"""
         if isinstance(other, self.__class__):
-            if self.url != other.url:
-                return False
-            if self.status != other.status:
-                return False
-            if self.waittime != other.waittime:
-                return False
-            return json.dumps(self.data) == json.dumps(other.data)
+            return repr(other) == repr(self)
         return NotImplemented
 
     def __ne__(self, other):

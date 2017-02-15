@@ -14,7 +14,4 @@ deploy:
     all_branches: python3
 notifications:
   email:
-    - dmirecki.DM@gmail.com
     - slawomir.karol.domagala@gmail.com
-    - tomasz.wlislocki@gmail.com
-    - bartoszzieba@hotmail.com

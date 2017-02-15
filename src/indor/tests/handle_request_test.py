@@ -5,7 +5,21 @@ from indor.test_runner import TestsRunner
 
 
 class TestHandleRequest(unittest.TestCase):
-    def test_adding_request_works(self):
+    def test_adding_empty_request(self):
+        tests_runner = TestsRunner()
+        Handle(tests_runner.result_collector).parse(
+            [
+                "REQUEST",
+                [
+                    "http://localhost:5000/user/add"
+                ]
+            ])
+
+        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=10.0, status="200",
+                                    data=None)
+        self.assertEqual(expected, tests_runner.result_collector.requests[0])
+
+    def test_adding_filled_request(self):
         tests_runner = TestsRunner()
         Handle(tests_runner.result_collector).parse(
             [
@@ -15,7 +29,7 @@ class TestHandleRequest(unittest.TestCase):
                 ],
                 [
                     "WAITTIME",
-                    "1000"
+                    "2000"
                 ],
                 [
                     "STATUS",
@@ -30,5 +44,5 @@ class TestHandleRequest(unittest.TestCase):
                 ]
             ])
 
-        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=10, status="200", data={"postalcode": "50316", "username": "indor"})
+        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=2.0, status="200", data={"postalcode": "50316", "username": "indor"})
         self.assertEqual(expected, tests_runner.result_collector.requests[0])
