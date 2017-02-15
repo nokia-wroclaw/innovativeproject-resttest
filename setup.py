@@ -9,7 +9,8 @@ setup(
         "requests",
         "pyparsing",
         'junit-xml',
-        'termcolor'
+        'termcolor',
+        'beautifulsoup4'
     ],
     packages=find_packages('./src'),
     include_package_data=True,
