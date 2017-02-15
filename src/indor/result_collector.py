@@ -1,8 +1,22 @@
 import re
+import urllib.parse
+
+from indor.indor_exceptions import IncoherentCallbacksServerParameters
+from indor.request_handler import RequestHandler
 from .test_results import TestResults
 from .scenario_data import ScenarioData
 from .scenario_results import ScenarioResults
 from .xml_tree_factory import XmlTreeFactory
+
+
+class CallbackHandlerParams(object):
+    def __init__(self, hostname, port):
+        self.hostname = hostname
+        self.port = port
+        self.responses = {}
+
+    def add_response(self, name, response):
+        self.responses[name] = response
 
 
 class ResultCollector(object):
@@ -10,9 +24,12 @@ class ResultCollector(object):
         self.test_runner = test_runner
         self.flags = set(flags)
         self.scenarios = []
-        self.requests = []
         self.execute_current_scenario = True
         self.variables = {}
+
+        self.requests = {}
+        self.callback_handler_params = None
+        self.callback_handler = None
 
     def add_variable(self, name, value):
         self.variables[name] = value
@@ -28,14 +45,29 @@ class ResultCollector(object):
 
     def set_response(self, response):
         self.test_runner.response = response
+        self.callback_handler.join()
+        self.requests = self.callback_handler.get_responses()
+
+    def get_callback_handler_params(self, parsed_url):
+        if self.callback_handler_params is None:
+            self.callback_handler_params = CallbackHandlerParams(parsed_url.hostname, parsed_url.port)
+        else:
+            if self.callback_handler.hostname != parsed_url.hostname or self.callback_handler.port != parsed_url.port:
+                raise IncoherentCallbacksServerParameters((self.callback_handler.hostname, self.callback_handler.port),
+                                                          (parsed_url.url, parsed_url.port))
+        return self.callback_handler_params
 
     def add_request(self, request):
-        self.requests.append(request)
+        self.get_callback_handler_params(urllib.parse.urlparse(request.url)).add_response(request.url, request)
 
     def add_test(self, test_name):
         if len(self.scenarios) == 0:
             self.add_default_scenario()
         self.scenarios[-1].add_test(TestResults(test_name))
+        self.callback_handler = RequestHandler(self.callback_handler_params.url, self.callback_handler_params.port,
+                                               self.callback_handler_params.responses)
+        self.callback_handler_params = None
+        self.callback_handler.start()
 
     def get_response(self):
         return self.test_runner.response

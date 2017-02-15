@@ -29,6 +29,11 @@ class URLNotFound(Exception):
         super(URLNotFound, self).__init__("Incorrect URL Address: " + url)
 
 
+class IncoherentCallbacksServerParameters(Exception):
+    def __init__(self, expected, given):
+        super(IncoherentCallbacksServerParameters, self).__init__("Expected parameters: {}, but got: {}".format(expected, given))
+
+
 class InvalidRelationalOperator(Exception):
     def __init__(self, keyword):
         super(InvalidRelationalOperator, self).__init__("Invalid relational operator: " + keyword)

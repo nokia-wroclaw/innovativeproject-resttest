@@ -1,14 +1,15 @@
-# coding=utf-8
 import ast
 
 import requests
 from pyparsing import *
 
+from indor.command_classes.handle_request import HandleRequest
+from indor.request_handler import RequestHandler
 from .. import indor_exceptions
 from .. import result
 from ..command import Command
 from ..command_register import CommandRegister
-from ..result import ConnectionError
+from ..result import ConnectionError, Failed, Passed
 from ..tools import transform_nested_array, extract_section_by_name, parse_url_with_type
 
 PARAMS_NAME = "PARAMS"
@@ -138,6 +139,12 @@ class Connect(Command, metaclass=CommandRegister):
                                                     json=get_json(path),
                                                     headers=get_headers(path),
                                                     timeout=get_timeout(path)))
+            # for name in responses:
+            #     if responses[name].handled:
+            #         self.result_collector.add_result(Passed(HandleRequest, "Got request '" + name + "'"))
+            #     else:
+            #         self.result_collector.add_result(Failed(HandleRequest, "Expecting request '" + name + "'", "not handled"))
+
         except indor_exceptions.URLNotFound as e:
             self.result_collector.add_test("NO URL")
             self.result_collector.add_result(ConnectionError(self, e))
