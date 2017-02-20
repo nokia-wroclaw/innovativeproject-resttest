@@ -21,14 +21,19 @@ def extract_section_by_name(path, section_name):
     :rtype: list|None
     """
 
+    sections_params = _extract_section_by_name([path], section_name)
+
+    if sections_params is not None:
+        return sections_params
+
+    return _extract_section_by_name(path, section_name)
+
+
+def _extract_section_by_name(path, section_name):
     section = section_name.split(" ")
+    predicate = lambda x, s: s == x[:len(s)]
 
-    predicate = lambda x, section: section == x[:len(section)]
-
-    try:
-        return next(x[len(section):] for x in path if predicate(x, section))
-    except StopIteration:
-        return None
+    return next((x[len(section):] for x in path if predicate(x, section)), None)
 
 
 def parse_url_with_type(path):
@@ -46,6 +51,6 @@ def parse_url_with_type(path):
 def parse_url(path, section_name):
     section_with_url = extract_section_by_name(path, section_name)
 
-    if section_with_url is None:
+    if section_with_url is None or len(section_with_url) > 1:
         raise indor_exceptions.URLNotFound("Nie podano adres URL")
-    return section_with_url[-1]
+    return section_with_url[0]

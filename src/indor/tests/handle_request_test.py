@@ -7,13 +7,17 @@ from indor.test_runner import TestsRunner
 
 
 class TestHandleRequest(unittest.TestCase):
+    def setUp(self):
+        self.tests_runner = TestsRunner()
+        self.result_collector = self.tests_runner.result_collector
+
     def test_adding_request_with_missing_url(self):
-        tests_runner = TestsRunner()
         with self.assertRaises(indor_exceptions.URLNotFound):
-            Handle(tests_runner.result_collector).parse(
+            Handle(self.result_collector).parse(
                 [
-                    "REQUEST",
                     [
+                        "HANDLE",
+                        "REQUEST",
                         "WAITTIME",
                         "2000"
                     ],
@@ -31,26 +35,28 @@ class TestHandleRequest(unittest.TestCase):
                 ])
 
     def test_adding_empty_request(self):
-        tests_runner = TestsRunner()
-        Handle(tests_runner.result_collector).parse(
+        callback_url = "http://localhost:5000/user/add"
+        Handle(self.result_collector).parse(
             [
+                "HANDLE",
                 "REQUEST",
-                [
-                    "http://localhost:5000/user/add"
-                ]
+                callback_url
             ])
 
-        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=10.0, status="200",
+        expected = CallbackResponse(url=("%s" % callback_url), waittime=10.0, status="200",
                                     data=None)
-        self.assertEqual(expected, tests_runner.result_collector.requests[0])
+        self.assertEqual(5000, self.result_collector.callback_handler_params.port)
+        self.assertEqual("localhost", self.result_collector.callback_handler_params.hostname)
+        self.assertEqual(expected, self.result_collector.callback_handler_params.responses[callback_url])
 
     def test_adding_filled_request(self):
-        tests_runner = TestsRunner()
-        Handle(tests_runner.result_collector).parse(
+        callback_url = "http://localhost:5000/user/add"
+        Handle(self.result_collector).parse(
             [
-                "REQUEST",
                 [
-                    "http://localhost:5000/user/add"
+                    "HANDLE",
+                    "REQUEST",
+                    callback_url
                 ],
                 [
                     "WAITTIME",
@@ -69,5 +75,7 @@ class TestHandleRequest(unittest.TestCase):
                 ]
             ])
 
-        expected = CallbackResponse(url="http://localhost:5000/user/add", waittime=2.0, status="200", data={"postalcode": "50316", "username": "indor"})
-        self.assertEqual(expected, tests_runner.result_collector.requests[0])
+        expected = CallbackResponse(url=callback_url, waittime=2.0, status="200", data={"postalcode": "50316", "username": "indor"})
+        self.assertEqual(5000, self.result_collector.callback_handler_params.port)
+        self.assertEqual("localhost", self.result_collector.callback_handler_params.hostname)
+        self.assertEqual(expected, self.result_collector.callback_handler_params.responses[callback_url])
