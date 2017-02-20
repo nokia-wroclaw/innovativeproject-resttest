@@ -45,9 +45,9 @@ class TestHandleRequest(unittest.TestCase):
 
         expected = CallbackResponse(url=("%s" % callback_url), waittime=10.0, status="200",
                                     data=None)
-        self.assertEqual(5000, self.result_collector.callback_handler_params.port)
-        self.assertEqual("localhost", self.result_collector.callback_handler_params.hostname)
-        self.assertEqual(expected, self.result_collector.callback_handler_params.responses[callback_url])
+        self.assertEqual(5000, self.result_collector.clb_handler_params.port)
+        self.assertEqual("localhost", self.result_collector.clb_handler_params.hostname)
+        self.assertEqual(expected, self.result_collector.clb_handler_params.responses[callback_url])
 
     def test_adding_filled_request(self):
         callback_url = "http://localhost:5000/user/add"
@@ -75,7 +75,8 @@ class TestHandleRequest(unittest.TestCase):
                 ]
             ])
 
-        expected = CallbackResponse(url=callback_url, waittime=2.0, status="200", data={"postalcode": "50316", "username": "indor"})
-        self.assertEqual(5000, self.result_collector.callback_handler_params.port)
-        self.assertEqual("localhost", self.result_collector.callback_handler_params.hostname)
-        self.assertEqual(expected, self.result_collector.callback_handler_params.responses[callback_url])
+        expected = CallbackResponse(url=callback_url, waittime=2.0, status="200",
+                                    data={"postalcode": "50316", "username": "indor"})
+        self.assertEqual(5000, self.result_collector.clb_handler_params.port)
+        self.assertEqual("localhost", self.result_collector.clb_handler_params.hostname)
+        self.assertEqual(expected, self.result_collector.clb_handler_params.responses[callback_url])

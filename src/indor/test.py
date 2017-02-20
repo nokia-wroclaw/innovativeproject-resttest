@@ -53,4 +53,4 @@ class Test(Command):
                         next_step = Handle(self.result_collector)
                         next_step.parse(path[0:])
         except (SyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments) as e:
-            self.result_collector.add_result(Error.syntax_error(self, path, e.message))
+            self.result_collector.add_result(Error.syntax_error(self, path, str(e)))

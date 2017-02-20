@@ -14,13 +14,13 @@ class CommandRequest(Command, metaclass=CommandRegister):
         super(CommandRequest, self).__init__(result_collector)
 
     def parse(self, path):
-        if len(path) == 0:
+        if len(path) < 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                     hints=CommandFactory().get_class_children(
                                                         self.__class__.__name__))
 
-        next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
-        return next_step.parse(path[1:])
+        next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
+        return next_step.parse(path[0:1]+path[2:])
 
 
 class CommandRequestHandled(Command, metaclass=CommandRegister):
@@ -38,5 +38,5 @@ class CommandRequestHandled(Command, metaclass=CommandRegister):
             raise ParsingException(self, result.ERROR_REQUEST_NOT_FOUND)
 
         computed = self.result_collector.requests[path[0]].handled
-        parsed = ParsedValue(self, True, "HANDLED")
+        parsed = ParsedValue(self, True, path[0] + "is HANDLED")
         return computed, parsed

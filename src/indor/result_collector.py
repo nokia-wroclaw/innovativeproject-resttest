@@ -29,8 +29,8 @@ class ResultCollector(object):
         self.variables = {}
 
         self.requests = {}
-        self.callback_handler_params = None
-        self.callback_handler = None
+        self.clb_handler_params = None
+        self.clb_handler = None
 
     def add_variable(self, name, value):
         self.variables[name] = value
@@ -46,21 +46,22 @@ class ResultCollector(object):
 
     def set_response(self, response):
         self.test_runner.response = response
-        if self.callback_handler is not None:
-            self.callback_handler.join()
-            self.requests = self.callback_handler.get_responses()
-            self.callback_handler = None
+        if self.clb_handler is not None:
+            self.clb_handler.join()
+            self.requests = self.clb_handler.get_responses()
+            self.clb_handler = None
             for name in self.requests:
-                Assert(self).parse(["REQUEST", "HANDLED", name])
+                Assert(self).parse(["REQUEST", name, "HANDLED"])
 
     def get_callback_handler_params(self, parsed_url):
-        if self.callback_handler_params is None:
-            self.callback_handler_params = CallbackHandlerParams(parsed_url.hostname, parsed_url.port)
+        if self.clb_handler_params is None:
+            self.clb_handler_params = CallbackHandlerParams(parsed_url.hostname, parsed_url.port)
         else:
-            if self.callback_handler_params.hostname != parsed_url.hostname or self.callback_handler_params.port != parsed_url.port:
-                raise IncoherentCallbacksServerParameters((self.callback_handler_params.hostname, self.callback_handler_params.port),
-                                                          (parsed_url.url, parsed_url.port))
-        return self.callback_handler_params
+            if self.clb_handler_params.hostname != parsed_url.hostname or self.clb_handler_params.port != parsed_url.port:
+                raise IncoherentCallbacksServerParameters(
+                    (self.clb_handler_params.hostname, self.clb_handler_params.port),
+                    (parsed_url.url, parsed_url.port))
+        return self.clb_handler_params
 
     def add_request(self, request):
         self.get_callback_handler_params(urllib.parse.urlparse(request.url)).add_response(request.url, request)
@@ -69,12 +70,12 @@ class ResultCollector(object):
         if len(self.scenarios) == 0:
             self.add_default_scenario()
         self.scenarios[-1].add_test(TestResults(test_name))
-        if self.callback_handler_params is not None:
-            self.callback_handler = RequestHandler(self.callback_handler_params.hostname,
-                                                   self.callback_handler_params.port,
-                                                   self.callback_handler_params.responses)
-            self.callback_handler_params = None
-            self.callback_handler.start()
+        if self.clb_handler_params is not None:
+            self.clb_handler = RequestHandler(self.clb_handler_params.hostname,
+                                              self.clb_handler_params.port,
+                                              self.clb_handler_params.responses)
+            self.clb_handler_params = None
+            self.clb_handler.start()
 
     def get_response(self):
         return self.test_runner.response
@@ -92,7 +93,7 @@ class ResultCollector(object):
         else:
             self.execute_current_scenario = False
             # TODO: Why would we need the next line? It doesn't seem to be working
-        #        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
+            #        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
 
     def get_response_ElementTree(self):
         if self.test_runner.responseXML is None:
