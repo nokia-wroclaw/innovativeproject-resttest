@@ -57,8 +57,8 @@ class ResultCollector(object):
         if self.callback_handler_params is None:
             self.callback_handler_params = CallbackHandlerParams(parsed_url.hostname, parsed_url.port)
         else:
-            if self.callback_handler.hostname != parsed_url.hostname or self.callback_handler.port != parsed_url.port:
-                raise IncoherentCallbacksServerParameters((self.callback_handler.hostname, self.callback_handler.port),
+            if self.callback_handler_params.hostname != parsed_url.hostname or self.callback_handler_params.port != parsed_url.port:
+                raise IncoherentCallbacksServerParameters((self.callback_handler_params.hostname, self.callback_handler_params.port),
                                                           (parsed_url.url, parsed_url.port))
         return self.callback_handler_params
 

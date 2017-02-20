@@ -1,4 +1,3 @@
-__author__ = 'Damian Mirecki'
 import unittest
 
 from indor import relational_operators

@@ -1,6 +1,5 @@
-__author__ = "Tomasz M. Wlisłocki"
-
 import unittest
+
 import indor.input_parser as parser
 
 
@@ -402,7 +401,6 @@ class TestInputParser(unittest.TestCase):
 
         self.assertCountEqual(actual, expected)
 
-
     def test_defines(self):
         to_be_parsed = """
                 DEFINE URL = http://api.geonames.org/postalCodeLookupJSON
@@ -450,7 +448,6 @@ class TestInputParser(unittest.TestCase):
         ]
 
         self.assertCountEqual(actual, expected)
-
 
     def test_nested_defines(self):
         to_be_parsed = """

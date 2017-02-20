@@ -1,5 +1,4 @@
 import ast
-import json
 import unittest
 from threading import Timer
 
@@ -193,6 +192,32 @@ class TestBehavioral(unittest.TestCase):
 
         results = scenario.test_results[0].results
         self.assertEqual(2, len(results))
+        self.assertAllPassed(results)
+
+    def test_many_callbacks_ok(self):
+        test = """
+            HANDLE REQUEST http://localhost:5000/user/add.
+            HANDLE REQUEST http://localhost:5000/user/get.
+            HANDLE REQUEST http://localhost:5000/user/remove.
+
+            POST
+                http://httpbin.org/post.
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        timer1 = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/add"))
+        timer2 = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/get"))
+        timer3 = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/remove"))
+        timer1.start()
+        timer2.start()
+        timer3.start()
+        result = run_indor(test)
+
+        self.assertScenarioCount(1, result)
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(4, len(results))
         self.assertAllPassed(results)
 
     def test_timeout_ok(self):

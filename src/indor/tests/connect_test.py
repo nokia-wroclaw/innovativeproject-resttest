@@ -1,13 +1,13 @@
-API_SAMPLE_URL = "http://api.sample.pl"
-METHOD = "GET"
-__author__ = "Damian Mirecki"
-
 import unittest
+
 import requests
 
+import indor.input_parser as input_parser
 from indor.command_classes.connect import get_allow_redirects, get_auth
 from indor.tools import extract_section_by_name
-import indor.input_parser as input_parser
+
+API_SAMPLE_URL = "http://api.sample.pl"
+METHOD = "GET"
 
 
 class TestConnect(unittest.TestCase):
