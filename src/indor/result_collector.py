@@ -1,8 +1,9 @@
 import re
 import urllib.parse
 
-from indor.indor_exceptions import IncoherentCallbacksServerParameters
-from indor.request_handler import RequestHandler
+from .command_classes.assert_ import Assert
+from .indor_exceptions import IncoherentCallbacksServerParameters
+from .request_handler import RequestHandler
 from .test_results import TestResults
 from .scenario_data import ScenarioData
 from .scenario_results import ScenarioResults
@@ -45,8 +46,12 @@ class ResultCollector(object):
 
     def set_response(self, response):
         self.test_runner.response = response
-        self.callback_handler.join()
-        self.requests = self.callback_handler.get_responses()
+        if self.callback_handler is not None:
+            self.callback_handler.join()
+            self.requests = self.callback_handler.get_responses()
+            self.callback_handler = None
+            for name in self.requests:
+                Assert(self).parse(["REQUEST", "HANDLED", name])
 
     def get_callback_handler_params(self, parsed_url):
         if self.callback_handler_params is None:
@@ -64,10 +69,11 @@ class ResultCollector(object):
         if len(self.scenarios) == 0:
             self.add_default_scenario()
         self.scenarios[-1].add_test(TestResults(test_name))
-        self.callback_handler = RequestHandler(self.callback_handler_params.url, self.callback_handler_params.port,
-                                               self.callback_handler_params.responses)
-        self.callback_handler_params = None
-        self.callback_handler.start()
+        if self.callback_handler_params is not None:
+            self.callback_handler = RequestHandler(self.callback_handler_params.hostname, self.callback_handler_params.port,
+                                                   self.callback_handler_params.responses)
+            self.callback_handler_params = None
+            self.callback_handler.start()
 
     def get_response(self):
         return self.test_runner.response

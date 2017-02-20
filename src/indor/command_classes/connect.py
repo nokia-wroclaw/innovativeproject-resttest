@@ -3,8 +3,6 @@ import ast
 import requests
 from pyparsing import *
 
-from indor.command_classes.handle_request import HandleRequest
-from indor.request_handler import RequestHandler
 from .. import indor_exceptions
 from .. import result
 from ..command import Command
@@ -139,19 +137,13 @@ class Connect(Command, metaclass=CommandRegister):
                                                     json=get_json(path),
                                                     headers=get_headers(path),
                                                     timeout=get_timeout(path)))
-            # for name in responses:
-            #     if responses[name].handled:
-            #         self.result_collector.add_result(Passed(HandleRequest, "Got request '" + name + "'"))
-            #     else:
-            #         self.result_collector.add_result(Failed(HandleRequest, "Expecting request '" + name + "'", "not handled"))
 
         except indor_exceptions.URLNotFound as e:
             self.result_collector.add_test("NO URL")
             self.result_collector.add_result(ConnectionError(self, e))
-        except AttributeError:
+        except AttributeError as e:
             self.result_collector.add_result(
-                ConnectionError(self,
-                                indor_exceptions.TypeRequestNotFound('type not found "%s"' % (request_type.lower()))))
+                ConnectionError(self, indor_exceptions.TypeRequestNotFound('type not found "%s"' % (e))))
         except requests.exceptions.Timeout as e:
             self.result_collector.add_result(ConnectionError(self, result.ERROR_CONNECTION_TIMEOUT))
         except requests.exceptions.ConnectionError as e:

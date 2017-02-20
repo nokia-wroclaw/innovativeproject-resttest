@@ -22,5 +22,10 @@ class Handle(Command, metaclass=CommandRegister):
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
                                                     hints=CommandFactory().get_class_children(
                                                         self.__class__.__name__))
-        command = CommandFactory().get_class("Handle", path[0], self.result_collector)
-        command.parse(path[1:])
+
+        if not isinstance(path[0], str):
+            command = CommandFactory().get_class("Handle", path[0][1], self.result_collector)
+        else:
+            command = CommandFactory().get_class("Handle", path[1], self.result_collector)
+
+        command.parse(path[0:])

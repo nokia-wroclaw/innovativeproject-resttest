@@ -49,8 +49,8 @@ class Test(Command):
                     elif argument == SET_NAME:
                         next_step = Set(self.result_collector)
                         next_step.parse(path[1:])
-                    elif argument == HANDLE_NAME:
+                    elif argument == HANDLE_NAME or argument[0] == HANDLE_NAME:
                         next_step = Handle(self.result_collector)
-                        next_step.parse(path[:1])
+                        next_step.parse(path[0:])
         except (SyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments) as e:
             self.result_collector.add_result(Error.syntax_error(self, path, e.message))

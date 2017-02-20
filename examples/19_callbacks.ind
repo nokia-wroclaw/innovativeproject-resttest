@@ -1,12 +1,24 @@
 HANDLE REQUEST
 	http://localhost:5000/user/add,
 WAITTIME
-	100ms,
+	10000,
 STATUS
 	200,
 DATA
-	postalcode 41800,
+	postalcode 41800
 	username indoor.
+
+GET
+	http://api.geonames.org/postalCodeLookupJSON,
+PARAMS
+	postalcode 50316
+	username indor.
+
+ASSERT RESPONSE STATUS OK.
+ASSERT RESPONSE TYPE JSON.
+ASSERT RESPONSE EMPTY.
+ASSERT RESPONSE EMPTY.
+ASSERT RESPONSE LENGTH > 200.
 
 ASSERT REQUEST TYPE JSON.
 ASSERT REQUEST LENGTH = 1234.

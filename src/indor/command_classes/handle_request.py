@@ -68,8 +68,5 @@ class HandleRequest(Command, metaclass=CommandRegister):
         super(HandleRequest, self).__init__(result_collector)
 
     def parse(self, path):
-        url = parse_url(path)
-
-        self.result_collector.add_test(url)
-        self.result_collector.add_request(CallbackResponse(url=url, status=get_status(path),
+        self.result_collector.add_request(CallbackResponse(url=parse_url(path, "HANDLE REQUEST"), status=get_status(path),
                                                            waittime=get_waittime(path), data=get_data(path)))

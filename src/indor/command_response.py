@@ -206,8 +206,6 @@ class CommandResponseLength(Command, metaclass=CommandRegister):
 
 
 class CommandResponseEmpty(Command, metaclass=CommandRegister):
-    __metaclass__ = CommandRegister
-
     pretty_name = "RESPONSE EMPTY"
 
     def __init__(self, result_collector):

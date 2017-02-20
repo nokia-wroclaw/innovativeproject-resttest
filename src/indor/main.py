@@ -91,4 +91,3 @@ class Indor(object):
 
 def main():
     Indor()
-Indor()

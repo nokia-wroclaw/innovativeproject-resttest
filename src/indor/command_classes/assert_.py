@@ -1,7 +1,11 @@
+import importlib
+
 from ..command_response import *
 from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from ..parsing_exception import ParsingException
-from ..tools import transform_nested_array
+from ..tools import transform_nested_array, get_parent_module_name
+
+importlib.import_module(".command_request", package=get_parent_module_name(__name__))
 
 
 class Assert(Command, metaclass=CommandRegister):
@@ -15,8 +19,8 @@ class Assert(Command, metaclass=CommandRegister):
 
         if len(path) == 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
         command = CommandFactory().get_class("Command", path[0], self.result_collector)
         try:
             computed, parsed = command.parse(path[1:])

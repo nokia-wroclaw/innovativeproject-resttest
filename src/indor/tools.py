@@ -43,13 +43,9 @@ def parse_url_with_type(path):
     return path[0], path[1]
 
 
-def parse_url(path):
-    if isinstance(path[0], list):
-        if len(path[0]) != 1:
-            raise indor_exceptions.URLNotFound("Nie podano adres URL")
-        return path[0][0]
+def parse_url(path, section_name):
+    section_with_url = extract_section_by_name(path, section_name)
 
-    if len(path) < 1:
+    if section_with_url is None:
         raise indor_exceptions.URLNotFound("Nie podano adres URL")
-
-    return path[0]
+    return section_with_url[-1]
