@@ -29,6 +29,16 @@ class URLNotFound(Exception):
         super(URLNotFound, self).__init__("Incorrect URL Address: " + url)
 
 
+class InvalidStatusCode(Exception):
+    def __init__(self, status_code):
+        super(InvalidStatusCode, self).__init__("Incorrect status code: " + status_code)
+
+
+class InvalidStatusCodeName(Exception):
+    def __init__(self, message):
+        super(InvalidStatusCodeName, self).__init__(message)
+
+
 class IncoherentCallbacksServerParameters(Exception):
     def __init__(self, expected, given):
         super(IncoherentCallbacksServerParameters, self).__init__("Expected parameters: {}, but got: {}".format(expected, given))

@@ -1,8 +1,11 @@
 import json
 
+from ..result import Error
+from ..parsing_exception import ParsingException
+from ..indor_exceptions import InvalidStatusCodeName, InvalidStatusCode
 from ..command import Command
 from ..command_register import CommandRegister
-from ..tools import extract_section_by_name, parse_url
+from ..tools import extract_section_by_name, parse_url, parse_response_status
 
 DATA_NAME = "DATA"
 WAITTIME_NAME = "WAITTIME"
@@ -42,7 +45,7 @@ def get_status(path):
 class CallbackResponse(object):
     def __init__(self, url, status, waittime, data):
         self.url = url
-        self.status = status
+        self.status = parse_response_status(status)
         self.waittime = waittime
         self.data = data
 
@@ -68,6 +71,11 @@ class HandleRequest(Command, metaclass=CommandRegister):
         super(HandleRequest, self).__init__(result_collector)
 
     def parse(self, path):
-        self.result_collector.add_request(
-            CallbackResponse(url=parse_url(path, "HANDLE REQUEST"), status=get_status(path),
-                             waittime=get_waittime(path), data=get_data(path)))
+        try:
+            self.result_collector.add_request(
+                CallbackResponse(url=parse_url(path, "HANDLE REQUEST"), status=get_status(path),
+                                 waittime=get_waittime(path), data=get_data(path)))
+        except InvalidStatusCodeName as e:
+            raise ParsingException(self, Error.from_exception(self, e))
+        except InvalidStatusCode as e:
+            raise ParsingException(self, Error.from_exception(self, e))

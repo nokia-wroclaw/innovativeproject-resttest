@@ -1,9 +1,9 @@
-from requests.status_codes import _codes
-from requests.structures import CaseInsensitiveDict
+from .tools import parse_response_status
 from .command import Command
 from .command_factory import CommandFactory
 from .command_register import CommandRegister
-from .indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator
+from .indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator, InvalidStatusCodeName, \
+    InvalidStatusCode
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
 from .relational_operators import compare_by_supposed_relational_operator
@@ -92,25 +92,6 @@ class CommandResponseStatus(Command, metaclass=CommandRegister):
 
     def __init__(self, result_collector):
         super(CommandResponseStatus, self).__init__(result_collector)
-        self.mapping = CaseInsensitiveDict()
-        self.mapping["Ok"] = 200
-        self.mapping["Not found"] = 404
-
-    def map_status_code(self, status):
-        """
-
-        author Damian Mirecki
-
-        :param status
-        :return:
-        :rtype: int
-        :raise LookupError: When status is not implemented yet.
-        """
-
-        if status not in self.mapping:
-            raise LookupError("Status " + status + " not found in " + self.mapping.__str__())
-
-        return self.mapping[status]
 
     def parse(self, path):
         response = self.result_collector.get_response()
@@ -124,16 +105,12 @@ class CommandResponseStatus(Command, metaclass=CommandRegister):
 
         status = path[0]
 
-        if not status.isdigit():
-            try:
-                status = self.map_status_code(status)
-            except LookupError as e:
-                raise ParsingException(self, Error.from_exception(self, e))
-        else:
-            if int(status) not in _codes.keys():
-                raise ParsingException(self, result.ERROR_INVALID_STATUS_CODE)
-
-        expected = int(status)
+        try:
+            expected = parse_response_status(status)
+        except InvalidStatusCodeName as e:
+            raise ParsingException(self, Error.from_exception(self, e))
+        except InvalidStatusCode as e:
+            raise ParsingException(self, Error.from_exception(self, e))
         return actual, ParsedValue(self, expected, "")
 
 

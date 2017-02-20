@@ -1,4 +1,8 @@
+from requests.status_codes import _codes
+from requests.structures import CaseInsensitiveDict
+
 from . import indor_exceptions
+from .indor_exceptions import InvalidStatusCodeName, InvalidStatusCode
 
 
 def get_parent_module_name(module_name):
@@ -46,6 +50,40 @@ def parse_url_with_type(path):
         raise indor_exceptions.URLNotFound("Nie podano adres URL")
 
     return path[0], path[1]
+
+
+_response_status_mapping = CaseInsensitiveDict()
+_response_status_mapping["Ok"] = 200
+_response_status_mapping["Not found"] = 404
+
+
+def _map_status_code(status):
+    """
+
+    author Damian Mirecki
+
+    :param status
+    :return:
+    :rtype: int
+    :raise LookupError: When status is not implemented yet.
+    """
+
+    if status not in _response_status_mapping:
+        raise LookupError("Status " + status + " not found in " + _response_status_mapping.__str__())
+
+    return _response_status_mapping[status]
+
+
+def parse_response_status(status):
+    if not status.isdigit():
+        try:
+            status = _map_status_code(status)
+        except LookupError as e:
+            raise InvalidStatusCodeName(str(e)) from e
+    else:
+        if int(status) not in _codes.keys():
+            raise InvalidStatusCode(status)
+    return int(status)
 
 
 def parse_url(path, section_name):
