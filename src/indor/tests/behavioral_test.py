@@ -1,10 +1,13 @@
+import ast
+import json
 import unittest
+from threading import Timer
+
+import requests
 
 from indor.scenario_results import ScenarioResults
 from indor.result import Passed, Error, Failed, ConnectionError
 from .common import run_indor
-
-__author__ = 'Damian Mirecki'
 
 
 class TestBehavioral(unittest.TestCase):
@@ -22,6 +25,12 @@ class TestBehavioral(unittest.TestCase):
 
     def assertResultIsError(self, obj):
         self.assertIsInstance(obj, Error)
+
+    def getResponseForUrl(self, url):
+        func = getattr(requests, "GET".lower())
+        resp = func(url=url, allow_redirects=False)
+        self.status_code = resp.status_code
+        self.content = resp.text
 
     def test_no_url(self):
         test = """
@@ -153,6 +162,37 @@ class TestBehavioral(unittest.TestCase):
 
         results = scenario.test_results[0].results
         self.assertEqual(1, len(results))
+        self.assertAllPassed(results)
+
+    def test_callback_ok(self):
+        test = """
+            HANDLE REQUEST
+                http://localhost:5000/user/add,
+            WAITTIME
+                10000,
+            STATUS
+                200,
+            DATA
+                postalcode 41800
+                username indoor.
+
+            POST
+                http://httpbin.org/post.
+            ASSERT RESPONSE STATUS OK.
+        """
+
+        timer = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/add"))
+        timer.start()
+        result = run_indor(test)
+
+        self.assertEqual(200, self.status_code)
+        self.assertEqual({'postalcode': '41800', 'username': 'indoor'}, ast.literal_eval(self.content))
+
+        self.assertScenarioCount(1, result)
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(2, len(results))
         self.assertAllPassed(results)
 
     def test_timeout_ok(self):

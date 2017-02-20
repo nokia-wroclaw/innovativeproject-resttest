@@ -4,41 +4,6 @@ from threading import Thread, Timer
 from time import sleep
 
 
-def create_handler_class(resps):
-    class DynamicHTTPHandler(http.server.BaseHTTPRequestHandler):
-        waiting_responses = resps
-        expired_responses = {}
-
-        @classmethod
-        def pop_response_by_name(cls, name):
-            cls.expired_responses[name] = cls.waiting_responses.pop(name)
-            return cls.expired_responses[name]
-
-        @classmethod
-        def pop_response_by_url(cls, url):
-            for key in cls.waiting_responses:
-                if cls.waiting_responses[key].match(url):
-                    cls.expired_responses[key] = cls.waiting_responses.pop(key)
-                    return cls.expired_responses[key]
-            return None
-
-        def do_GET(self):
-            resp = self.pop_response_by_url(self.path)
-
-            if resp is None:
-                self.send_error(404, "URL <<" + self.path + ">> is not handled")
-                return
-
-            resp.set_handled()
-            self.send_response(int(resp.get_response_code()))
-            for key, value in resp.get_headers().items():
-                self.send_header(key, value)
-            self.end_headers()
-            self.wfile.write(resp.get_content())
-
-    return DynamicHTTPHandler
-
-
 class RequestHandler(object):
     def __init__(self, hostname, port, responses):
         self.hostname = hostname
@@ -47,7 +12,7 @@ class RequestHandler(object):
         for name in responses:
             resps[name] = ExpirableResponse(name, name, responses[name].waittime, responses[name].status,
                                             responses[name].data)
-        self.handler_class = create_handler_class(resps)
+        self.handler_class = _create_handler_class(resps)
         self.app = http.server.HTTPServer((hostname, port), self.handler_class)
         self.server_thread = Thread(target=self.app.serve_forever)
 
@@ -100,3 +65,38 @@ class ExpirableResponse(object):
 
     def start_handling(self):
         self.timer.start()
+
+
+def _create_handler_class(resps):
+    class DynamicHTTPHandler(http.server.BaseHTTPRequestHandler):
+        waiting_responses = resps
+        expired_responses = {}
+
+        @classmethod
+        def pop_response_by_name(cls, name):
+            cls.expired_responses[name] = cls.waiting_responses.pop(name)
+            return cls.expired_responses[name]
+
+        @classmethod
+        def pop_response_by_url(cls, url):
+            for key in cls.waiting_responses:
+                if cls.waiting_responses[key].match(url):
+                    cls.expired_responses[key] = cls.waiting_responses.pop(key)
+                    return cls.expired_responses[key]
+            return None
+
+        def do_GET(self):
+            resp = self.pop_response_by_url(self.path)
+
+            if resp is None:
+                self.send_error(404, "URL <<" + self.path + ">> is not handled")
+                return
+
+            resp.set_handled()
+            self.send_response(int(resp.get_response_code()))
+            for key, value in resp.get_headers().items():
+                self.send_header(key, value)
+            self.end_headers()
+            self.wfile.write(resp.get_content())
+
+    return DynamicHTTPHandler
