@@ -4,9 +4,9 @@ import urllib.parse
 from .command_classes.assert_ import Assert
 from .indor_exceptions import IncoherentCallbacksServerParameters
 from .request_handler import RequestHandler
-from .test_results import TestResults
 from .scenario_data import ScenarioData
 from .scenario_results import ScenarioResults
+from .test_results import TestResults
 from .xml_tree_factory import XmlTreeFactory
 
 
@@ -70,7 +70,8 @@ class ResultCollector(object):
             self.add_default_scenario()
         self.scenarios[-1].add_test(TestResults(test_name))
         if self.callback_handler_params is not None:
-            self.callback_handler = RequestHandler(self.callback_handler_params.hostname, self.callback_handler_params.port,
+            self.callback_handler = RequestHandler(self.callback_handler_params.hostname,
+                                                   self.callback_handler_params.port,
                                                    self.callback_handler_params.responses)
             self.callback_handler_params = None
             self.callback_handler.start()
@@ -90,8 +91,8 @@ class ResultCollector(object):
             self.execute_current_scenario = True
         else:
             self.execute_current_scenario = False
-        # TODO: Why would we need the next line? It doesn't seem to be working
-#        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
+            # TODO: Why would we need the next line? It doesn't seem to be working
+        #        self.scenarios[-1].add_test(self.scenarios[-2].get_last_test())
 
     def get_response_ElementTree(self):
         if self.test_runner.responseXML is None:
@@ -100,7 +101,7 @@ class ResultCollector(object):
                 t = contentType[:contentType.index(';')]
                 t = t.split("/")
                 class_name = ""
-                for i in range(0,len(t)):
+                for i in range(0, len(t)):
                     class_name += t[i].lower().title()
             else:
                 class_name = self.test_runner.parser

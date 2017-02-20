@@ -1,6 +1,6 @@
-from abc import ABCMeta, abstractmethod
 import os
 import sys
+from abc import ABCMeta, abstractmethod
 
 from junit_xml import TestSuite, TestCase
 from termcolor import cprint, colored

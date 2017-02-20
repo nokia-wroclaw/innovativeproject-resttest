@@ -8,8 +8,8 @@ DATA_NAME = "DATA"
 WAITTIME_NAME = "WAITTIME"
 STATUS_NAME = "STATUS"
 
-DEFAULT_WAITTIME = 10.0   # seconds
-DEFAULT_STATUS = "200"    # OK
+DEFAULT_WAITTIME = 10.0  # seconds
+DEFAULT_STATUS = "200"  # OK
 
 
 def get_data(path):
@@ -68,5 +68,6 @@ class HandleRequest(Command, metaclass=CommandRegister):
         super(HandleRequest, self).__init__(result_collector)
 
     def parse(self, path):
-        self.result_collector.add_request(CallbackResponse(url=parse_url(path, "HANDLE REQUEST"), status=get_status(path),
-                                                           waittime=get_waittime(path), data=get_data(path)))
+        self.result_collector.add_request(
+            CallbackResponse(url=parse_url(path, "HANDLE REQUEST"), status=get_status(path),
+                             waittime=get_waittime(path), data=get_data(path)))

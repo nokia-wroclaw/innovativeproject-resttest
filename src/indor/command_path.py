@@ -1,10 +1,10 @@
+from . import result
 from .command import Command
 from .command_factory import CommandFactory
 from .command_register import CommandRegister
+from .indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
-from .indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
-from . import result
 from .relational_operators import compare_by_supposed_relational_operator
 from . import select_parser # important import
 
@@ -18,9 +18,9 @@ class CommandPath(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) < 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         'At least 2 arguments expected. ' + self.pretty_name +
-                                                         ' is not valid command.', CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    'At least 2 arguments expected. ' + self.pretty_name +
+                                                    ' is not valid command.',
+                                                    CommandFactory().get_class_children(self.__class__.__name__))
 
         url = path[0]
         next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
@@ -38,7 +38,7 @@ class CommandPathExists(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) != 1:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         'The path to check expected.')
+                                                    'The path to check expected.')
 
         url = path[0]
         doc = self.result_collector.get_response_ElementTree()
@@ -57,7 +57,7 @@ class CommandPathContains(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) < 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(self.__class__.__name__))
 
         url = path[0]
 
@@ -76,8 +76,8 @@ class CommandPathContainsAny(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) != 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
         parsed = ParsedValue(self, True, "PATH CONTAINS ANY")
         computed = False
 
@@ -134,8 +134,8 @@ class CommandPathNodes(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) < 2:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
 
         url = path[0]
         next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
@@ -184,6 +184,6 @@ class CommandPathFinal(Command, metaclass=CommandRegister):
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'At least on argument expected.')
 
         doc = self.result_collector.get_response_ElementTree()
-        computed = len(doc.findall(path[0])) > 0 and len(doc.findall(path[0]+"/*")) == 0
+        computed = len(doc.findall(path[0])) > 0 and len(doc.findall(path[0] + "/*")) == 0
         parsed = ParsedValue(self, True, "PATH FINAL")
         return computed, parsed

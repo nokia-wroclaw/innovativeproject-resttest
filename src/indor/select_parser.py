@@ -13,8 +13,8 @@ class Set(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) <= 1:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                         self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
         else:
             next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
             next_step.parse(path[1:])
@@ -29,7 +29,7 @@ class SetParser(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) < 1:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                         self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
         else:
             self.result_collector.set_parser(path[0])

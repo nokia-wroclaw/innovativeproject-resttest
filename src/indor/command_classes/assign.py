@@ -1,6 +1,3 @@
-import re
-from ..commands import *
-from ..command_response import *
 from ..command import Command
 from ..command_factory import CommandFactory
 from ..command_register import CommandRegister
@@ -16,13 +13,13 @@ class Assign(Command, metaclass=CommandRegister):
         super(Assign, self).__init__(result_collector)
 
     def parse(self, path):
-        for i in range(1, len(path)-1):
+        for i in range(1, len(path) - 1):
             path[i] = self.result_collector.use_variables(path[i])
 
         if len(path) <= 1:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                          self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
 
         try:
             command = CommandFactory().get_class("Command", path[1], self.result_collector)

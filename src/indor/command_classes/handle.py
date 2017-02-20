@@ -1,10 +1,10 @@
+import importlib
+
 from ..command import Command
 from ..command_factory import CommandFactory
 from ..command_register import CommandRegister
 from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from ..tools import transform_nested_array, get_parent_module_name
-import importlib
-
 
 importlib.import_module(".handle_request", package=get_parent_module_name(__name__))
 

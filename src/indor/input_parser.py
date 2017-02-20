@@ -1,5 +1,6 @@
-from pyparsing import *
 import json
+
+from pyparsing import *
 
 from . import indor_exceptions
 

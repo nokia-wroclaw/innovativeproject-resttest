@@ -4,12 +4,12 @@ import os
 
 from pyparsing import ParseException
 
+from . import input_parser as parser
+from . import test_runner
 from .general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED, GENERAL_ERROR_FILE_NOT_FOUND
 from .printer import Printer
 from .reading import read_from_file
 from .statistics import Statistics
-from . import test_runner
-from . import input_parser as parser
 
 
 def parse_arguments():
@@ -77,7 +77,7 @@ class Indor(object):
             results = [GeneralError("{} {}".format(GENERAL_ERROR_FILE_NOT_FOUND, file_path))]
         except ParseException:
             results = [GeneralError("{} {}".format(GENERAL_ERROR_PARSE_FAILED, file_path))]
-        #except Exception as e:
+        # except Exception as e:
         #    results = [GeneralError("{}({}) {} {}".format(GENERAL_ERROR_UNKNOWN_ERROR, e.__class__.__name__, file_path, e.message))]
         return results
 

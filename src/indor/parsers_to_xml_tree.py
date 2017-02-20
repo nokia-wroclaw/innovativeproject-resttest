@@ -1,8 +1,8 @@
-from .xml_tree import XmlTree
-import xml.etree.ElementTree as ET
-from .xml_tree_register import XmlTreeRegister
 import json
+import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
+from .xml_tree import XmlTree
+from .xml_tree_register import XmlTreeRegister
 
 
 class TextXml(XmlTree, metaclass=XmlTreeRegister):
@@ -26,6 +26,7 @@ class ApplicationJson(XmlTree, metaclass=XmlTreeRegister):
         json_obj = json.loads(xml)
         xml_string = self.json2xml(json_obj)
         return ET.fromstring(xml_string.encode('utf-8'))
+
     # method form stackoverflow
     # stackoverflow.com/questions/8988775/convert-json-to-xml-in-python
     def json2xml(self, json_obj, line_padding=""):

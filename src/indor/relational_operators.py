@@ -1,4 +1,5 @@
 import operator
+
 from .indor_exceptions import InvalidRelationalOperator
 
 

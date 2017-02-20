@@ -1,9 +1,9 @@
 import importlib
 
-from ..result import Passed, Failed
 from ..command_response import *
 from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from ..parsing_exception import ParsingException
+from ..result import Passed, Failed
 from ..tools import transform_nested_array, get_parent_module_name
 
 importlib.import_module(".command_request", package=get_parent_module_name(__name__))

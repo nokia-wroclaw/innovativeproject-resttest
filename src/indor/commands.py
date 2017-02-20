@@ -1,10 +1,10 @@
+from . import result
 from .command import Command
 from .command_factory import CommandFactory
 from .command_register import CommandRegister
+from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
-from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
-from . import result
 
 
 class CommandCookie(Command, metaclass=CommandRegister):
@@ -16,8 +16,8 @@ class CommandCookie(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) == 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         return next_step.parse(path[1:])
@@ -59,7 +59,8 @@ class CommandCookieValue(Command, metaclass=CommandRegister):
 
     def execute(self, path):
         if len(path) == 0:
-            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Too few arguments expected: cookie name and cookie value.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                    'Too few arguments expected: cookie name and cookie value.')
 
         response = self.result_collector.get_response()
         if response is None:
@@ -87,8 +88,8 @@ class CommandHeader(Command, metaclass=CommandRegister):
     def parse(self, path):
         if len(path) == 0:
             raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
-                                                         hints=CommandFactory().get_class_children(
-                                                             self.__class__.__name__))
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[0], self.result_collector)
         return next_step.parse(path[1:])
@@ -128,7 +129,8 @@ class CommandHeaderValue(Command, metaclass=CommandRegister):
 
     def parse(self, path):
         if len(path) < 1 or len(path) > 2:
-            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__, 'Two arguments expected: header name and header value.')
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                    'Two arguments expected: header name and header value.')
 
         return self.execute(path)
 

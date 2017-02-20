@@ -45,7 +45,8 @@ class RequestHandler(object):
         self.port = port
         resps = {}
         for name in responses:
-            resps[name] = ExpirableResponse(name, name, responses[name].waittime, responses[name].status, responses[name].data)
+            resps[name] = ExpirableResponse(name, name, responses[name].waittime, responses[name].status,
+                                            responses[name].data)
         self.handler_class = create_handler_class(resps)
         self.app = http.server.HTTPServer((hostname, port), self.handler_class)
         self.server_thread = Thread(target=self.app.serve_forever)

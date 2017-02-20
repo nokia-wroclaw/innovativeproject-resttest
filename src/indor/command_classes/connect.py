@@ -7,7 +7,7 @@ from .. import indor_exceptions
 from .. import result
 from ..command import Command
 from ..command_register import CommandRegister
-from ..result import ConnectionError, Failed, Passed
+from ..result import ConnectionError
 from ..tools import transform_nested_array, extract_section_by_name, parse_url_with_type
 
 PARAMS_NAME = "PARAMS"
