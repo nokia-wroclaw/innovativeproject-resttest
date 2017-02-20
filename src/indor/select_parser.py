@@ -1,5 +1,3 @@
-__author__ = 'Bartosz Zięba'
-
 from .command import Command
 from .command_factory import CommandFactory
 from .command_register import CommandRegister

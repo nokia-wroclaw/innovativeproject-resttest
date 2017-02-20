@@ -1,4 +1,3 @@
-__author__ = 'Bartek'
 from .indor_exceptions import ClassPropertyNotFound
 from .xml_tree_factory import XmlTreeFactory
 from .xml_tree import XmlTree

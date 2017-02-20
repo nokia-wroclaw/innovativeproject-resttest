@@ -3,7 +3,6 @@ from .command_factory import CommandFactory
 from .command_register import CommandRegister
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
-from .result import Error, Passed, Failed
 from .indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
 from . import result
 from .relational_operators import compare_by_supposed_relational_operator
@@ -61,7 +60,6 @@ class CommandPathContains(Command, metaclass=CommandRegister):
                                                          hints=CommandFactory().get_class_children(self.__class__.__name__))
 
         url = path[0]
-        from command_factory import CommandFactory
 
         next_step = CommandFactory().get_class(self.__class__.__name__, path[1], self.result_collector)
         path = path[2:]

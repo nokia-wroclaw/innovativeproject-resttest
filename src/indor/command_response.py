@@ -7,7 +7,7 @@ from .indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelation
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
 from .relational_operators import compare_by_supposed_relational_operator
-from .result import Error, Passed, Failed
+from .result import Error
 from . import result
 
 

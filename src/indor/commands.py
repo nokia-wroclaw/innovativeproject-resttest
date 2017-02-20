@@ -3,7 +3,6 @@ from .command_factory import CommandFactory
 from .command_register import CommandRegister
 from .parsed_value import ParsedValue
 from .parsing_exception import ParsingException
-from .result import Error, Passed, Failed
 from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from . import result
 

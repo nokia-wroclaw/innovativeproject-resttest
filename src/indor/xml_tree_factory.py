@@ -1,5 +1,3 @@
-__author__ = 'Bartek'
-
 from .singleton import Singleton
 
 

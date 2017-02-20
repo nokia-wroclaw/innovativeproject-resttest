@@ -1,5 +1,3 @@
-__author__ = 'Bartek'
-
 from .xml_tree import XmlTree
 import xml.etree.ElementTree as ET
 from .xml_tree_register import XmlTreeRegister
