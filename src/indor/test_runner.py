@@ -1,4 +1,4 @@
-from .test import Test
+from .command_classes.test import Test
 from .result_collector import ResultCollector
 
 

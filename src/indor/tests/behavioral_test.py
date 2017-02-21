@@ -4,7 +4,7 @@ from threading import Timer
 
 import requests
 
-from indor.scenario_results import ScenarioResults
+from indor.result_collector import ScenarioResults
 from indor.result import Passed, Error, Failed, ConnectionError
 from .common import run_indor
 

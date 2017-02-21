@@ -1,12 +1,12 @@
-from .command_classes.handle import Handle
-from .command_classes.assign import Assign
-from .command import Command
-from .command_classes.assert_ import Assert
-from .command_classes.connect import Connect
-from .indor_exceptions import SyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments
-from .result import Error
+from ..command_classes.handle import Handle
+from ..command_classes.assign import Assign
+from ..command import Command
+from ..command_classes.assert_ import Assert
+from ..command_classes.connect import Connect
+from ..indor_exceptions import SyntaxErrorClassNotExists, SyntaxErrorWrongNumberOfArguments
+from ..result import Error
 from .scenario import Scenario
-from .select_parser import Set
+from ..select_parser import Set
 
 ASSERT_NAME = 'ASSERT'
 SCENARIO_NAME = 'SCENARIO'
