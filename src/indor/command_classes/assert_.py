@@ -26,7 +26,7 @@ class Assert(Command, metaclass=CommandRegister):
         try:
             computed, parsed = command.parse(path[1:])
             if computed == parsed.value:
-                self.result_collector.add_result(Passed(parsed.parsing_object))
+                self.result_collector.add_result(Passed(parsed.parsing_object, parsed.description))
             else:
                 self.result_collector.add_result(Failed(parsed.parsing_object, parsed.description, computed))
         except ParsingException as e:

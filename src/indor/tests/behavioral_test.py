@@ -220,6 +220,42 @@ class TestBehavioral(unittest.TestCase):
         self.assertEqual(4, len(results))
         self.assertAllPassed(results)
 
+    def test_callback_not_ok(self):
+        test = """
+            HANDLE REQUEST
+                http://localhost:5000/user/add,
+            WAITTIME
+                2000.
+            HANDLE REQUEST
+                http://localhost:5000/user/get,
+            WAITTIME
+                2000.
+            HANDLE REQUEST
+                http://localhost:5000/user/remove,
+            WAITTIME
+                2000.
+
+            POST
+                http://httpbin.org/post.
+        """
+        timer1 = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/add"))
+        timer2 = Timer(4, lambda: self.getResponseForUrl("http://localhost:5000/user/get"))
+        timer1.start()
+        timer2.start()
+        result = run_indor(test)
+        timer1.join()
+        timer2.join()
+
+        self.assertScenarioCount(1, result)
+        scenario = result[0]
+
+        results = scenario.test_results[0].results
+        self.assertEqual(3, len(results))
+
+        self.assertIsInstance(next(filter(lambda x: "/user/add" in x.expected, results)), Passed)
+        self.assertIsInstance(next(filter(lambda x: "/user/remove" in x.expected, results)), Failed)
+        self.assertIsInstance(next(filter(lambda x: "/user/get" in x.expected, results)), Failed)
+
     def test_timeout_ok(self):
         test = """
             POST

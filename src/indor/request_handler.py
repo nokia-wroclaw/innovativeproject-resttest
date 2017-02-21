@@ -30,6 +30,7 @@ class RequestHandler(object):
         self.server_thread.join()
 
     def get_responses(self):
+        print(self.handler_class.expired_responses)
         return self.handler_class.expired_responses
 
 

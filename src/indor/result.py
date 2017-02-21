@@ -15,8 +15,9 @@ class Result:
 
 
 class Passed(Result):
-    def __init__(self, class_instance):
+    def __init__(self, class_instance, expected):
         Result.__init__(self, class_instance)
+        self.expected = expected
 
 
 class Failed(Result):

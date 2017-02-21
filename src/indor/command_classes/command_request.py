@@ -38,5 +38,5 @@ class CommandRequestHandled(Command, metaclass=CommandRegister):
             raise ParsingException(self, result.ERROR_REQUEST_NOT_FOUND)
 
         computed = self.result_collector.requests[path[0]].handled
-        parsed = ParsedValue(self, True, path[0] + "is HANDLED")
+        parsed = ParsedValue(self, True, path[0] + " to be HANDLED")
         return computed, parsed
