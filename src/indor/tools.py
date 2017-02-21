@@ -14,6 +14,17 @@ def transform_nested_array(array, transform):
     return [transform_nested_array(x, transform) if isinstance(x, (list, tuple)) else transform(x) for x in array]
 
 
+def create_key_value_pairs(section):
+    """
+
+    :param section:
+    :type section: list
+    :return:
+    :rtype: dict
+    """
+    return dict(zip(section[0::2], section[1::2]))
+
+
 def extract_section_by_name(path, section_name):
     """
 

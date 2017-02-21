@@ -1,12 +1,12 @@
-from . import result
-from .command import Command
-from .command_factory import CommandFactory
-from .command_register import CommandRegister
-from .indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
-from .parsed_value import ParsedValue
-from .parsing_exception import ParsingException
-from .relational_operators import compare_by_supposed_relational_operator
-from . import select_parser # important import
+from .. import result
+from ..command import Command
+from ..command_factory import CommandFactory
+from ..command_register import CommandRegister
+from ..indor_exceptions import InvalidRelationalOperator, SyntaxErrorWrongNumberOfArguments
+from ..parsed_value import ParsedValue
+from ..parsing_exception import ParsingException
+from ..relational_operators import compare_by_supposed_relational_operator
+from .. import select_parser # important import
 
 
 class CommandPath(Command, metaclass=CommandRegister):

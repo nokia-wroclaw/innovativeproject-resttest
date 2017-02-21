@@ -8,7 +8,7 @@ from .. import result
 from ..command import Command
 from ..command_register import CommandRegister
 from ..result import ConnectionError
-from ..tools import transform_nested_array, extract_section_by_name, parse_url_with_type
+from ..tools import transform_nested_array, extract_section_by_name, parse_url_with_type, create_key_value_pairs
 
 PARAMS_NAME = "PARAMS"
 HEADERS_NAME = "HEADERS"
@@ -96,7 +96,7 @@ def get_headers(path):
     if section is None:
         return None
 
-    return dict(zip(section[0::2], section[1::2]))
+    return create_key_value_pairs(section)
 
 
 def get_params(path):
@@ -105,7 +105,7 @@ def get_params(path):
     if section is None:
         return None
 
-    return dict(zip(section[0::2], section[1::2]))
+    return create_key_value_pairs(section)
 
 
 def get_timeout(path):

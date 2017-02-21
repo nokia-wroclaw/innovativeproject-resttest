@@ -1,10 +1,10 @@
-from . import result
-from .command import Command
-from .command_factory import CommandFactory
-from .command_register import CommandRegister
-from .indor_exceptions import SyntaxErrorWrongNumberOfArguments
-from .parsed_value import ParsedValue
-from .parsing_exception import ParsingException
+from .. import result
+from ..command import Command
+from ..command_factory import CommandFactory
+from ..command_register import CommandRegister
+from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
+from ..parsed_value import ParsedValue
+from ..parsing_exception import ParsingException
 
 
 class CommandCookie(Command, metaclass=CommandRegister):

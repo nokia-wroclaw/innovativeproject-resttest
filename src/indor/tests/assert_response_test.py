@@ -1,7 +1,7 @@
 import unittest
 import mock
 
-from indor.command_response import CommandResponse
+from indor.command_classes.command_response import CommandResponse
 
 
 class AssertResponseTest(unittest.TestCase):

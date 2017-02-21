@@ -7,4 +7,10 @@ class Command(object, metaclass=ABCMeta):
 
     @abstractmethod
     def parse(self, path):
+        """
+
+        :param path: list of args to execute one statement
+        :type path: list
+        :return:
+        """
         pass

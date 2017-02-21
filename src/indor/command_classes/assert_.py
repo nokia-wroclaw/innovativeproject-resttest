@@ -1,6 +1,6 @@
 import importlib
 
-from ..command_response import *
+from .command_response import *
 from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments
 from ..parsing_exception import ParsingException
 from ..result import Passed, Failed

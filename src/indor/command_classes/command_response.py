@@ -1,14 +1,14 @@
-from .tools import parse_response_status
-from .command import Command
-from .command_factory import CommandFactory
-from .command_register import CommandRegister
-from .indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator, InvalidStatusCodeName, \
+from ..tools import parse_response_status
+from ..command import Command
+from ..command_factory import CommandFactory
+from ..command_register import CommandRegister
+from ..indor_exceptions import SyntaxErrorWrongNumberOfArguments, InvalidRelationalOperator, InvalidStatusCodeName, \
     InvalidStatusCode
-from .parsed_value import ParsedValue
-from .parsing_exception import ParsingException
-from .relational_operators import compare_by_supposed_relational_operator
-from .result import Error
-from . import result
+from ..parsed_value import ParsedValue
+from ..parsing_exception import ParsingException
+from ..relational_operators import compare_by_supposed_relational_operator
+from ..result import Error
+from .. import result
 
 
 class CommandResponseRedirects(Command, metaclass=CommandRegister):
