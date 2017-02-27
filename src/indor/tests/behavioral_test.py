@@ -178,6 +178,7 @@ class TestBehavioral(unittest.TestCase):
             POST
                 http://httpbin.org/post.
             ASSERT RESPONSE STATUS OK.
+            ASSERT REQUEST http://localhost:5000/user/add METHOD GET.
         """
 
         timer = Timer(1, lambda: self.getResponseForUrl("http://localhost:5000/user/add"))
@@ -191,7 +192,7 @@ class TestBehavioral(unittest.TestCase):
         scenario = result[0]
 
         results = scenario.test_results[0].results
-        self.assertEqual(2, len(results))
+        self.assertEqual(3, len(results))
         self.assertAllPassed(results)
 
     def test_many_callbacks_ok(self):

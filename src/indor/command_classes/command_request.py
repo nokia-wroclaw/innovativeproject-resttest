@@ -40,3 +40,22 @@ class CommandRequestHandled(Command, metaclass=CommandRegister):
         computed = self.result_collector.requests[path[0]].handled
         parsed = ParsedValue(self, True, path[0] + " to be HANDLED")
         return computed, parsed
+
+
+class CommandRequestMethod(Command, metaclass=CommandRegister):
+    pretty_name = "REQUEST METHOD"
+
+    def __init__(self, result_collector):
+        super(CommandRequestMethod, self).__init__(result_collector)
+
+    def parse(self, path):
+        if len(path) < 2:
+            raise SyntaxErrorWrongNumberOfArguments(self.__class__.__name__,
+                                                    hints=CommandFactory().get_class_children(
+                                                        self.__class__.__name__))
+        if path[0] not in self.result_collector.requests:
+            raise ParsingException(self, result.ERROR_REQUEST_NOT_FOUND)
+
+        computed = self.result_collector.requests[path[0]].request_method
+        parsed = ParsedValue(self, computed, path[1])
+        return computed, parsed
