@@ -1,7 +1,10 @@
+DEFINE URL = https://restcountries.eu/rest/v2/capital
+
 REPEAT FOR
 {
-    "Poland": {"url": "https://restcountries.eu/rest/v2/capital/tallinn", "expected_country": "Estonia" },
-    "Estonia": {"url": "https://restcountries.eu/rest/v2/capital/warsaw", "expected_country": "Poland" }
+    "Poland": {"url": "@URL@/tallinn", "expected_country": "Estonia" },
+    "Estonia": {"url": "@URL@/warsaw", "expected_country": "Poland" },
+    "Russia": {"url": "@URL@/moscow", "expected_country": "Russia" }
 }
     HANDLE REQUEST
         http://localhost:5000/user/add,
@@ -10,8 +13,8 @@ REPEAT FOR
     STATUS
         200,
     DATA
-        postalcode 41800
-        username indoor.
+        param1 value1,
+        param2 value2.
 
     GET
         $url$,
@@ -22,6 +25,7 @@ REPEAT FOR
     ASSERT RESPONSE STATUS OK.
     ASSERT TEXT CONTAINS $expected_country$.
     ASSERT RESPONSE TYPE JSON.
+
     ASSERT REQUEST http://localhost:5000/user/add METHOD POST.
 END REPEAT
 
