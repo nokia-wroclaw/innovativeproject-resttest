@@ -20,3 +20,4 @@
 * Handling callbacks in one test on different ports
 * Underscore/point an exact point where is syntax error
 * Inform about missing dots and commas
+* Added tests for testing if the given examples work
