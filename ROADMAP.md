@@ -2,6 +2,7 @@
 * Providing time in time units, eg. 100ms, 10s, 1h
 * Checking JSON responses works
 * There is possibility to assigning data from requests (callbacks) to variables
+* Add an easter egg: printing the asciiart (a turkey)
 * Matching callback urls with wild expressions
 
 #### Milestone #2
