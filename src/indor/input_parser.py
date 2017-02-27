@@ -29,7 +29,6 @@ def parse_constants(input_data):
     # Getting all defined macros
     const_definition = Suppress("DEFINE") + word + Suppress("=") + empty + restOfLine
     constants = list(const_definition.searchString(input_data))
-    print(constants)
 
     # Replacing consts values in input text
     constants_replaced = input_data

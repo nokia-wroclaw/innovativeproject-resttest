@@ -7,6 +7,7 @@ from ..result import Passed, Failed
 from ..tools import transform_nested_array, get_parent_module_name
 
 importlib.import_module(".command_request", package=get_parent_module_name(__name__))
+importlib.import_module(".commands", package=get_parent_module_name(__name__))
 
 
 class Assert(Command, metaclass=CommandRegister):

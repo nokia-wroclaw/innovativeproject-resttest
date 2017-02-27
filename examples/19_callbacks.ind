@@ -1,29 +1,34 @@
-HANDLE REQUEST
-	http://localhost:5000/user/add,
-WAITTIME
-	10000,
-STATUS
-	200,
-DATA
-	postalcode 41800
-	username indoor.
+REPEAT FOR
+{
+    "Poland": {"url": "https://restcountries.eu/rest/v2/capital/tallinn", "expected_country": "Estonia" },
+    "Estonia": {"url": "https://restcountries.eu/rest/v2/capital/warsaw", "expected_country": "Poland" }
+}
+    HANDLE REQUEST
+        http://localhost:5000/user/add,
+    WAITTIME
+        10000,
+    STATUS
+        200,
+    DATA
+        postalcode 41800
+        username indoor.
 
-GET
-	http://api.geonames.org/postalCodeLookupJSON,
-PARAMS
-	postalcode 50316
-	username indor.
+    GET
+        $url$,
+    PARAMS
+        postalcode 50316
+        username indor.
 
-ASSERT RESPONSE STATUS OK.
-ASSERT RESPONSE TYPE JSON.
-ASSERT RESPONSE EMPTY.
-ASSERT RESPONSE EMPTY.
-ASSERT RESPONSE LENGTH > 200.
+    ASSERT RESPONSE STATUS OK.
+    ASSERT TEXT CONTAINS $expected_country$.
+    ASSERT RESPONSE TYPE JSON.
+    ASSERT REQUEST http://localhost:5000/user/add METHOD POST.
+END REPEAT
 
-#ASSERT REQUEST TYPE JSON.
-#ASSERT REQUEST LENGTH = 1234.
-#ASSERT REQUEST PATH ./path/to/resource EXISTS.
-#ASSERT REQUEST TEXT CONTAINS blabla.
-#ASSERT REQUEST HEADER my-header EXISTS.
-#ASSERT REQUEST HEADER my-header IS sth.
-#ASSERT REQUEST SERVER is example.com.
+# ASSERT REQUEST TYPE JSON.
+# ASSERT REQUEST LENGTH = 1234.
+# ASSERT REQUEST PATH ./path/to/resource EXISTS.
+# ASSERT REQUEST TEXT CONTAINS blabla.
+# ASSERT REQUEST HEADER my-header EXISTS.
+# ASSERT REQUEST HEADER my-header IS sth.
+# ASSERT REQUEST SERVER is example.com.

@@ -57,5 +57,5 @@ class CommandRequestMethod(Command, metaclass=CommandRegister):
             raise ParsingException(self, result.ERROR_REQUEST_NOT_FOUND)
 
         computed = self.result_collector.requests[path[0]].request_method
-        parsed = ParsedValue(self, computed, path[1])
+        parsed = ParsedValue(self, path[1], "Request " + path[0] + " method is " + path[1])
         return computed, parsed

@@ -31,7 +31,6 @@ class RequestHandler(object):
         self.server_thread.join()
 
     def get_responses(self):
-        print(self.handler_class.expired_responses)
         return self.handler_class.expired_responses
 
 
@@ -94,7 +93,7 @@ def _create_handler_class(resps):
 
         def __getattr__(self, item):
             if "do_" in item:
-                return partial(self.__do, item[2:])
+                return partial(self.__do, item[3:])
             raise AttributeError
 
         def __do(self, method_name):
