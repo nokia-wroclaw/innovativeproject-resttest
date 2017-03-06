@@ -59,7 +59,7 @@ class ConsolePrinter(Printer):
         logo_file_path = os.path.join(this_dir, "logo.txt")
         logo_file = open(logo_file_path)
         logo = logo_file.read()
-        print(logo)
+        print(logo.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
 
     def print_statistics(self, statistics):
         sys.stdout.write(
