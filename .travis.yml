@@ -3,6 +3,8 @@ python:
 - '3.5'
 install: pip install -r requirements.txt
 script: nosetests indor -v --with-coverage --cover-test --cover-package=indor --cover-min-percentage=75
+before_deploy:
+  - [ "v"`python3 setup.py --version` == `git describe` ]
 deploy:
   provider: pypi
   user: godlark
