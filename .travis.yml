@@ -11,6 +11,7 @@ deploy:
   on:
     tags: true
     repo: nokia-wroclaw/innovativeproject-resttest
+    all_branches: true
 notifications:
   email:
   - slawomir.karol.domagala@gmail.com
