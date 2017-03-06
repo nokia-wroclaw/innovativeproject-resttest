@@ -8,7 +8,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-nosetests indor -v --with-coverage --cover-test --cover-package=indor --cover-min-percentage=88 --failure-detail
+nosetests indor -v --with-coverage --cover-test --cover-package=indor --cover-min-percentage=84 --failure-detail
 python3 setup.py bdist_wheel --universal
 virtualenv  ./venv
 source ./venv/bin/activate
