@@ -5,15 +5,12 @@ install: pip install -r requirements.txt
 script: nosetests indor -v --with-coverage --cover-test --cover-package=indor --cover-min-percentage=75
 deploy:
   provider: pypi
-  user: DeeM
+  user: godlark
   password:
-    secure: oEX2JJIgWuARdnfZMzn4ADI+zoWEZNzlal286n88PoXGd9udsIXX0Ojh6mdoZn9xxIcknWZ8mRhch59s3MctjQo0IacsthjwFrPduplxwR7iO+uf21K+Uqv5YSMELzgHtVe3SgB5e6D2EPfr/oF9nJyc2be6oxIQICVfLKAaU+Q=
+    secure: UwY+WNipdmqFnLTY8RCJi8elvhIEqkrKO8yf1di8Tv1GtxPE5UUOw4NAH2PXW2sFLIVz5Rdgka12xQHieD4qwjL1YWnzODcIYIKlRZkWz/BuS4wQ78SNZNDGY/+3+IxcDjIG4YhORfdBCnqCKEd1aX9JbRKjXlam0M49X2YGugo=
   on:
     tags: true
     repo: nokia-wroclaw/innovativeproject-resttest
 notifications:
   email:
-    - dmirecki.DM@gmail.com
-    - slawomir.karol.domagala@gmail.com
-    - tomasz.wlislocki@gmail.com
-    - bartoszzieba@hotmail.com
+  - slawomir.karol.domagala@gmail.com
