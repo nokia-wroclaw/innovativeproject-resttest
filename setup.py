@@ -9,7 +9,8 @@ setup(
         "requests",
         "pyparsing",
         'junit-xml',
-        'termcolor'
+        'termcolor',
+        'beautifulsoup4'
     ],
     package_dir={'indor': 'src/indor'},
     packages=['indor'],
