@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.3.1.2'
+VERSION = '0.3-callbacks-rc.1'
 
 setup(
     name='indor',
