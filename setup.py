@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '0.3.1.2'
+VERSION = '0.3.1.3'
 
 setup(
     name='indor',
