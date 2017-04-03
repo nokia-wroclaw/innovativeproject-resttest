@@ -1,0 +1,14 @@
+/%
+	You may use defined environment variables. To use them, simply put the environment variable name between two # chars.
+	Important! Environment variables are parsed after consts and after test variables.
+%/
+
+DEFINE URL2 = #URL2_TEST#
+
+POST
+	#URL_TEST#,
+PARAMS
+	postalcode 41800,
+	username indor.
+
+GET @URL2@.

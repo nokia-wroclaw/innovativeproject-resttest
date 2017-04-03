@@ -1,3 +1,5 @@
+import os
+
 from pyparsing import *
 import json
 
@@ -22,6 +24,12 @@ def flatten_list(x):
     if len(x) == 1:
         return x[0]
     return x
+
+
+def parse_env_variables(input_data):
+    env_var = Literal("#") + word + Literal("#")
+    env_var.setParseAction(lambda s, l, t: os.environ[t[1]])
+    return env_var.transformString(input_data)
 
 
 def parse_constants(input_data):
@@ -89,6 +97,7 @@ def parse(input_data):
     comment = multi_line_comment | inline_comment
 
     repeats_parsed = parse_repeats(consts_replaced)
+    envs_replaced = parse_env_variables(repeats_parsed)
 
     sub_command = Group(OneOrMore(token) + Optional(Literal(",").suppress()))
     command = Group(OneOrMore(sub_command) + ("." + LineEnd()).suppress())
@@ -96,5 +105,5 @@ def parse(input_data):
     parser = OneOrMore(command)
     parser.ignore(comment)
 
-    all_commands = parser.parseString(repeats_parsed).asList()
+    all_commands = parser.parseString(envs_replaced).asList()
     return map(flatten_list, all_commands)  # TW: Ta linijka kodu to piękno najczystszej postaci <3
