@@ -1,3 +1,7 @@
+/%
+    Variables are parsed after parsing constants. The constants behaves like the DEFINE macros in C
+%/
+
 GET http://google.pl.
 ASSIGN $1$ TEXT.
 ASSIGN $2$ COOKIE VALUE login.
