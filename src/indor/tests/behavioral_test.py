@@ -4,8 +4,6 @@ from indor.scenario_results import ScenarioResults
 from indor.result import Passed, Error, Failed, ConnectionError
 from .common import run_indor
 
-__author__ = 'Damian Mirecki'
-
 
 class TestBehavioral(unittest.TestCase):
     def assertAllPassed(self, results):
