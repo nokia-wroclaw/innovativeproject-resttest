@@ -4,6 +4,7 @@ import os
 
 from pyparsing import ParseException
 
+from .indor_exceptions import EnvironmentVariableNotDefined
 from .general_error import GeneralError, GENERAL_ERROR_PARSE_FAILED, GENERAL_ERROR_FILE_NOT_FOUND
 from .printer import Printer
 from .reading import read_from_file
@@ -77,6 +78,8 @@ class Indor(object):
             results = [GeneralError("{} {}".format(GENERAL_ERROR_FILE_NOT_FOUND, file_path))]
         except ParseException:
             results = [GeneralError("{} {}".format(GENERAL_ERROR_PARSE_FAILED, file_path))]
+        except EnvironmentVariableNotDefined as e:
+            results = [GeneralError(str(e))]
         #except Exception as e:
         #    results = [GeneralError("{}({}) {} {}".format(GENERAL_ERROR_UNKNOWN_ERROR, e.__class__.__name__, file_path, e.message))]
         return results

@@ -3,6 +3,7 @@ import os
 from pyparsing import *
 import json
 
+from .indor_exceptions import EnvironmentVariableNotDefined
 from . import indor_exceptions
 
 # TODO - Tomasz Wlisłocki - Uprościć tego regexa
@@ -28,8 +29,11 @@ def flatten_list(x):
 
 def parse_env_variables(input_data):
     env_var = Literal("#") + word + Literal("#")
-    env_var.setParseAction(lambda s, l, t: os.environ[t[1]])
-    return env_var.transformString(input_data)
+    try:
+        env_var.setParseAction(lambda s, l, t: os.environ[t[1]])
+        return env_var.transformString(input_data)
+    except KeyError as e:
+        raise EnvironmentVariableNotDefined(e.args[0]) from e
 
 
 def parse_constants(input_data):

@@ -43,3 +43,8 @@ class ClassPropertyNotFound(Exception):
 class InvalidRepeatParameters(Exception):
     def __init__(self, params):
         super(InvalidRepeatParameters, self).__init__("Invalid parameters for REPEAT statement: " + params)
+
+
+class EnvironmentVariableNotDefined(LookupError):
+    def __init__(self, env_var_name):
+        super(EnvironmentVariableNotDefined, self).__init__(env_var_name)

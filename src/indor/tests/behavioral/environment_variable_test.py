@@ -1,8 +1,9 @@
 import os
 import unittest
 
+from indor.indor_exceptions import EnvironmentVariableNotDefined
 from indor.scenario_results import ScenarioResults
-from indor.result import Passed, Error, Failed, ConnectionError
+from indor.result import Passed, Error, Failed
 from ..common import run_indor
 
 
@@ -45,12 +46,9 @@ class TestEnvironmentVariables(unittest.TestCase):
             ASSERT RESPONSE STATUS 200.
         """
 
-        result = run_indor(test)
-        self.assertScenarioCount(1, result)
-
-        scenario = result[0]
-        self.assertEqual(1, len(scenario.test_results))
-
-        results = scenario.test_results[0].results
-        self.assertAllPassed(results)
+        try:
+            result = run_indor(test)
+            self.assertTrue(False, "It should throw an exception")
+        except EnvironmentVariableNotDefined as e:
+            self.assertEqual("RANDOM_NAME", e.args[0])
 
