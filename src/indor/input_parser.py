@@ -29,6 +29,7 @@ def flatten_list(x):
 
 def parse_env_variables(input_data):
     env_var = Literal("#") + word + Literal("#")
+    env_var.ignore(get_comment_expression())
     try:
         env_var.setParseAction(lambda s, l, t: os.environ[t[1]])
         return env_var.transformString(input_data)
@@ -39,8 +40,9 @@ def parse_env_variables(input_data):
 def parse_constants(input_data):
     # Getting all defined macros
     const_definition = Suppress("DEFINE") + word + Suppress("=") + empty + restOfLine
+    const_definition.ignore(get_comment_expression())
+
     constants = list(const_definition.searchString(input_data))
-    print(constants)
 
     # Replacing consts values in input text
     constants_replaced = input_data
@@ -48,6 +50,8 @@ def parse_constants(input_data):
     # Replacing with reverse order so that consts declared earlier were more important
     for key, value in constants[::-1]:
         const = Literal("@") + Literal(key) + Literal("@")
+        const.ignore(get_comment_expression())
+
         const.setParseAction(replaceWith(value))
         constants_replaced = const.transformString(constants_replaced)
 
@@ -67,11 +71,15 @@ def parse_repeat_statement(start, length, tokens):
 
     for repetition_name, repetition_params in repetitions.items():
         scenario = Literal("SCENARIO")
+        scenario.ignore(get_comment_expression())
+
         scenario.setParseAction(replaceWith('REPEATED_SCENARIO "' + str(repetition_name) + '"'))
 
         repetition = scenario.transformString(commands)
         for param_name, param_value in repetition_params.items():
             param = Literal("$") + Literal(param_name) + Literal("$")
+            param.ignore(get_comment_expression())
+
             param.setParseAction(replaceWith(param_value))
             repetition = param.transformString(repetition)
 
@@ -83,6 +91,7 @@ def parse_repeat_statement(start, length, tokens):
 def parse_repeats(input_data):
     # repeats_definition = nestedExpr("REPEAT FOR", "END REPEAT")
     repeats_definition = Suppress("REPEAT FOR") + expression_in_bracket + SkipTo("END REPEAT") + Suppress("END REPEAT")
+    repeats_definition.ignore(get_comment_expression())
 
     repeats_definition.setParseAction(parse_repeat_statement)
 
@@ -92,14 +101,6 @@ def parse_repeats(input_data):
 def parse(input_data):
     consts_replaced = parse_constants(input_data)
 
-    hashmark = '#'
-    multi_line_comment_start = '/%'
-    multi_line_comment_end = '%/'
-
-    inline_comment = hashmark + restOfLine
-    multi_line_comment = nestedExpr(multi_line_comment_start, multi_line_comment_end)
-    comment = multi_line_comment | inline_comment
-
     repeats_parsed = parse_repeats(consts_replaced)
     envs_replaced = parse_env_variables(repeats_parsed)
 
@@ -107,7 +108,17 @@ def parse(input_data):
     command = Group(OneOrMore(sub_command) + ("." + LineEnd()).suppress())
 
     parser = OneOrMore(command)
-    parser.ignore(comment)
+    parser.ignore(get_comment_expression())
 
     all_commands = parser.parseString(envs_replaced).asList()
     return map(flatten_list, all_commands)  # TW: Ta linijka kodu to piękno najczystszej postaci <3
+
+
+def get_comment_expression():
+    hashmark = '#'
+    multi_line_comment_start = '/%'
+    multi_line_comment_end = '%/'
+    inline_comment = hashmark + restOfLine
+    multi_line_comment = nestedExpr(multi_line_comment_start, multi_line_comment_end)
+    comment = multi_line_comment | inline_comment
+    return comment
